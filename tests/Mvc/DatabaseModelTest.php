@@ -40,7 +40,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app->setConfig($params);
 
 
-        $this->assertTrue(FooModel::tryCreateTable());
+        $this->assertTrue(FooDatabaseModel::tryCreateTable());
 
     }
 
@@ -60,7 +60,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app = new Application();
         $app->setConfig($params);
         
-        $this->assertTrue(FooModel::tryCreateTable());
+        $this->assertTrue(FooDatabaseModel::tryCreateTable());
 
     }
 
@@ -77,7 +77,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app = new Application();
         $app->setConfig($params);
         
-        $this->assertTrue(FooModel::tryCreateTable());
+        $this->assertTrue(FooDatabaseModel::tryCreateTable());
     }
 
 }

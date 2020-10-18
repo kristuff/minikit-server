@@ -1,7 +1,5 @@
 # Miniweb
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0ef0fc58ffcc41b6882290def0573f3a)](https://www.codacy.com/app/kristuff/miniweb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Kristuff/pwf&amp;utm_campaign=Badge_Grade)
-[![Maintainability](https://api.codeclimate.com/v1/badges/6a998c3408adb125271e/maintainability)](https://codeclimate.com/github/kristuff/miniweb/maintainability)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kristuff/miniweb/?branch=master)
 [![Build Status](https://travis-ci.org/kristuff/miniweb.svg?branch=master)](https://travis-ci.org/kristuff/miniweb)
 [![codecov](https://codecov.io/gh/kristuff/miniweb/branch/master/graph/badge.svg)](https://codecov.io/gh/kristuff/miniweb)
