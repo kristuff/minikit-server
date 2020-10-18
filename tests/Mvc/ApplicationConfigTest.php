@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Mvc;
 
 use Kristuff\Miniweb\Core\Config;
 use Kristuff\Miniweb\Core\Locale;

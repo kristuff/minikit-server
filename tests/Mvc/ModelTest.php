@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Mvc;
+
 require_once __DIR__.'/../_data/mvc_app/model/DummySessionModel.php';
 require_once __DIR__.'/../_data/mvc_app/model/DummyModel.php';
 

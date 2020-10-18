@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Http;
 
 use Kristuff\Miniweb\Http\Server;
 

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Mvc;
 
 use Kristuff\Miniweb\Mvc\Application;
 use Kristuff\Miniweb\Mvc\Controller;

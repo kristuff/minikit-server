@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Security;
 
 use Kristuff\Miniweb\Http\Session;
 use Kristuff\Miniweb\Security\Captcha;

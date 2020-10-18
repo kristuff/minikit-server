@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__.'/../../vendor/autoload.php';
-require_once __DIR__.'/../_data/FooDatabaseModel.php';
+namespace Kristuff\Miniweb\Tests\Mvc;
+require_once __DIR__.'/../_data/model/FooDatabaseModel.php';
 
 use Kristuff\Miniweb\Mvc\Application;
 

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Core;
 
 use Kristuff\Miniweb\Core\Filter;
 
@@ -73,7 +73,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $integerBefore = 123;
         $integerAfter  = 123;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->int = $integerBefore;
         $object->str = 'foo';
         $object->badstr = $codeBefore;
@@ -92,7 +92,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $integerBefore = 123;
         $integerAfter  = 123;
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->str = 'foo';
         $object->badstr = $codeBefore;
 
@@ -106,7 +106,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $codeAfter = 'Hello &lt;script&gt;var http = new XMLHttpRequest(); http.open(&#039;POST&#039;, &#039;example.com/my_account/delete.php&#039;, true);&lt;/script&gt;';
 
         $badArray = ['foo' => 'bar', 'bad1' => $codeBefore1, 'bad2' => $codeBefore2];
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->badArray = $badArray;
 
         Filter::XssFilter($object);         
@@ -122,7 +122,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $codeAfter = 'Hello &lt;script&gt;var http = new XMLHttpRequest(); http.open(&#039;POST&#039;, &#039;example.com/my_account/delete.php&#039;, true);&lt;/script&gt;';
 
         $badArray = ['foo' => 'bar', 'bad' => $codeBefore];
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->badArray = $badArray;
 
         $this->assertEquals($codeAfter,  Filter::XssFilter($object)->badArray['bad']);
@@ -135,10 +135,10 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $codeAfter = 'Hello &lt;script&gt;var http = new XMLHttpRequest(); http.open(&#039;POST&#039;, &#039;example.com/my_account/delete.php&#039;, true);&lt;/script&gt;';
 
 
-        $object = new stdClass();
+        $object = new \stdClass();
         $object->badStr = $codeBefore1;
 
-        $childObject = new stdClass();
+        $childObject = new \stdClass();
         $childObject->badStr = $codeBefore2;
 
         $object->badObject = $childObject;
@@ -154,8 +154,8 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $codeBefore = "Hello <script>var http = new XMLHttpRequest(); http.open('POST', 'example.com/my_account/delete.php', true);</script>";
         $codeAfter = 'Hello &lt;script&gt;var http = new XMLHttpRequest(); http.open(&#039;POST&#039;, &#039;example.com/my_account/delete.php&#039;, true);&lt;/script&gt;';
 
-        $object = new stdClass();
-        $childObject = new stdClass();
+        $object = new \stdClass();
+        $childObject = new \stdClass();
         $childObject->badStr = $codeBefore;
         $object->badObject = $childObject;
 
@@ -238,7 +238,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $codeBefore4 = "Hello <script>var http = new XMLHttpRequest(); http.open('POST', 'example.com/my_account/delete.php', true);</script>";
         $codeAfter = 'Hello &lt;script&gt;var http = new XMLHttpRequest(); http.open(&#039;POST&#039;, &#039;example.com/my_account/delete.php&#039;, true);&lt;/script&gt;';
         
-        $badObject = new stdClass();
+        $badObject = new \stdClass();
         $badObject->badstr = $codeBefore4;
 
         $badArray = [ 

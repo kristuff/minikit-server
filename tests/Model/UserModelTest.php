@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../../vendor/autoload.php';
+namespace Kristuff\Miniweb\Tests\Http;
 
 
 class UserModelTest extends \PHPUnit\Framework\TestCase
