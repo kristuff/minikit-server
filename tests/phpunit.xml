@@ -1,0 +1,32 @@
+<phpunit
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
+   colors="true"
+   stopOnError="false"
+   stopOnFailure="false">
+  <testsuites>
+    <testsuite name="Core">
+      <directory>Core/</directory>
+    </testsuite>
+    <testsuite name="Http">
+      <directory>Http/</directory>
+    </testsuite>
+    <testsuite name="Security">
+      <directory>Security/</directory>
+    </testsuite>
+    <testsuite name="Mvc">
+      <directory>Mvc/</directory>
+    </testsuite>
+    <testsuite name="Model">
+      <directory>Model/</directory>
+    </testsuite>
+ </testsuites>
+ <filter>
+   <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">../lib/</directory>
+      <exclude>
+        <file>../lib/default.conf.php</file>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>

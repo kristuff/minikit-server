@@ -1,0 +1,25 @@
+{
+    "name": "kristuff/miniweb",
+    "description": "Mini php web framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kristuff",
+            "homepage": "https://github.com/kristuff"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "kristuff/patabase": ">=0.3-stable",
+        "kristuff/mishell": ">=1.3-stable",
+        "phpmailer/phpmailer": ">=6.1-stable",
+        "gregwar/captcha": ">=1.1-stable"
+    },
+     "autoload": {
+        "psr-4": {"Kristuff\\Miniweb\\": "lib/"}
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5 || ^8"
+    }
+}
