@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** 
  *        _      _            _
  *  _ __ (_)_ _ (_)_ __ _____| |__
@@ -31,9 +33,9 @@ class TextHelper
      * @param string        $key            The key
      * @param string        $locale         The locale to use (the default is used if null). (optional)
      *
-     * @return mixed        The key value is the key exists, otherwise null.
+     * @return string|null    The key value is the key exists, otherwise null.
      */
-    public static function text(string $key, $locale = null)
+    public static function text(string $key, ?string $locale = null): ?string
     {
         $possibleOverideText = Application::text($key, $locale);
         

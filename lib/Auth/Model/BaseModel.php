@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** 
  *        _      _            _
  *  _ __ (_)_ _ (_)_ __ _____| |__
@@ -37,9 +39,9 @@ abstract class BaseModel extends DatabaseModel
      * @param string    $key        The key
      * @param string    $locale     The locale to use (the default locale is used if null). 
      *
-     * @return mixed    The key value is the key exists, otherwise null.
+  * @return string|null    The key value is the key exists, otherwise null.
      */
-    public static function text(string $key, string $locale = null)
+    public static function text(string $key, ?string $locale = null): ?string
     {
         return TextHelper::text($key, $locale);
     }         
