@@ -6,17 +6,20 @@ php:
   - '7.2'
   - '7.3'
   - '7.4'
-  
+
+services:
+  - mysql
+  - postgresql
+ 
 env:
   global:
     - APPLICATION_ENV=testing_phpunit
 
 before_install:
-    - composer install
-    - cd tests
+  - composer install
+  - cd tests
 
 before_script:
-# required to test DabaseModel 
  - psql  -c "CREATE DATABASE  patapouf;" -U postgres
  - mysql -e "CREATE DATABASE  patapouf;" -u root
 
