@@ -55,7 +55,7 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $session = new Session();
         $feedback = new Feedback($session);
 
-        DummyFeedbackModel::registerSomeMessages();
+        \DummyFeedbackModel::registerSomeMessages();
 
         $this->assertEquals(2,       count($feedback->getPositives()));
         $this->assertEquals('hello',       $feedback->getPositives()[0]);
@@ -73,7 +73,7 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $session = new Session();
         $feedback = new Feedback($session);
 
-        DummyFeedbackModel::registerSomeMessages_direct();
+        \DummyFeedbackModel::registerSomeMessages_direct();
 
         $this->assertEquals(2,       count($feedback->getPositives()));
         $this->assertEquals('hello direct',       $feedback->getPositives()[0]);
@@ -91,7 +91,7 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $session = new Session();
         $feedback = new Feedback($session);
 
-        DummyFeedbackModel::registerSomeErrors();
+        \DummyFeedbackModel::registerSomeErrors();
 
         $this->assertEquals(2,                    count($feedback->getNegatives()));
         $this->assertEquals('something is wrong',       $feedback->getNegatives()[0]);
@@ -109,7 +109,7 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $session = new Session();
         $feedback = new Feedback($session);
 
-        DummyFeedbackModel::registerSomeErrors_direct();
+        \DummyFeedbackModel::registerSomeErrors_direct();
 
         $this->assertEquals(2,                    count($feedback->getNegatives()));
         $this->assertEquals('something is wrong direct',       $feedback->getNegatives()[0]);

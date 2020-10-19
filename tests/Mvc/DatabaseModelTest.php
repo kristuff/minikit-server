@@ -18,7 +18,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(true, true);  // dummy OK test
         
         // no connection init exit wil be called
-        FooDatabaseModel::tryToDoSomethingWithDatabase();
+        \FooDatabaseModel::tryToDoSomethingWithDatabase();
 
         $this->assertEquals(true, false); // dummy wrong test, (won't be reported as app should exit before)
     }
@@ -40,7 +40,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app->setConfig($params);
 
 
-        $this->assertTrue(FooDatabaseModel::tryCreateTable());
+        $this->assertTrue(\FooDatabaseModel::tryCreateTable());
 
     }
 
@@ -60,7 +60,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app = new Application();
         $app->setConfig($params);
         
-        $this->assertTrue(FooDatabaseModel::tryCreateTable());
+        $this->assertTrue(\FooDatabaseModel::tryCreateTable());
 
     }
 
@@ -77,7 +77,7 @@ class DatabaseModelTest extends \PHPUnit\Framework\TestCase
         $app = new Application();
         $app->setConfig($params);
         
-        $this->assertTrue(FooDatabaseModel::tryCreateTable());
+        $this->assertTrue(\FooDatabaseModel::tryCreateTable());
     }
 
 }

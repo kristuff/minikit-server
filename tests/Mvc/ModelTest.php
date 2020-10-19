@@ -39,7 +39,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $app = new Application();
         $app->setConfig($params);
 
-        DummyModel::configTestMethod();
+        \DummyModel::configTestMethod();
 
         // dup object for tesing
         $session = new Session();
@@ -55,7 +55,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($app->locales()->registerAutoloader(__DIR__ . '/../_data/locale', ['en-US', 'fr-FR'], 'app.locale.php'));
         $this->assertTrue($app->locales()->setDefault('fr-FR'));
 
-        DummyModel::localeTestMethod();
+        \DummyModel::localeTestMethod();
 
         // dup object for tesing
         $session = new Session();
@@ -69,7 +69,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
     {
         $app = new Application();
 
-        DummyModel::responseTestMethod();
+        \DummyModel::responseTestMethod();
 
         // dup object for tesing
         $session = new Session();

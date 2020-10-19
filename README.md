@@ -3,7 +3,8 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kristuff/miniweb/?branch=master)
 [![Build Status](https://travis-ci.org/kristuff/miniweb.svg?branch=master)](https://travis-ci.org/kristuff/miniweb)
 [![codecov](https://codecov.io/gh/kristuff/miniweb/branch/master/graph/badge.svg)](https://codecov.io/gh/kristuff/miniweb)
-![GitHub](https://img.shields.io/github/license/kristuff/miniweb)
+[![Latest Stable Version](https://poser.pugx.org/kristuff/miniweb/v/stable)](https://packagist.org/packages/kristuff/miniweb)
+[![License](https://poser.pugx.org/kristuff/miniweb/license)](https://packagist.org/packages/kristuff/miniweb)
 
 > Mini PHP web Framework.
 
