@@ -2,7 +2,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kristuff/miniweb/?branch=master)
 [![Build Status](https://travis-ci.org/kristuff/miniweb.svg?branch=master)](https://travis-ci.org/kristuff/miniweb)
-[![codecov](https://codecov.io/gh/kristuff/miniweb/branch/master/graph/badge.svg)](https://codecov.io/gh/kristuff/miniweb)
+[![codecov](https://codecov.io/gh/kristuff/miniweb/branch/main/graph/badge.svg?token=8e9XoS8HnV)](https://codecov.io/gh/kristuff/miniweb)
 [![Latest Stable Version](https://poser.pugx.org/kristuff/miniweb/v/stable)](https://packagist.org/packages/kristuff/miniweb)
 [![License](https://poser.pugx.org/kristuff/miniweb/license)](https://packagist.org/packages/kristuff/miniweb)
 
