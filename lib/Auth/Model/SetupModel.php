@@ -17,11 +17,11 @@
 
 namespace Kristuff\Miniweb\Auth\Model; 
 
-use \Kristuff\Miniweb\Auth;
-use \Kristuff\Miniweb\Mvc\TaskResponse;
-use \Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
-use \Kristuff\Patabase\Database;
-use \Kristuff\Mishell\Console;
+use Kristuff\Miniweb\Auth;
+use Kristuff\Miniweb\Mvc\TaskResponse;
+use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
+use Kristuff\Patabase\Database;
+use Kristuff\Mishell\Console;
 
 /** 
  * SetupModel

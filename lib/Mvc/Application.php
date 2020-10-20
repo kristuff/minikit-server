@@ -144,7 +144,7 @@ class Application
     public static function text(string $key, ?string $locale = null): ?string
     {
         return isset(self::$locale) ? self::$locale->get($key, $locale) : null;
-    }   
+    }  
 
     /**
      * Gets/returns the locale value for the given key (localized apps)

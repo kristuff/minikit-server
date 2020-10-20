@@ -122,7 +122,7 @@ class Rooter
     public function handleRequest(): bool
     {
         // get url and method
-        $uri = Http\Request::get('url');
+        $uri = Http\Request::get('url') ?? '';
         $method = Http\Server::requestMethod();
                
         // create array with URL parts in $url

@@ -78,7 +78,7 @@ class TaskResponse extends Model
      *
      * @return TaskResponse                
      */
-    public static function create(int $code = 200, string $message = '', array $data = [], array $errors = [])
+    public static function create(int $code = 200, ?string $message = null, array $data = [], array $errors = [])
     {
         return new TaskResponse($code, $message, $data, $errors); 
     }

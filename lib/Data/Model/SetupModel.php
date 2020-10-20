@@ -17,9 +17,9 @@
 
 namespace Kristuff\Miniweb\Data\Model; 
 
-use \Kristuff\Miniweb\Mvc\TaskResponse;
-use \Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
-use \Kristuff\Patabase\Database;
+use Kristuff\Miniweb\Mvc\TaskResponse;
+use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
+use Kristuff\Patabase\Database;
 
 /** 
  * SetupModel

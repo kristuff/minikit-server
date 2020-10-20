@@ -134,9 +134,9 @@ abstract class Model
      * @param string    $key                The key
      * @param string   [$configName]        The name of the configuration (optional)
      *
-     * @return string|null    The key value is the key exists, otherwise null.
+     * @return mixed|null    The key value is the key exists, otherwise null.
      */
-    public static function config(string $key, ?string $configName = null): ?string
+    public static function config(string $key, ?string $configName = null)
     {
         return Application::config($key, $configName);
     }   
