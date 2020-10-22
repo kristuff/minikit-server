@@ -28,7 +28,7 @@ class CaptchaFactory
 {
     /**
      * @access private
-     * @static var
+     * @static
      * @var Security\CaptchaFactory $factory        The CaptchaFactory instance 
      */
     private static $factory;
@@ -43,7 +43,7 @@ class CaptchaFactory
      * Gets or creates a global static Factory instance
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return CaptchaFactory
      */
