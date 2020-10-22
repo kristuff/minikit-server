@@ -67,6 +67,7 @@ class Application
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-core.conf.php');
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-auth.conf.php');
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-data.conf.php');
+        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-captcha.conf.php');
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-mailer.conf.php');
         
         // create initialize a session
