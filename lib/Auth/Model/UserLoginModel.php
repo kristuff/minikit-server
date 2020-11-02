@@ -220,39 +220,37 @@ class UserLoginModel extends UserModel
         $errorMsg = self::text('LOGIN_COOKIE_ERROR_INVALID');
 
         // make sure cookie is set and
-        // before list(), check it can be split into 3 strings.
-        if ( $response->assertFalse(empty($cookie), 400, $errorMsg . ' (empty)') &&
-             $response->assertTrue(count (explode(':', $cookie)) === 3, 400, $errorMsg . ' (explode)')) {
+        if ( $response->assertFalse(empty($cookie), 400, $errorMsg)){
 
-            // check cookie's contents, check if cookie contents belong together or token is empty
-            list ($userId, $token, $hash) = explode(':', $cookie);
+            // decrypt cookiestring
+            $cookieString =  Encryption::decrypt($cookie, self::config('ENCRYPTION_KEY'), self::config('HMAC_SALT'));
 
-            // decrypt user id
-            $userId = Encryption::decrypt($userId, self::config('ENCRYPTION_KEY'), self::config('HMAC_SALT'));
+            // before list(), check it can be split into 3 strings.
+            if ( $response->assertTrue(count (explode(':', $cookieString)) === 3, 400, $errorMsg)) {
 
-            if ($response->assertTrue(!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token), 400, $errorMsg . '(compare)'  )) {
+                // check cookie's contents, check if cookie contents belong together or token is empty
+                list($userId, $token, $hash) = explode(':', $cookieString);
 
-                // get data of user that has this id and this token
-                $result = self::getUserByUserIdAndToken($userId, $token);
+                if ($response->assertTrue(!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token), 400, $errorMsg . '(compare)'  )) {
 
-                // if user with that id and exactly that cookie token exists in database
-                if ($response->assertTrue($result !== false, 400, $errorMsg . ' (user)')) {
-                    
-                    // successfully logged in, so we write all necessary data into the session and set "userIsLoggedIn" to true
-                    self::saveSuccessfulLoginInSession($result->userId, 
-                                                        $result->userName, 
-                                                        $result->userEmail, 
-                                                        $result->userAccountType,
-                                                        $result->userDataDirectory);
-                    
-                    // persist successful login in database (login timestamp)
-                    // NOTE: we don't set another remember_me-cookie here as the current cookie should always
-                    // be invalid after a certain amount of time, so the user has to login with username/password
-                    // again from time to time. This is good and safe ! ;)
-                    // This is done by setting the $remerberMeToken to False in saveSuccessfulLoginInDatabase(). 
-                    self::saveSuccessfulLoginInDatabase($result->userId, session_id(), false);
-               
-                    $response->setMessage(self::text('LOGIN_COOKIE_SUCCESSFUL'));
+                    // get data of user that has this id and this token
+                    $result = self::getUserByUserIdAndToken(intval($userId), $token);
+
+                    // if user with that id and exactly that cookie token exists in database
+                    if ($response->assertFalse($result === false, 400, $errorMsg)) {
+                        
+                        // successfully logged in, so we write all necessary data into the session and set "userIsLoggedIn" to true
+                        self::saveSuccessfulLoginInSession($result);
+                        
+                        // persist successful login in database (login timestamp)
+                        // NOTE: we don't set another remember_me-cookie here as the current cookie should always
+                        // be invalid after a certain amount of time, so the user has to login with username/password
+                        // again from time to time. This is good and safe ! ;)
+                        // This is done by setting the $remerberMeToken to False in saveSuccessfulLoginInDatabase(). 
+                        self::saveSuccessfulLoginInDatabase($result->userId, session_id(), false);
+                
+                        $response->setMessage(self::text('LOGIN_COOKIE_SUCCESSFUL'));
+                    }
                 }
             }
         }
@@ -365,17 +363,17 @@ class UserLoginModel extends UserModel
      *
      * @return mixed    Returns false if user does not exist, returns object with user's data when user exists
      */
-    private static function getUserByUserIdAndToken($userId, $token)
+    private static function getUserByUserIdAndToken(int $userId, string $token)
     {
 
         $users = self::database()->select('userId','userName', 'userEmail', 'userPasswordHash', 'userAccountType', 
                                             'userCreationTimestamp', 'userDataDirectory', 'userHasAvatar', 'userDeleted', 'userActivated',
                                             'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
                                ->from('user')
-                               ->where()->equal('userId', (int) $userId)
+                               ->whereEqual('userId', $userId)
                                ->where()->notNull('userRememberMeToken')
-                               ->where()->equal('userRememberMeToken', $token)
-                               ->where()->equal('userAccountType','DEFAULT')
+                               ->whereEqual('userRememberMeToken', $token)
+                               ->whereEqual('userProvider', 'DEFAULT')
                                ->getOne('obj');
 
         return count($users) > 0 ? $users[0] : false;
@@ -388,11 +386,7 @@ class UserLoginModel extends UserModel
      *
      * @access private
      * @static
-     * @param  int      $userId
-     * @param  string   $userName
-     * @param  string   $userEmail
-     * @param  int      $userAccountType
-     * @param  string   $userDataDirectory
+     * @param mixed   $user
      *
      * @return void
      */
@@ -516,13 +510,26 @@ class UserLoginModel extends UserModel
      */
     private static function createRememberMeCookie($userId)
     {
+        
         // generate 64 char random string
-        $cookieToken = hash('sha256', mt_rand());
+        $cookieToken = self::token()->getNewToken(64); //hash('sha256', mt_rand());
+
+        // generate cookie string that consists of user id, token and cominaison of both 
+        // and encrypt it to never expose the original user id.
+        $cookie = $userId .':'. $cookieToken ;
+        $cookie .= ':'. hash('sha256', $userId .':'. $cookieToken);
+        $cookieString  = Encryption::encrypt($cookie , 
+                                    self::config('ENCRYPTION_KEY'), 
+                                    self::config('HMAC_SALT'));
+ 		
+        
+        // generate 64 char random string
+        //$cookieToken = hash('sha256', mt_rand());
 
         // generate cookie string that consists of user id, random string and combined hash of both
         // never expose the original user id, instead, encrypt it.
-        $cookieString  = Encryption::encrypt($userId, self::config('ENCRYPTION_KEY'), self::config('HMAC_SALT')) . ':' . $cookieToken;
-        $cookieString .= ':' . hash('sha256', $userId . ':' . $cookieToken);
+        //$cookieString  = Encryption::encrypt($userId, self::config('ENCRYPTION_KEY'), self::config('HMAC_SALT')) . ':' . $cookieToken;
+        //$cookieString .= ':' . hash('sha256', $userId . ':' . $cookieToken);
 		
 		// set cookie, and make it available only for the domain created on (to avoid XSS attacks, where the
         // attacker could steal your remember-me cookie string and would login itself).

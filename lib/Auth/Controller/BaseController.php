@@ -38,7 +38,9 @@ abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
 
         // if user is not logged and the login with cookie is enabled and cookie is set, 
         $loginCookie = $this->cookie()->get('remember_me');
-        if (!UserLoginModel::isUserLoggedIn() && Application::config('AUTH_LOGIN_COOKIE_ENABLED') === true && isset($loginCookie)) {
+        if (!UserLoginModel::isUserLoggedIn() && 
+            Application::config('AUTH_LOGIN_COOKIE_ENABLED') === true && 
+            isset($loginCookie)) {
             
             // try to login with cookie
             $loginProccess = UserLoginModel::loginWithCookie($loginCookie);

@@ -62,7 +62,7 @@ abstract class AuthController extends \Kristuff\Miniweb\Auth\Controller\BaseCont
                 $loginResult = UserLoginModel::login(
                     $this->request()->post('user_name_or_email', true),
                     $this->request()->post('user_password', true),
-                    $this->request()->post('set_remember_me_cookie'),
+                    $this->request()->postCheckbox('set_remember_me_cookie'),
                     $this->request()->post('token'));
 
                 // check login status: if true, then redirect user home or previous page, 
@@ -124,7 +124,7 @@ abstract class AuthController extends \Kristuff\Miniweb\Auth\Controller\BaseCont
      */
     public function recovery($action = null, $userName = null, $actionHash = null)
     {
-        // returns false (->404) if the recovery process is not enabled
+        // returns false (=>404) if the recovery process is not enabled
         if (! UserRecoveryModel::isRecoveryEnabled()){
             return false;
         }
