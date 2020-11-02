@@ -13,7 +13,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.0
+ * @version    0.9.1
  * @copyright  2017-2020 Kristuff
  */
     
