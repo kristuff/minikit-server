@@ -19,6 +19,7 @@
  * Returns the default configuration as array
  */
 return array(
+
     /**
      * -------------------------------------------
      * Configuration for: Email server credentials

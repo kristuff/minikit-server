@@ -28,9 +28,9 @@ return array(
      * AUTH_LOGIN_COOKIE_ENABLED: true to allow login with cookie (see also configuration for cookie)
      */
     'AUTH_LOGIN_URL'                             => 'auth/signin',
-    'AUTH_LOGIN_COOKIE_ENABLED'                  => false,
     'AUTH_LOGIN_VIEW_FILE'                       => 'auth/login.view.php',
     'AUTH_LOGIN_VIEW_TEMPLATE'                   => 'auth',
+    'AUTH_LOGIN_COOKIE_ENABLED'                  => false,
    
     /**
      * -------------------------------------
