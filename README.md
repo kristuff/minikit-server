@@ -19,7 +19,7 @@ Features
 Requirements
 ------------
 
-- PHP >= 7.1
+- PHP >= 7.3
 - activated mod_rewrite on your server
 
 Dependencies
