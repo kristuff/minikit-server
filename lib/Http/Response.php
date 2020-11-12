@@ -263,7 +263,7 @@ class Response
             ];
         }
 
-        // return status array if exits 
+        // return status string if exists 
         return array_key_exists($statusCode, self::$status) ? self::$status[$statusCode] : null;
     }
 }
