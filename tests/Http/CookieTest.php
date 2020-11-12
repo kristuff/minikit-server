@@ -108,7 +108,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $header = print_r(xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test=value;', $header);
         $this->assertStringContainsString('; secure', $header);
-        $this-> assertStringNotContainsString('; httponly', $header);
+        $this->assertStringNotContainsString('; HttpOnly', $header);
         $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
@@ -125,8 +125,8 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
         $header = print_r(xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test=value;', $header);
-        $this-> assertStringNotContainsString('; secure', $header);
-        $this->assertStringContainsString('; httpOnly', $header);
+        $this->assertStringNotContainsString('; secure', $header);
+        $this->assertStringContainsString('; HttpOnly', $header);
         // php7 now set correctly HttpOnly (httponly before)
         // $this->assertStringContainsString('; httponly', strtolower($header));
         $this->assertStringContainsString('; SameSite=Lax', $header);
@@ -146,7 +146,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $header = print_r(xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test=value;', $header);
         $this->assertStringContainsString('; path=/path/', $header);
-        $this-> assertStringNotContainsString('; domain=', $header);
+        $this->assertStringNotContainsString('; domain=', $header);
         $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
@@ -164,7 +164,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $header = print_r(xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test=value;', $header);
         $this->assertStringContainsString('; path=/path/', $header);
-        $this-> assertStringNotContainsString('; domain=', $header);
+        $this->assertStringNotContainsString('; domain=', $header);
     }
 
     /**
@@ -180,8 +180,8 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
         $header = print_r(xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test2=value2;', $header);
-        $this-> assertStringNotContainsString('; Max-Age=;', $header);
-        $this-> assertStringNotContainsString('; expires=', $header);
+        $this->assertStringNotContainsString('; Max-Age=;', $header);
+        $this->assertStringNotContainsString('; expires=', $header);
         $this->assertStringContainsString('; path=/', $header);
     }
 
