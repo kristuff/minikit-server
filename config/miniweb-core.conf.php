@@ -94,10 +94,8 @@ return array(
      * --------------------------
      * Configuration for: Cookies
      * --------------------------
-     */
-
-    /**
-     * COOKIE_RUNTIME: 1209600 seconds = 2 weeks
+     * 
+     * COOKIE_RUNTIME: The cookie validity in second. 1209600 seconds = 2 weeks
      */
     'COOKIE_RUNTIME' => 1209600,
 
@@ -135,6 +133,11 @@ return array(
      * SESSION_RUNTIME: How long should a session cookie be valid by seconds, 604800 = 1 week.
      */
     'SESSION_RUNTIME' => 604800,
+
+    /**
+     * 
+     */
+    'COOKIE_SAMESITE' => 'Strict',
 
 
     /**

@@ -175,6 +175,7 @@ class Factory
                 Application::config('COOKIE_HTTP'),
                 Application::config('COOKIE_PATH'), 
                 Application::config('COOKIE_DOMAIN'),
+                Application::config('COOKIE_SAMESITE'),
                 Application::config('COOKIE_RUNTIME')
             );
         }

@@ -24,6 +24,9 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         // ["Set-Cookie: test=value; expires=Sun, 30-Apr-2017 01:17:52 GMT; Max-Age=604800; path=\/"]
 
         $header = print_r(xdebug_get_headers(), true);
+
+        $this->assertEquals('DEBUG', $header);
+
         $this->assertContains('Set-Cookie: test=value;', $header);
         $this->assertContains('; Max-Age=604800;', $header);
         $this->assertContains('; expires=', $header);
@@ -117,8 +120,9 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $header = print_r(xdebug_get_headers(), true);
         $this->assertContains('Set-Cookie: test=value;', $header);
         $this->assertNotContains('; secure', $header);
+        $this->assertContains('; httpOnly', $header);
         // php7 now set correctly HttpOnly (httponly before)
-        $this->assertContains('; httponly', strtolower($header));
+        // $this->assertContains('; httponly', strtolower($header));
     }
 
     /**

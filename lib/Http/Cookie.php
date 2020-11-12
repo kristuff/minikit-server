@@ -28,6 +28,20 @@ use Kristuff\Miniweb\Http\Server;
  */
 class Cookie
 {
+    /**
+     * The SameSite attribute of the Set-Cookie HTTP response header allows you to declare if your cookie 
+     * should be restricted to a first-party or same-site context. 
+     * The SameSite attribute accepts three values:
+     *  - Lax:     Cookies are allowed to be sent with top-level navigations and will be sent along with GET 
+     *             request initiated by third party website. This is the default value in modern browsers.
+     *  - Strict:  Cookies will only be sent in a first-party context and not be sent along with requests 
+     *             initiated by third party websites.
+     *  - None:    Cookies will be sent in all contexts, i.e sending cross-origin is allowed
+     * 
+     * @access protected
+     * @var string
+     */
+    protected $sameSite = 'Lax';
 
     /**
      * Indicates that cookies should only be transmitted over a secure HTTPS connection 
@@ -88,16 +102,19 @@ class Cookie
      * @param bool      $httpOnly           true if cookies should only be accessible only through the HTTP protocol.
      * @param string    $path               The default path on the server in which the cookie will be available on. 
      * @param string    $domain             The default (sub)domain that the cookie is available to.
+     * @param string    $samesite           SameSite attribut declares if your cookie should be restricted to a first-party 
+     *                                      or same-site context.
      * @param int       $runtime            The duration of the cookie (in seconds). Default is -1, that
      *                                      means using the default duration is used.  
      * 
      * @return void
      */
-    public function __construct(bool $secure = false, bool $httpOnly = false, string $path = '/', string $domain = '', int $runtime = -1)
+    public function __construct(bool $secure = false, bool $httpOnly = false, string $path = '/', string $domain = '', string $sameSite = 'Lax', int $runtime = -1)
     {
         $this->secure   = $secure;
         $this->httpOnly = $httpOnly;
         $this->path     = $path;
+        $this->sameSite = $sameSite;
 
         // use the given domain if defined or get current
         $this->domain   = !empty($domain) ? $domain : $this->getCurrentHost();
@@ -150,7 +167,14 @@ class Cookie
         // define when cookie will expire
         $expire =  ($runtime > -1) ? time() + (int) $runtime : time() + $this->runtime;
 
-        return setcookie($name, $value, $expire, $this->getCookiePath($path), $this->domain, $this->secure, $this->httpOnly); 
+        return setcookie($name, $value, [
+            'expires'   => $expire,
+            'path'      => $this->getCookiePath($path),
+            'domain'    => $this->domain,
+            'samesite'  => $this->sameSite,
+            'secure'    => $this->secure,
+            'httponly'  => $this->httpOnly,
+        ]);
     }
     
     /**
@@ -175,14 +199,21 @@ class Cookie
      */
     public function setForSession(string $name, string $value, string $path = null): bool
     {
-        return setcookie($name, $value, 0, $this->getCookiePath($path), $this->domain, $this->secure, $this->httpOnly); 
+        return setcookie($name, $value, [
+            'expires'   => 0,
+            'path'      => $this->getCookiePath($path),
+            'domain'    => $this->domain,
+            'samesite'  => $this->sameSite,
+            'secure'    => $this->secure,
+            'httponly'  => $this->httpOnly,
+        ]);
     }
 
     /**
      * Deletes the cookie
      *
      * Cookies must be deleted with the same parameters as they were set with.  
-     * Sets value to empty string and expire to a year ago (31536000 = 3600secs * 24 hours * 365 days). 
+     * Sets value to empty string and expire to passed date (1)
      * @see http://php.net/manual/en/function.setcookie.php
      *
      * @access public
@@ -196,7 +227,15 @@ class Cookie
         if (isset($_COOKIE[$name])) {
             unset($_COOKIE[$name]);
         }
-        setcookie($name, '', time() - 31536000, $this->getCookiePath($path), $this->domain, $this->secure, $this->httpOnly); 
+
+        setcookie($name, '', [
+            'expires'   => 1,
+            'path'      => $this->getCookiePath($path),
+            'domain'    => $this->domain,
+            'samesite'  => $this->sameSite,
+            'secure'    => $this->secure,
+            'httponly'  => $this->httpOnly,
+        ]);
     }
 
     /**
