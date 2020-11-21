@@ -68,8 +68,8 @@ abstract class AuthController extends \Kristuff\Miniweb\Auth\Controller\BaseCont
                 // check login status: if true, then redirect user home or previous page, 
                 // if false, then to login form again
                 if ($loginResult->success()) {
-                    $redirect =  $this->request()->post('redirect') ? $this->request()->post('redirect')  : ''; 
-                    $this->redirect(rtrim(Application::getUrl(), '/') . $redirect);
+                    $redirectTo =  $this->request()->post('redirect') ? $this->request()->post('redirect')  : ''; 
+                    $this->redirect(rtrim(Application::getUrl(), '/') . $redirectTo, 303);
                     break;
                 }
 
