@@ -18,8 +18,8 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $session = new Session();
         $feedback = new Feedback($session);
 
-        $this->assertInternalType('array', $feedback->getPositives());
-        $this->assertInternalType('array', $feedback->getNegatives());
+        $this->assertIsArray($feedback->getPositives());
+        $this->assertIsArray($feedback->getNegatives());
         $this->assertEquals(0, count($feedback->getPositives()));
         $this->assertEquals(0, count($feedback->getNegatives()));
 
@@ -38,8 +38,8 @@ class FeedbackTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('something is wrong again', $feedback->getNegatives()[1]);
 
         $feedback->clear();
-        $this->assertInternalType('array', $feedback->getPositives());
-        $this->assertInternalType('array', $feedback->getNegatives());
+        $this->assertIsArray($feedback->getPositives());
+        $this->assertIsArray($feedback->getNegatives());
         $this->assertEquals(0, count($feedback->getPositives()));
         $this->assertEquals(0, count($feedback->getNegatives()));
     }

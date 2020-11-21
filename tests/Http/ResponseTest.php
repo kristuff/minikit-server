@@ -24,7 +24,7 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
          */
         $headers =  print_r(xdebug_get_headers(), TRUE);
 
-        //$this->assertContains('HTTP/1.0 404 Not Found', $headers);
+        //$this->assertStringContainsString('HTTP/1.0 404 Not Found', $headers);
         //$this->assertEquals(404, http_response_code()); 
     }
 
@@ -43,7 +43,7 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         $headers =  print_r(xdebug_get_headers(), TRUE);
 
         if (!empty($expectedHeader)){
-            $this->assertContains($expectedHeader, $headers);
+            $this->assertStringContainsString($expectedHeader, $headers);
         }
 
         // response code not testable like this

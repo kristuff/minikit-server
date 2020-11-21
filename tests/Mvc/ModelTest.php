@@ -144,15 +144,15 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($app->handleRequest());
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; Max-Age=22222;', $header); 
-        $this->assertContains('; expires=', $header); // ...
-        $this->assertContains('GMT', $header); // ...
-        $this->assertContains('; path=/testcookie/', $header);
-        $this->assertContains('; secure', $header);
-        $this->assertContains('; domain=mydomain.com', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; Max-Age=22222;', $header); 
+        $this->assertStringContainsString('; expires=', $header); // ...
+        $this->assertStringContainsString('GMT', $header); // ...
+        $this->assertStringContainsString('; path=/testcookie/', $header);
+        $this->assertStringContainsString('; secure', $header);
+        $this->assertStringContainsString('; domain=mydomain.com', $header);
         // php7 now set correctly HttpOnly (httponly before)
-        $this->assertContains('; httponly', strtolower($header));
+        $this->assertStringContainsString('; httponly', strtolower($header));
     }
 
 }

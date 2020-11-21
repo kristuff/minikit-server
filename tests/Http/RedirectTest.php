@@ -52,7 +52,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
          */
         $headers =  print_r(xdebug_get_headers(), TRUE);
 
-        $this->assertContains('Location: http://www.example.com/', $headers);
+        $this->assertStringContainsString('Location: http://www.example.com/', $headers);
         $this->assertEquals(302, http_response_code()); 
     }
 
@@ -74,7 +74,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
          */
         $headers =  print_r(xdebug_get_headers(), TRUE);
 
-        $this->assertContains('Location: http://www.example.com/', $headers);
+        $this->assertStringContainsString('Location: http://www.example.com/', $headers);
         $this->assertEquals(301, http_response_code()); 
     }
 
