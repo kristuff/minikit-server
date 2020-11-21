@@ -94,21 +94,16 @@ abstract class Controller
     /**
 	 * Redirects to the defined url
      *
-     * Send Location header and a redirect response code: 302 (default) or 301 for permanent redirect.
-     * Make sure the 201 or a 3xx status code has not already been set before to use this function. 
-     * Most contemporary clients accept relative URIs as argument to "Location", but some older clients 
-     * require an absolute URI including the scheme, hostname and absolute path.
-     *
 	 * @access protected
-	 * @param  string  $url         The url.
-	 * @param  bool    $permanent   true for permanent redirect. Default is false. 
-	 * @param  bool    $exit        true to stop application via exit(). Default is false.
+	 * @param string  $url         The url.
+	 * @param int     $code        The http response code. 
+	 * @param bool    $exit        true to stop application via exit(). Default is true.
      *
      * @return void
 	 */
-    protected function redirect(string $url, bool $permanent = false, bool $exit = false): void
+    protected function redirect(string $url, int $code = 302, bool $exit = true): void
     {
-        Redirect::url($url, $permanent, $exit);  
+        Redirect::url($url, $code, $exit);  
     }
     
 }

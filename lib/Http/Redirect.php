@@ -37,15 +37,15 @@ class Redirect
 	 * @access public
      * @static
 	 * @param string  $url         The url.
-	 * @param bool    $permanent   true for permanent redirect. Default is false. 
+	 * @param int     $code        The http response code. 
 	 * @param bool    $exit        true to stop application via exit(). Default is false.
      * 
      * @return void
 	 */
-	public static function url(string $uri, bool $permanent = false, bool $exit = false): void
+	public static function url(string $uri, int $code = 302, bool $exit = false): void
 	{
         // set redirect header with according status code
-		header("Location: " . $uri, true, $permanent ? 301 : 302);
+		header("Location: " . $uri, true, $code);
 
         /**
          * As there is no guarantee the client respects the Location header (curl and some crawlers will
@@ -57,5 +57,66 @@ class Redirect
             // \Kristuff\Miniweb\Core\SafeExit::exit();
             exit();
          }
+    }
+    
+    /**
+	 * Redirects to the defined url with 301 http code (permanent redirect)
+     *
+     * Send Location header and a redirect response code: 301 (Moved Permanently)  
+     * Make sure the 201 or a 3xx status code has not already been set before to use this function. 
+     * Most contemporary clients accept relative URIs as argument to "Location", but some older clients 
+     * require an absolute URI including the scheme, hostname and absolute path.
+     *
+	 * @access public
+     * @static
+	 * @param string  $url         The url.
+	 * @param bool    $exit        true to stop application via exit(). Default is false.
+     * 
+     * @return void
+	 */
+	public static function permanent(string $uri, bool $exit = false): void
+	{
+        self::url($uri, 301, $exit);
 	}
+
+    /**
+	 * Redirects to the defined url with 302 http code (temporary redirect)
+     *
+     * Send Location header and a redirect response code: 302 (Found)  
+     * Make sure the 201 or a 3xx status code has not already been set before to use this function. 
+     * Most contemporary clients accept relative URIs as argument to "Location", but some older clients 
+     * require an absolute URI including the scheme, hostname and absolute path.
+     *
+	 * @access public
+     * @static
+	 * @param string  $url         The url.
+	 * @param bool    $exit        true to stop application via exit(). Default is false.
+     * 
+     * @return void
+	 */
+	public static function temporary(string $uri, bool $exit = false): void
+	{
+        self::url($uri, 302, $exit);
+	}
+
+    /**
+	 * Redirects to the defined url with 303 http code (see other)
+     *
+     * Send Location header and a redirect response code: 303 (see other) 
+     * Make sure the 201 or a 3xx status code has not already been set before to use this function. 
+     * Most contemporary clients accept relative URIs as argument to "Location", but some older clients 
+     * require an absolute URI including the scheme, hostname and absolute path.
+     *
+	 * @access public
+     * @static
+	 * @param string  $url         The url.
+	 * @param bool    $exit        true to stop application via exit(). Default is false.
+     * 
+     * @return void
+	 */
+	public static function seeOther(string $uri, bool $exit = false): void
+	{
+        self::url($uri, 303, $exit);
+	}
+
 }

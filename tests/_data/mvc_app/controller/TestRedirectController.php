@@ -5,11 +5,11 @@ class TestRedirectController extends Controller
 {
     public function testRedirectTo()
     {
-        $this->redirect('http://www.example.com/', true);
+        $this->redirect('http://www.example.com/', 301, false);
     }
 
     public function testRedirectWithExit()
     {
-        $this->redirect('/home', true, true);
+        $this->redirect('/home', 301, true);
     }
 }
