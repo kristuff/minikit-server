@@ -19,7 +19,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($factice);
 
         // redirect
-        Redirect::url('http://www.example.com/', false, true);
+        Redirect::url('http://www.example.com/', 302, true);
 
         /**
          * use xdebug_get_headers() to retreive header as headers_list() wont 
@@ -43,7 +43,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         header_remove(); 
 
         // redirect (do no exit for testing header)
-        Redirect::url('http://www.example.com/', false);
+        Redirect::url('http://www.example.com/', 302, false);
 
         /**
          * use xdebug_get_headers() to retreive header as headers_list() wont 
@@ -65,7 +65,7 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         header_remove(); 
 
         // redirect (do no exit for testing header)
-        Redirect::url('http://www.example.com/', true);
+        Redirect::url('http://www.example.com/', 301);
 
         /**
          * use xdebug_get_headers() to retreive header as headers_list() wont 
