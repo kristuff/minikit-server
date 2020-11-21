@@ -86,7 +86,7 @@ class ApiController extends BaseController
         // api need a token
         $token = $this->request()->arg('token') ? $this->request()->arg('token') : null;
         if (!$this->token()->isTokenValid($token, $apiTokenKey)) {
-            $this->view->renderJson(TaskResponse::create(400, $this->text('ERROR_INVALID_TOKEN'))->toArray(), 400);
+            $this->view->renderJson(TaskResponse::create(401, $this->text('ERROR_INVALID_TOKEN'))->toArray(), 401);
             exit();
         }
 
