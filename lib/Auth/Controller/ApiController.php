@@ -99,7 +99,7 @@ class ApiController extends BaseController
     }
       
     /** 
-     * Default controller returns an error 
+     * Default controller action returns an error 
      * 
      * @access private
      * @return void      
