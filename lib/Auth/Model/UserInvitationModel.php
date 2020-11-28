@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -63,9 +63,9 @@ class UserInvitationModel extends UserRegistrationModel
      *
      * @return TaskResponse
      */
-    public static function inviteNewUser(string $userEmail = null, 
-                                         string $token = null, 
-                                         string $tokenKey = null)
+    public static function inviteNewUser(?string $userEmail = null, 
+                                         ?string $token = null, 
+                                         ?string $tokenKey = null)
 	{
         // the return response
         $response = TaskResponse::create();

@@ -202,7 +202,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
          */
         $headers =  print_r(xdebug_get_headers(), TRUE);
 
-        $this->assertContains('Content-Type: application/json', $headers);
+        $this->assertStringContainsString('Content-Type: application/json', $headers);
         $this->assertEquals(201, http_response_code()); 
     }
 }

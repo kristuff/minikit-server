@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -72,7 +72,7 @@ abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
 	 */
     protected function redirectHome()
     {
-        $this->redirect(Application::getUrl(), false, true);
+        $this->redirect(Application::getUrl(), 302, true);
     }
 
     /** 
@@ -83,7 +83,7 @@ abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
 	 */
     protected function redirectLogin()
     {
-        $this->redirect(Application::getUrl() . Application::config('AUTH_LOGIN_URL'), false, true);
+        $this->redirect(Application::getUrl() . Application::config('AUTH_LOGIN_URL'), 302, true);
     }
 
     /** 

@@ -22,13 +22,18 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         // Array... [0] => Set-Cookie: test=value; expires=Sun, 30-Apr-2017 01:45:23 GMT; Max-Age=604800; path=/
         //$this->assertEquals('DEBUG', json_encode(xdebug_get_headers()));
         // ["Set-Cookie: test=value; expires=Sun, 30-Apr-2017 01:17:52 GMT; Max-Age=604800; path=\/"]
-
+        // [0] => Set-Cookie: test=value; expires=Thu, 19-Nov-2020 21:00:11 GMT; Max-Age=604800; path=/; SameSite=Lax\n
+        
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; Max-Age=604800;', $header);
-        $this->assertContains('; expires=', $header);
-        $this->assertContains('GMT', $header);
-        $this->assertContains('; path=/', $header);
+
+        //$this->assertEquals('DEBUG', $header);
+
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; Max-Age=604800;', $header);
+        $this->assertStringContainsString('; expires=', $header);
+        $this->assertStringContainsString('GMT', $header);
+        $this->assertStringContainsString('; path=/', $header);
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
     /**
@@ -43,11 +48,12 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value', '/', 222));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; Max-Age=222;', $header);
-        $this->assertContains('; expires=', $header);
-        $this->assertContains('GMT', $header);
-        $this->assertContains('path=/', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; Max-Age=222;', $header);
+        $this->assertStringContainsString('; expires=', $header);
+        $this->assertStringContainsString('GMT', $header);
+        $this->assertStringContainsString('path=/', $header);
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
     /**
@@ -58,15 +64,16 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         // necessary for testing
         header_remove(); 
 
-        $cookie = new Cookie(FALSE , FALSE, '/', '', 2222);
+        $cookie = new Cookie(FALSE , FALSE, '/', '', 'Strict',  2222);
         $this->assertTrue($cookie->set('test', 'value'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; Max-Age=2222;', $header);
-        $this->assertContains('; expires=', $header);
-        $this->assertContains('GMT', $header);
-        $this->assertContains('; path=/', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; Max-Age=2222;', $header);
+        $this->assertStringContainsString('; expires=', $header);
+        $this->assertStringContainsString('GMT', $header);
+        $this->assertStringContainsString('; path=/', $header);
+        $this->assertStringContainsString('; SameSite=Strict', $header);
     }
 
     /**
@@ -81,9 +88,10 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; path=/', $header);
-        $this->assertContains('; domain=.example.com', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; path=/', $header);
+        $this->assertStringContainsString('; domain=.example.com', $header);
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
     /**
@@ -98,9 +106,10 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; secure', $header);
-        $this->assertNotContains('; httponly', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; secure', $header);
+        $this->assertStringNotContainsString('; HttpOnly', $header);
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
       /**
@@ -115,10 +124,12 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertNotContains('; secure', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringNotContainsString('; secure', $header);
+        $this->assertStringContainsString('; HttpOnly', $header);
         // php7 now set correctly HttpOnly (httponly before)
-        $this->assertContains('; httponly', strtolower($header));
+        // $this->assertStringContainsString('; httponly', strtolower($header));
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
     /**
@@ -133,9 +144,10 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; path=/path/', $header);
-        $this->assertNotContains('; domain=', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; path=/path/', $header);
+        $this->assertStringNotContainsString('; domain=', $header);
+        $this->assertStringContainsString('; SameSite=Lax', $header);
     }
 
      /**
@@ -150,9 +162,9 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->set('test', 'value', '/path/'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=value;', $header);
-        $this->assertContains('; path=/path/', $header);
-        $this->assertNotContains('; domain=', $header);
+        $this->assertStringContainsString('Set-Cookie: test=value;', $header);
+        $this->assertStringContainsString('; path=/path/', $header);
+        $this->assertStringNotContainsString('; domain=', $header);
     }
 
     /**
@@ -167,10 +179,10 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cookie->setForSession('test2', 'value2'));
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test2=value2;', $header);
-        $this->assertNotContains('; Max-Age=;', $header);
-        $this->assertNotContains('; expires=', $header);
-        $this->assertContains('; path=/', $header);
+        $this->assertStringContainsString('Set-Cookie: test2=value2;', $header);
+        $this->assertStringNotContainsString('; Max-Age=;', $header);
+        $this->assertStringNotContainsString('; expires=', $header);
+        $this->assertStringContainsString('; path=/', $header);
     }
 
 
@@ -208,8 +220,8 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $cookie->delete('test');
 
         $header = print_r(xdebug_get_headers(), true);
-        $this->assertContains('Set-Cookie: test=deleted;', $header);
-        $this->assertContains('; Max-Age=0;', $header);
+        $this->assertStringContainsString('Set-Cookie: test=deleted;', $header);
+        $this->assertStringContainsString('; Max-Age=0;', $header);
     }
    
 }

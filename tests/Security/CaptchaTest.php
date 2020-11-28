@@ -48,7 +48,7 @@ class CaptchaTest extends \PHPUnit\Framework\TestCase
         $encodedImage   = 'data:image/jpeg;base64,'. base64_encode($image);
         $inline         = $captcha->inline();
 
-        $this->assertContains('data:image/jpeg;base64,', $inline); 
+        $this->assertStringContainsString('data:image/jpeg;base64,', $inline); 
         $this->assertEquals($encodedImage, $inline); 
     }
 
@@ -84,7 +84,7 @@ class CaptchaTest extends \PHPUnit\Framework\TestCase
         $inline         = $captcha->inline();
         $inlineHtml     = $captcha->inlineHtml();
 
-        $this->assertContains('data:image/jpeg;base64,', $inline); 
-        $this->assertContains($inline, $inlineHtml); 
+        $this->assertStringContainsString('data:image/jpeg;base64,', $inline); 
+        $this->assertStringContainsString($inline, $inlineHtml); 
     }
 }

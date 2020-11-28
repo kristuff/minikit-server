@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -68,8 +68,8 @@ abstract class AuthController extends \Kristuff\Miniweb\Auth\Controller\BaseCont
                 // check login status: if true, then redirect user home or previous page, 
                 // if false, then to login form again
                 if ($loginResult->success()) {
-                    $redirect =  $this->request()->post('redirect') ? $this->request()->post('redirect')  : ''; 
-                    $this->redirect(rtrim(Application::getUrl(), '/') . $redirect);
+                    $redirectTo =  $this->request()->post('redirect') ? $this->request()->post('redirect')  : ''; 
+                    $this->redirect(rtrim(Application::getUrl(), '/') . $redirectTo, 303);
                     break;
                 }
 

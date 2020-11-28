@@ -13,7 +13,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -263,7 +263,7 @@ class Response
             ];
         }
 
-        // return status array if exits 
+        // return status string if exists 
         return array_key_exists($statusCode, self::$status) ? self::$status[$statusCode] : null;
     }
 }

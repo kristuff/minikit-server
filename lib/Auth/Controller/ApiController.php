@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -86,7 +86,7 @@ class ApiController extends BaseController
         // api need a token
         $token = $this->request()->arg('token') ? $this->request()->arg('token') : null;
         if (!$this->token()->isTokenValid($token, $apiTokenKey)) {
-            $this->view->renderJson(TaskResponse::create(400, $this->text('ERROR_INVALID_TOKEN'))->toArray(), 400);
+            $this->view->renderJson(TaskResponse::create(401, $this->text('ERROR_INVALID_TOKEN'))->toArray(), 401);
             exit();
         }
 
@@ -99,7 +99,7 @@ class ApiController extends BaseController
     }
       
     /** 
-     * Default controller returns an error 
+     * Default controller action returns an error 
      * 
      * @access private
      * @return void      

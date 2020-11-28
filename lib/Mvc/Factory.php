@@ -13,7 +13,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.1
+ * @version    0.9.2
  * @copyright  2017-2020 Kristuff
  */
 
@@ -175,6 +175,7 @@ class Factory
                 Application::config('COOKIE_HTTP'),
                 Application::config('COOKIE_PATH'), 
                 Application::config('COOKIE_DOMAIN'),
+                Application::config('COOKIE_SAMESITE'),
                 Application::config('COOKIE_RUNTIME')
             );
         }
