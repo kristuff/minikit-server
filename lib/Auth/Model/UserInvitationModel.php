@@ -63,9 +63,9 @@ class UserInvitationModel extends UserRegistrationModel
      *
      * @return TaskResponse
      */
-    public static function inviteNewUser(string $userEmail = null, 
-                                         string $token = null, 
-                                         string $tokenKey = null)
+    public static function inviteNewUser(?string $userEmail = null, 
+                                         ?string $token = null, 
+                                         ?string $tokenKey = null)
 	{
         // the return response
         $response = TaskResponse::create();
