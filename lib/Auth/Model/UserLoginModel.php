@@ -162,7 +162,8 @@ class UserLoginModel extends UserModel
         
         // validate token and for simplicity empty username and empty password in one line
         if (self::validateToken($response, $token, 'login') &&
-            $response->assertTrue(!empty($userNameOrEmail) && !empty($userPassword), 400, self::text('LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY'))){
+            $response->assertTrue(!empty($userNameOrEmail) && 
+            !empty($userPassword), 400, self::text('LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY'))){
 	    
             // checks if user exists, if login is not blocked (due to failed logins) and if password fits the hash
 	        $user = self::validateAndGetUser($response, $userNameOrEmail, $userPassword);
