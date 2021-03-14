@@ -22,26 +22,12 @@ namespace Kristuff\Miniweb\Http;
 /**
  * Class Server
  *
- * Abstracts $_SERVER superglobal access.
- *
+ * Abstracts $_SERVER superglobal access (see also Request class that implements request related properties).
+ * 
  */
 class Server
 {
-    /**
-     * Gets/returns the content of the $_SERVER super global, or the the fallback value 
-     * if the key value is null.
-     *
-     * @access private
-     * @static
-     * @param string        $key                The key
-     * @param mixed         $fallbackValue      (optional) The fallback value. Default is null.
-     *
-     * @return mixed        The value of the key in $_SERVER if exists, otherwhise the fallback value
-     */
-    private static function getServerValue(string $key, $fallbackValue = null)
-    {
-         return isset($_SERVER[$key]) ? $_SERVER[$key] : $fallbackValue;
-    }
+    use ServerTrait;
 
     /**
      * Gets/returns the host name
