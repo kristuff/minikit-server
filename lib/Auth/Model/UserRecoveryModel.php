@@ -28,14 +28,14 @@ use Kristuff\Miniweb\Mail\Mailer;
  * Handles all the stuff that is related to the password-reset process.
  *
  * 1) UserRecoveryModel::verifyPasswordRecoveryRequest() => Verifies the recovery request (userName or email / captcha)
- *                                                          and sends email if successful 
+ *                                                          and sends an email with reset link if successfull 
  * 2) UserRecoveryModel::verifyPasswordResetLink()       => Verifies the password reset link sent by email
  * 3) UserRecoveryModel::handlePasswordReset()           => Handles the password reset form submission
  */
 class UserRecoveryModel extends UserModel
 {
     /** 
-     * Gets whether the receovery process is enabled or not
+     * Gets whether the recovery process is enabled or not
      * 
      * @access public
      * @static

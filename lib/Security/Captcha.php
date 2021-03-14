@@ -36,7 +36,7 @@ class Captcha
 
     /** 
      * @access private
-     * @var Mvc\Application     $application    The application instance
+     * @var string              $identifier     The captcha identifier
      */
     private $identifier = '';
 
