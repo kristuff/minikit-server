@@ -239,7 +239,7 @@ abstract class UserBaseModel extends BaseModel
      *
 	 * @return bool             True if the given username is valid, otherwise false.   
      */
-    protected static function validateToken(TaskResponse $response, string $token, string $tokenKey)
+    protected static function validateToken(TaskResponse $response, ?string $token, string $tokenKey)
     {
         return $response->assertTrue(self::token()->isTokenValid($token, $tokenKey), 405, 
                                      self::text('ERROR_INVALID_TOKEN'));
