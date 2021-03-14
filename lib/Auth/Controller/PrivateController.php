@@ -39,7 +39,7 @@ abstract class PrivateController extends BaseController
             $this->session()->destroy();
             $this->redirect(Application::getUrl() . 
                             Application::config('AUTH_LOGIN_URL').'?redirect=' . 
-                            urlencode(Server::requestUri()), false, true);
+                            urlencode(Server::requestUri()));
         }
 
         // check for concurrency session / suspended or deleted account
