@@ -295,7 +295,7 @@ class UserSettingsModel extends UserModel
      */
     public static function loadDefaultSettings(Database $database, int $userId = null)
     {
-        $confileJsonFile = self::config('CONFIG_PATH') . 'user.settings.default.json';
+        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'user.settings.default.json';
          
         if (!Path::fileExists($confileJsonFile)) {
             return false;

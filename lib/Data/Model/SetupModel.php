@@ -82,7 +82,7 @@ class SetupModel extends \Kristuff\Miniweb\Mvc\Model
      */
     public static function deleteSqliteDatabase()
     {
-       $configFileName = self::config('CONFIG_PATH') . 'db.config.php';
+       $configFileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
        $dbFileName = self::config('DB_NAME');
 
        if (file_exists($configFileName)){

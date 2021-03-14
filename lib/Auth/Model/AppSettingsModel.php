@@ -190,7 +190,7 @@ class AppSettingsModel extends UserModel
      */
     public static function loadDefaultAppSettings(Database $database)
     {
-        $confileJsonFile = self::config('CONFIG_PATH') . 'app.settings.default.json';
+        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'app.settings.default.json';
 
         if (!Path::fileExists($confileJsonFile)){
             return false;
