@@ -14,12 +14,28 @@
  * @version    0.9.3
  * @copyright  2017-2021 Kristuff
  */
+    
+namespace Kristuff\Miniweb\Mail;
 
-/**
- * Texts used in the application.
+use Kristuff\Miniweb\Mvc\Application;
+
+/** 
+ *
  */
-return array(
+class EmailBuilder
+{
 
-    // TODO
+    
 
-);
+    public static function getBody()
+    {
+      //  $builder = new HtmlEmailBuilder();
+      //  $builder->setEmailBodyWidth(560); 
+      //  $builder->setTitle('');
+      //  $builder->header()->add(new HtmlElements\BreakLine);
+
+    }
+
+
+    
+}

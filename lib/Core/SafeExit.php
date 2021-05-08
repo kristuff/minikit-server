@@ -15,11 +15,16 @@
  * @copyright  2017-2021 Kristuff
  */
 
-/**
- * Texts used in the application.
- */
-return array(
+namespace Kristuff\Miniweb\Core;
 
-    // TODO
-
-);
+// todo doc
+class SafeExit
+{
+    // todo doc
+    public static function exit(int $code = 0)
+    {
+        //if (strtoupper(Environment::app()) !== 'TESTING_PHPUNIT') {
+              exit($code); 
+        //}
+    }
+}

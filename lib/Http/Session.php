@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /** 
  *        _      _            _
@@ -13,13 +11,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Http;
 
 use Kristuff\Miniweb\Core\Filter;
+use Kristuff\Miniweb\Mvc\Application;
 
 /**
  * class Session 
@@ -38,9 +37,22 @@ class Session
     {
         // if no session exist, start the session
         if (session_id() === '') {
+            
+            // honor app config
+            session_set_cookie_params([
+                'secure'    => Application::config('COOKIE_SECURE'), 
+                'httponly'  => Application::config('COOKIE_HTTP'),
+                'path'      => Application::config('COOKIE_PATH'), 
+                'domain'    => Application::config('COOKIE_DOMAIN'),
+                'samesite'  => Application::config('COOKIE_SAMESITE'),
+                'lifetime'  => Application::config('COOKIE_RUNTIME'),
+            ]);
+
             session_start();
         }
     }
+
+
 
     /**
      * Gets/returns the session id. Returns the session id for the current session or an empty 

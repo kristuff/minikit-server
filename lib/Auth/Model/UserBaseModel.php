@@ -11,8 +11,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
@@ -239,7 +239,7 @@ abstract class UserBaseModel extends BaseModel
      *
 	 * @return bool             True if the given username is valid, otherwise false.   
      */
-    protected static function validateToken(TaskResponse $response, string $token, string $tokenKey)
+    protected static function validateToken(TaskResponse $response, ?string $token, string $tokenKey)
     {
         return $response->assertTrue(self::token()->isTokenValid($token, $tokenKey), 405, 
                                      self::text('ERROR_INVALID_TOKEN'));

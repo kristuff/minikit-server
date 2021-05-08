@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /** 
  *        _      _            _
@@ -13,8 +11,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Http;
@@ -22,26 +20,12 @@ namespace Kristuff\Miniweb\Http;
 /**
  * Class Server
  *
- * Abstracts $_SERVER superglobal access.
- *
+ * Abstracts $_SERVER superglobal access (see also Request class that implements request related properties).
+ * 
  */
 class Server
 {
-    /**
-     * Gets/returns the content of the $_SERVER super global, or the the fallback value 
-     * if the key value is null.
-     *
-     * @access private
-     * @static
-     * @param string        $key                The key
-     * @param mixed         $fallbackValue      (optional) The fallback value. Default is null.
-     *
-     * @return mixed        The value of the key in $_SERVER if exists, otherwhise the fallback value
-     */
-    private static function getServerValue(string $key, $fallbackValue = null)
-    {
-         return isset($_SERVER[$key]) ? $_SERVER[$key] : $fallbackValue;
-    }
+    use ServerTrait;
 
     /**
      * Gets/returns the host name
@@ -122,7 +106,7 @@ class Server
         return self::getServerValue('SCRIPT_NAME');
     }
 
-     /**
+    /**
      * Gets/returns the server identification string, given in the headers when responding to requests.
      *
      * @access public
@@ -134,4 +118,6 @@ class Server
     {
         return self::getServerValue('SERVER_SOFTWARE');
     }
+
+
 }

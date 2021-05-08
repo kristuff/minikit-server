@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /** 
  *        _      _            _
@@ -13,8 +11,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    1.0.0
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Mvc;
@@ -70,6 +68,9 @@ class Application
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-captcha.conf.php');
         $this->loadConfigFile(__DIR__ . '/../../config/miniweb-mailer.conf.php');
         
+        // Overwrite default config
+        $this->loadLocalConfig();
+
         // create initialize a session
         $session = new Session();
         $session->init();
@@ -80,7 +81,18 @@ class Application
         // create rooter
         $this->rooter = new Rooter($this, $session);
     }
-    
+
+    /** 
+	 * Overwrite default config
+     * This method must be Overwriten in real app
+     * 
+     * @access public
+     * @return void
+     */
+    public function loadLocalConfig(): void
+    {        
+    }
+
     /** 
 	 * Gets the static Locale instance 
      *

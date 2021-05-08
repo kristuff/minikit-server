@@ -11,8 +11,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Controller;
@@ -45,6 +45,12 @@ use Kristuff\Miniweb\Auth\Model\UserInvitationModel;
  *  /api/users/{userId}/settings        GET         Get the given user's setting   
  *  /api/users/{userId}/settings        PUT         Upadte a setting value                  parameter/value
  *  /api/users/{userId}/settings        DELETE      Reset the user's settings to defaults  
+ *  /api/profile                        POST        Edit user name or email   
+ *  /api/profile/name                   POST        Edit user name   
+ *  /api/profile/email                  POST        Edit user email   
+ *  /api/profile/avatar                 POST        Edit user avatar 
+ *  /api/profile/avatar/delete          POST        Delete user avatar 
+ *  /api/profile/password               POST        Edit user password
  *  ----------------------------        ------      -------------------------------------   -------------       --------
  * 
  *  Possible response codes and outpout format by method:
@@ -203,6 +209,78 @@ class ApiController extends BaseController
         }
 
         // render response
+        $this->view->renderJson($this->response->toArray(), $this->response->code());
+    }
+
+
+    /** 
+     * Profile api end points
+     *
+     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
+     *  End points                              Method      Description                         parameters(s)           Response
+     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
+     *  /api/profile                            POST        Edit user name or email   
+     *  /api/profile/name                       POST        Edit user name   
+     *  /api/profile/email                      POST        Edit user email   
+     *  /api/profile/avatar                     POST        Edit user avatar 
+     *  /api/profile/avatar/delete              POST        Delete user avatar 
+     *  /api/profile/password                   POST        Edit user password
+     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
+     */
+    public function profile($process = '', $parameter = '')
+    {
+        // accept only POST requests
+        if ($this->request()->method() === Request::METHOD_POST) {
+
+            switch ($process){
+                case '':
+                case 'all':
+                        if ($this->request()->post('user_email') !== $this->session()->get('userEmail')){
+                            $this->response = UserEditModel::editCurrentUserEmail(
+                                $this->request()->post('user_email'),
+                                $this->request()->post('token'),
+                                $this->tokenKey);
+                        }
+                        if ($this->request()->post('user_name') !== $this->session()->get('userName')){
+                            $this->response = UserEditModel::editCurrentUserName(
+                                $this->request()->post('user_name'),
+                                $this->request()->post('token'),
+                                $this->tokenKey);
+                        }
+                        break;                     
+
+                case 'email': 
+                    $this->response = UserEditModel::editCurrentUserEmail(
+                        $this->request()->post('user_email'),
+                        $this->request()->post('token'),
+                        $this->tokenKey);
+                    break;
+                    
+                case 'name': 
+                    $this->response = UserEditModel::editCurrentUserName(
+                        $this->request()->post('user_name'),
+                        $this->request()->post('token'),
+                        $this->tokenKey);
+                    break;
+
+                case 'password': 
+                    $this->response =  UserEditModel::editCurrentUserPassword(
+                        $this->request()->post('user_password_current'),
+                        $this->request()->post('user_password_new'),
+                        $this->request()->post('user_password_repeat'),
+                        $this->request()->post('token'),
+                        $this->tokenKey);
+                    break;
+            
+                case 'avatar': 
+                    $this->response = ($parameter === 'delete') ? 
+                        UserAvatarModel::deleteCurrentUserAvatar($this->request()->post('token'), $this->tokenKey) : 
+                        UserAvatarModel::createCurrentUserAvatar($this->request()->post('token'), $this->tokenKey);
+                    break;
+            }
+        }
+
+        // render
         $this->view->renderJson($this->response->toArray(), $this->response->code());
     }
 

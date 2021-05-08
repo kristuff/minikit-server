@@ -11,8 +11,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
@@ -295,7 +295,7 @@ class UserSettingsModel extends UserModel
      */
     public static function loadDefaultSettings(Database $database, int $userId = null)
     {
-        $confileJsonFile = self::config('CONFIG_PATH') . 'user.settings.default.json';
+        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'user.settings.default.json';
          
         if (!Path::fileExists($confileJsonFile)) {
             return false;

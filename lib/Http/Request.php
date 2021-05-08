@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /** 
  *        _      _            _
@@ -13,8 +11,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Http;
@@ -24,15 +22,17 @@ use Kristuff\Miniweb\Http\RequestMethod;
 /**
  * Class Request
  *
- * Abstracts the access to $_GET, $_POST and $_COOKIE, preventing direct access to 
- * these super-globals. This makes PHP code quality analyzer tools very happy.
- *
+ * Abstracts the access to $_GET, $_POST and $_COOKIE and some $_SERVER properties, preventing 
+ * direct access to these super-globals. This makes PHP code quality analyzer tools very happy.
+ * 
  * @see http://php.net/manual/en/reserved.variables.request.php
  * @see https://phpmd.org/rules/controversial.html#superglobals
  */
 class Request extends RequestMethod
 {
-   /**
+    use ServerTrait;
+
+    /**
      * request method
      *
      * @access protected
@@ -201,6 +201,23 @@ class Request extends RequestMethod
     }
 
     /**
+     * Gets/returns the referer. 
+     * 
+     * The address of the page (if any) which referred the user agent to the current page. This is set 
+     * by the user agent. Not all user agents will set this, and some provide the ability to modify 
+     * HTTP_REFERER as a feature. In short, it cannot really be trusted. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string       The value of HTTP_REFERER in $_SERVER.
+     */
+    public static function referer()
+    {
+        return self::getServerValue('HTTP_REFERER');
+    }
+
+    /**
      * Gets/returns the user agent. 
      *
      * @access public
@@ -210,7 +227,127 @@ class Request extends RequestMethod
      */
     public static function userAgent()
     {
-        return $_SERVER['HTTP_USER_AGENT'];
+        return self::getServerValue('HTTP_USER_AGENT');
+    }
+
+    /**
+     * Gets/returns the remote port being used on the user's machine to communicate with the web server. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string       The value of REMOTE_PORT in $_SERVER.
+     */
+    public static function remotePort()
+    {
+        return self::getServerValue('REMOTE_PORT');
+    }
+
+    /**
+     * Gets/returns the remote user (authenticated user) . 
+     *
+     * @access public
+     * @static
+     *
+     * @return string       The value of REMOTE_USER in $_SERVER.
+     */
+    public static function remoteUser()
+    {
+        return self::getServerValue('REMOTE_USER');
+    }
+
+    /**
+     * Gets/returns the authenticated user if the request is internally redirected. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string       The value of REDIRECT_REMOTE_USER in $_SERVER.
+     */
+    public static function redirectRemoteUser()
+    {
+        return self::getServerValue('REDIRECT_REMOTE_USER');
+    }
+
+    /**
+     * Gets/returns the remote Host. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string       The value of REMOTE_HOST in $_SERVER.
+     */
+    public static function remoteHost()
+    {
+        return self::getServerValue('REMOTE_HOST');
+    }
+
+    /**
+     * Gets/returns the remote IP. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string       The value of REMOTE_ADDR in $_SERVER.
+     */
+    public static function remoteIp()
+    {
+        return self::getServerValue('REMOTE_ADDR');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept: header from the current request, if there is one. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function accept(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Charset: header from the current request, if there is one. 
+     * Example: 'iso-8859-1,*,utf-8'. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptCharset(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_CHARSET');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Language: header from the current request, if there is one. 
+     * Example: 'en'. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptLanguage(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_LANGUAGE');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Encoding: header from the current request, if there is one. 
+     * Example: 'gzip'. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptEncoding(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_ENCODING');
     }
 
     /**

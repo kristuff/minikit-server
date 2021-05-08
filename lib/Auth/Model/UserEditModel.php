@@ -11,8 +11,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
@@ -46,7 +46,7 @@ class UserEditModel extends UserModel
         // validate token
         if (self::validateToken($response, $token, $tokenKey)
                    
-            // check is new username is same as old one
+            // check that new username is not the same as old one
             && $response->assertFalse($newName == self::session()->get('userName'), 400, self::text('USER_NAME_ERROR_NEW_SAME_AS_OLD_ONE'))
 
             // check pattern and conflicts
@@ -112,7 +112,7 @@ class UserEditModel extends UserModel
                 // ... then write new email to session, Gravatar too (as this relies to the user's email address)
                 self::session()->set('userEmail', $newEmail);
 
-                // resset avatar url in case user uses gravatar     
+                // reset avatar url in case user uses gravatar     
                 UserAvatarModel::setAvatarInSession($userId, $userHasAvatar);
                 
                 // set success message
