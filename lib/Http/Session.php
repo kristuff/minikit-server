@@ -52,13 +52,11 @@ class Session
         }
     }
 
-
-
     /**
      * Gets/returns the session id. Returns the session id for the current session or an empty 
      * string ("") if there is no current session (no current session id exists). 
      * @link https://php.net/manual/en/function.session-id.php
-
+     * 
      * @access public
      * @return string
      */
