@@ -11,8 +11,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 /**
@@ -42,7 +42,7 @@ return array(
     "LOGIN_COOKIE_ERROR_INVALID"                => "Your remember-me-cookie is invalid.",
 	"LOGIN_COOKIE_SUCCESSFUL"                   => "You were successfully logged in via the remember-me-cookie.",
    
-    /* login recevery */
+    /* login recovery */
     'LOGIN_RECOVERY_TITLE'                      => "Request a password reset",
     'LOGIN_RECOVERY_TEXT'                       => "Enter your username or email and you'll get a mail with instructions:", 
     'LOGIN_RECOVERY_BUTTON'                     => "Send me a password-reset mail", 

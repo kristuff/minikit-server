@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /** 
  *        _      _            _
@@ -13,8 +11,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.2
- * @copyright  2017-2020 Kristuff
+ * @version    0.9.3
+ * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Http;
@@ -295,6 +293,61 @@ class Request extends RequestMethod
     public static function remoteIp()
     {
         return self::getServerValue('REMOTE_ADDR');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept: header from the current request, if there is one. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function accept(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Charset: header from the current request, if there is one. 
+     * Example: 'iso-8859-1,*,utf-8'. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptCharset(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_CHARSET');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Language: header from the current request, if there is one. 
+     * Example: 'en'. 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptLanguage(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_LANGUAGE');
+    }
+
+    /**
+     * Gets/returns the contents of the Accept-Encoding: header from the current request, if there is one. 
+     * Example: 'gzip'. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function acceptEncoding(): ?string
+    {
+        return self::getServerValue('HTTP_ACCEPT_ENCODING');
     }
 
     /**
