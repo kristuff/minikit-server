@@ -11,14 +11,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Controller;
 
-use Kristuff\Miniweb\Http\Request;
+use Kristuff\Miniweb\Mvc\Application;
 use Kristuff\Miniweb\Mvc\TaskResponse;
+use Kristuff\Miniweb\Http\Request;
 use Kristuff\Miniweb\Auth\Model\UserModel;
 use Kristuff\Miniweb\Auth\Model\UserAdminModel;
 use Kristuff\Miniweb\Auth\Model\UserLoginModel;
@@ -74,14 +75,16 @@ class ApiController extends BaseController
     protected $tokenKey = 'api';      // The api token key 
     protected $response = null;       // The default api response
 
-
-    /** 
+    /**
      * Constructor
+     *
      * Check authentification and token
+     * @access public
+     * @param Application $application        The application instance
      */
-    public function __construct(string $apiTokenKey = 'api')
+    public function __construct(Application $application, string $apiTokenKey = 'api')
     {
-        parent::__construct();
+        parent::__construct($application);
 
         // api need auth
         if (!UserLoginModel::isUserLoggedIn() || !UserLoginModel::isSessionValid()) {

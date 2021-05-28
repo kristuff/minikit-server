@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -212,12 +212,14 @@ class Rooter
         // does such a controller exist ?
         if (file_exists($filename)) {
 
-            // load this file 
-            require_once $filename;
+            // load this file if no namespace defined
+            if (empty($controllerNamespace)) {
+                require_once $filename;
+            }
             
             // create an instance of that controller
             $controllerFullName = $controllerNamespace.$controllerName.$controllerExtension;
-            $this->controller = new $controllerFullName();
+            $this->controller = new $controllerFullName($this->application);
 
             return true;
         }

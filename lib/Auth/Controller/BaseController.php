@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -28,9 +28,15 @@ use Kristuff\Miniweb\Auth\TextHelper;
  */
 abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
 {
-    public function __construct()
+    /**
+     * Constructor
+     *
+     * @access public
+     * @param Application $application        The application instance
+     */
+    public function __construct(Application $application)
     {
-        parent::__construct();
+        parent::__construct($application);
 
         // set basic data
         $this->view->setData('userIsLoggedIn', UserLoginModel::isUserLoggedIn());

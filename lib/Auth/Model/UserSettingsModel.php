@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -156,7 +156,7 @@ class UserSettingsModel extends UserModel
 
             // try to update
             $query = self::updateUserSettingsByName((int) $userId, $paramName, $value);
-            if ($response->assertTrue($query, 500, 'todo')){
+            if ($response->assertTrue($query, 500, 'todo' . $query)){
 
                 // get and reset user settings data into session
                 $settingsData = UserSettingsModel::getUserSettings(self::getCurrentUserId(), true);

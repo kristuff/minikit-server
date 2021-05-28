@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -22,6 +22,7 @@ use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Mvc\Application;
 use Kristuff\Miniweb\Auth\Model\UserRegistrationModel;
 use Kristuff\Miniweb\Auth\Model\UserLoginModel;
+use Kristuff\Miniweb\Mail\EmailBuilder;
 
 /** 
  * Class UserInvitationModel
@@ -43,6 +44,21 @@ class UserInvitationModel extends UserRegistrationModel
     {
         return self::config('AUTH_INVITATION_ENABLED') === true; 
     }
+
+    /**
+     * Validates that invitation process is enabled
+     * 
+     * @access protected
+     * @static
+     * @param TaskResponse      $response               The reponse instance.
+     *
+     * @return TaskResponse
+     */
+    protected static function validateInvitationEnabled(TaskResponse $response)
+    {
+        return $response->assertTrue(self::isInvitationEnabled(), 405, self::text('USER_INVITATION_NOT_ENABLED'));
+    }
+
 
     /** 
      * Invite new user
@@ -67,11 +83,11 @@ class UserInvitationModel extends UserRegistrationModel
                                          ?string $token = null, 
                                          ?string $tokenKey = null)
 	{
-        // the return response
         $response = TaskResponse::create();
         
-        // Check token and admin permissions
-        if (self::validateToken($response, $token, $tokenKey) && 
+        // Check invitation process enabled, token and admin permissions
+        if (self::validateInvitationEnabled($response) &&
+            self::validateToken($response, $token, $tokenKey) && 
             UserLoginModel::validateAdminPermissions($response)){
 
             // clean the input and create temp userName
@@ -136,7 +152,7 @@ class UserInvitationModel extends UserRegistrationModel
         // create response        
         $response = TaskResponse::create();
 
-        if ($response->assertTrue($count === 1, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED') . $count)){
+        if ($response->assertTrue($count === 1, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED')) ){
             $response->setMessage(self::text('USER_INVITATION_VALIDATION_SUCCESSFUL'));
         }
 
@@ -180,8 +196,10 @@ class UserInvitationModel extends UserRegistrationModel
             // try to update            
             $updated = self::updateAndActivateInvitedUser($userId, $userName, $userPasswordHash, $userActivationHash);
 
+
             // set feedback message
-            if ($response->assertTrue($updated, 405, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))) {
+            if ($response->assertTrue($updated, 405, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))
+                && $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))) {
                 $response->setMessage(self::text('USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'));
             }
         }
@@ -216,7 +234,7 @@ class UserInvitationModel extends UserRegistrationModel
 
         return $query->execute() && $query->rowCount() === 1;
 	}
-  
+
     /**
 	 * Sends an invitation email with link to complete the registration.
      *
@@ -230,40 +248,63 @@ class UserInvitationModel extends UserRegistrationModel
 	 */
 	protected static function sendInvitationEmail($userId, $userEmail, $userActivationHash)
 	{
+        $useHtml = self::isHtmlEmailEnabled();
         $mailSubject      = sprintf(self::text('USER_INVITATION_EMAIL_SUBJECT'), self::config('APP_NAME'));
 		$mailTitle        = self::text('USER_INVITATION_EMAIL_CONTENT_TITLE');
-		$mailContentpart1 = sprintf(self::text('USER_INVITATION_EMAIL_CONTENT_PART_1'), self::config('APP_NAME') . ' on ' . Application::getUrl());
+        $mailAppName      = self::config('APP_NAME') ;
+
+        $mailContentpart1 = sprintf(self::text('USER_INVITATION_EMAIL_CONTENT_PART_1'), self::config('APP_NAME') . ' on ' . Application::getUrl());
 		$mailContentpart2 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_2');
 		$mailContentpart3 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_3');
-    	$mailContentpart4 = 'Regards,<br>' . self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_FROM_NAME');
-    
+        $mailContentpart4 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_4');
+        $mailSignature    = sprintf(self::text('USER_INVITATION_EMAIL_SIGNATURE'), $mailAppName);
+        $mailLinkTitle    = self::text('USER_INVITATION_EMAIL_LINK_TITLE');
+
         $mailLinkUrl      = Application::getUrl() . self::config('AUTH_INVITATION_EMAIL_VERIFICATION_URL') . 
                           '/' . urlencode($userId) . 
                           '/' . urlencode($userActivationHash);
-        $mailLinkText    =  'Create my account now'; //TODO local
-        $mailAppName     =  self::config('APP_NAME') ;
         $mailCopyright   =  "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
 
-        $content = file_get_contents(self::config('VIEW_PATH').'auth/complete.email.html');
-        $content = str_replace('{{mailTitle}}', $mailTitle, $content);
-        $content = str_replace('{{mailSubject}}', $mailSubject, $content);
-        $content = str_replace('{{mailContentpart1}}', $mailContentpart1, $content);
-        $content = str_replace('{{mailContentpart2}}', $mailContentpart2, $content);
-        $content = str_replace('{{mailContentpart3}}', $mailContentpart3, $content);
-        $content = str_replace('{{mailContentpart4}}', $mailContentpart4, $content);
-        $content = str_replace('{{mailAppName}}',      $mailAppName,      $content);
-        $content = str_replace('{{mailCopyright}}',    $mailCopyright,    $content);
-        
-        $content = str_replace('{{mailLinkUrl}}',      $mailLinkUrl,    $content);
-        $content = str_replace('{{mailLinkText}}',     $mailLinkText,   $content);
+        if ($useHtml){
+            $builder = EmailBuilder::getEmailBuilder();
+            EmailBuilder::createHeader($builder, $mailSubject, '');
+            EmailBuilder::createContent($builder, [$mailTitle, $mailContentpart1, $mailContentpart2]);
+            EmailBuilder::createButton($builder, $mailLinkTitle, $mailLinkUrl);
+            EmailBuilder::createContent($builder, [$mailContentpart4, $mailSignature]);
+            EmailBuilder::createFooter($builder, $mailAppName, $mailCopyright);
+            $content = $builder->getHtml();
 
+        } else {
+            $content  = $mailTitle;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $mailContentpart1 ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $mailContentpart2 ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $mailLinkTitle . PHP_EOL . $mailLinkUrl ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            //$content .= $mailContentpart3;
+            //$content .= PHP_EOL ;
+            //$content .= PHP_EOL ;
+            $content .= $mailContentpart4 ;
+            $content .= PHP_EOL ;
+            $content .= $mailSignature;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $mailAppName . ' | ' . $mailCopyright ;
+        }
+       
 		$mail = new Mailer();
 		$mailSent = $mail->sendMail($userEmail, 
-                                    self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_FROM_EMAIL'),
-			                        self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_FROM_NAME'), 
+                                    self::config('AUTH_EMAIL_FROM_EMAIL'),
+			                        self::config('AUTH_EMAIL_FROM_NAME'), 
                                     $mailSubject, 
                                     $content, 
-                                    true);
+                                    $useHtml);
         
         return $mailSent ? true : false;
 	}  
