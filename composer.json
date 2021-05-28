@@ -23,7 +23,7 @@
     "autoload-dev": {
         "psr-4": {
             "Kristuff\\Miniweb\\Tests\\": "tests/",
-            "MyAwesomeApp\\": "tests/_data/mvc_app_namespace/controller"
+            "MyAwesomeApp\\": "tests/_data/mvc_app_namespace/controller/"
         }
     },
     "require-dev": {
