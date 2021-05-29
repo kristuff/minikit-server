@@ -12,7 +12,8 @@
     "require": {
         "php": ">=7.3",
         "kristuff/patabase": ">=0.3-stable",
-        "kristuff/mishell": ">=1.3-stable",
+        "kristuff/mishell": ">=1.5-stable",
+        "kristuff/phtemail": ">=0.2-stable",
         "phpmailer/phpmailer": ">=6.1-stable",
         "gregwar/captcha": ">=1.1-stable"
     },
@@ -21,7 +22,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Kristuff\\Miniweb\\Tests\\": "tests/"
+            "Kristuff\\Miniweb\\Tests\\": "tests/",
+            "MyAwesomeApp\\": "tests/_data/mvc_app_namespace/controller/"
         }
     },
     "require-dev": {

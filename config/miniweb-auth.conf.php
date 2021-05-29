@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -19,7 +19,20 @@
  * Returns the default configuration.
  */
 return array(
-
+ 
+    /** 
+     * --------------------
+     * global configuration
+     * --------------------
+     *
+     * AUTH_EMAIL_HTML:              True to use HTML email for auth process (registration, recovery, ...)
+     * AUTH_EMAIL_FROM_EMAIL:        The email address of the sender
+     * AUTH_EMAIL_FROM_NAME:         The name of the email sender
+     */
+    'AUTH_EMAIL_HTML'          => false,
+    'AUTH_EMAIL_FROM_EMAIL'    => 'no-reply@EXAMPLE.COM',
+    'AUTH_EMAIL_FROM_NAME'     => 'The EXAMPLE.COM team',
+   
     /** 
      * --------------------------
      * Configuration for: LOGIN

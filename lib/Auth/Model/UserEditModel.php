@@ -11,13 +11,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Core\Format;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Auth\Model\UserModel;
 
@@ -68,7 +67,6 @@ class UserEditModel extends UserModel
             }
         }
 
-        // return response
         return $response;
     }
 
@@ -103,19 +101,17 @@ class UserEditModel extends UserModel
 
             // write to database
             $userId = self::getCurrentUserId();
-            $userHasAvatar = self::session()->get('userHasAvatar');
             $saved = self::writeUserEmail($userId, $newEmail);    
 
             // if successful ...
             if ($response->assertTrue($saved, 500, self::text('ERROR_UNKNOWN'))){
         
-                // ... then write new email to session, Gravatar too (as this relies to the user's email address)
-                self::session()->set('userEmail', $newEmail);
-
+                // write new email to session and 
                 // reset avatar url in case user uses gravatar     
+                self::session()->set('userEmail', $newEmail);
+                $userHasAvatar = self::session()->get('userHasAvatar');
                 UserAvatarModel::setAvatarInSession($userId, $userHasAvatar);
-                
-                // set success message
+
                 $response->setMessage(self::text('USER_EMAIL_CHANGE_SUCCESSFUL'));
             }
         }

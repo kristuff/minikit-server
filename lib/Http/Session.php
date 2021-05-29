@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -36,7 +36,8 @@ class Session
     public function init(): void
     {
         // if no session exist, start the session
-        if (session_id() === '') {
+        if (session_status() == PHP_SESSION_NONE || session_status() == 1) {
+        //if (session_id() === '') {
             
             // honor app config
             session_set_cookie_params([
@@ -52,13 +53,11 @@ class Session
         }
     }
 
-
-
     /**
      * Gets/returns the session id. Returns the session id for the current session or an empty 
      * string ("") if there is no current session (no current session id exists). 
      * @link https://php.net/manual/en/function.session-id.php
-
+     * 
      * @access public
      * @return string
      */

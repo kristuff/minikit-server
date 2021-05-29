@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -34,15 +34,22 @@ abstract class Controller
      */
     protected $view = null;
 
+    /** 
+     * @access protected
+     * @var Mvc\Application $application        The application instance
+     */
+    protected $application;
+
     /**
      * Constructor
      *
      * @access public
+     * @param Mvc\Application $application        The application instance
      */
-    public function __construct()
+    public function __construct(Application $application)
     {
-        // create a View instance
         $this->view = new View();
+        $this->application = $application;
     }
 
     /**

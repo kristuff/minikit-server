@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -24,6 +24,7 @@ use Kristuff\Miniweb\Data\Model\DatabaseModel;
  * Class BaseModel 
  * Base class for all models of this library
  * Extends the DatabaseModel class with custom text function
+ * and utils for Auth process
  */
 abstract class BaseModel extends DatabaseModel
 {
@@ -37,10 +38,24 @@ abstract class BaseModel extends DatabaseModel
      * @param string    $key        The key
      * @param string    $locale     The locale to use (the default locale is used if null). 
      *
-  * @return string|null    The key value is the key exists, otherwise null.
+     * @return string|null    The key value is the key exists, otherwise null.
      */
     public static function text(string $key, ?string $locale = null): ?string
     {
         return TextHelper::text($key, $locale);
     }         
+
+    /** 
+     * Gets whether the auth process use HTML email
+     * 
+     * @access public
+     * @static
+     *
+     * @return bool         True if the auth process use HTML email, otherwise false.
+     */
+    public static function isHtmlEmailEnabled()
+    {
+        return self::config('AUTH_EMAIL_HTML') === true; 
+    }
+
 }

@@ -11,14 +11,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
 
 use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Auth\Model\UserLoginModel;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Core\Json;
 use Kristuff\Miniweb\Core\Path;
@@ -30,46 +29,25 @@ use Kristuff\Patabase\Database;
  */
 class AppSettingsModel extends UserModel
 {
-   
-
     /**
      * Get app settings 
      *
-     * Get the settings for a given user. Returns a Response with users settings as data, 
-     * or a key/value array if $returnArray is True.
-	 *
+     * Get the settings for a given user. Returns an indexed array
+     *
      * @access public
      * @static
-     * @param  bool             $returnArray    True to return an array instead of a complete Response. Default is False.
      *
-     * @return mixed|array        
+     * @return array        
      */
-    public static function getAppSettings($returnArray = false)
+    public static function getAppSettings()
     {
-        // the return response
-        $response = TaskResponse::create();
         $data = [];
-
-        // validate userId (self or admin permissions)
-        if (self::validateAdminPermissions($response)){
-            
-            // get users settings data
-            foreach(self::getList() as $item) {
-                $data[$item['settingName']] = \Kristuff\Miniweb\Core\Filter::XssFilter($item['settingValue']);
-            }
+        foreach(self::getList() as $item) {
+            $data[$item['settingName']] = \Kristuff\Miniweb\Core\Filter::XssFilter($item['settingValue']);
         }
 
-        // return array
-        if ($returnArray) {
-            return $data;
-        }
-
-        // return complete response with data
-        $response->setData($data);
-        return $response;
+        return $data;
     }
-
-
 
     /** 
      * Edit application settings
@@ -109,9 +87,9 @@ class AppSettingsModel extends UserModel
     }
     
     /**
-	 * Validate the param/value given. TODO §§§§§§
+	 * Validate the param/value given.
      *     
-     * Gets whether the param name is valid or not (check XXXXXXXXXXX) and in case it not, register error(s) in response. 
+     * Gets whether the param name is valid or not (check for empty) and in case it not, register error(s) in response. 
 	 *
      * @access protected
      * @static
@@ -123,13 +101,7 @@ class AppSettingsModel extends UserModel
 	 */
     protected static function validateSettingNameAndValue(TaskResponse $response, $paramName, $value)
     {
-        // param name and value must be set
-        if ($response->assertFalse(empty($paramName), 405, self::text('USER_SETTING_NAME_ERROR_EMPTY')) &&
-            $response->assertFalse(empty($value),     405, self::text('USER_SETTING_VALUE_ERROR_EMPTY'))){
-            return true;
-        }
-         
-        return false;
+        return $response->assertFalse(empty($paramName), 405, sprintf(self::text('ERROR_PARAM_NULL_OR_EMPTY'), 'name'));
     }
     
 
@@ -196,7 +168,7 @@ class AppSettingsModel extends UserModel
             return false;
         }
         
-        // prepar query
+        // preparE query
         $query = $database->insert('app_setting')
                           ->prepare('settingName', 'settingValue');
 

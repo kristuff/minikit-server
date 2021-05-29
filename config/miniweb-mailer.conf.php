@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -42,5 +42,5 @@ return array(
     'EMAIL_SMTP_PASSWORD'   => 'yourpassword',
     'EMAIL_SMTP_PORT'       => 465,
     'EMAIL_SMTP_ENCRYPTION' => 'ssl',
-
+    
 );

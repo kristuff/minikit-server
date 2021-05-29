@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.3
+ * @version    0.9.4
  * @copyright  2017-2021 Kristuff
  */
 
@@ -116,7 +116,10 @@ class UserRegistrationModel extends UserModel
                         // if verification email sending failed: instantly delete the user
                         self::rollbackRegistrationByUserId($userId);
                         return $response;
-                    }        
+                    }
+                    
+                    // load settings
+                    $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'));
 
                     // set success message and return response
                     $response->setMessage(self::text('USER_NEW_ACCOUNT_SUCCESSFULLY_CREATED'));
@@ -155,6 +158,7 @@ class UserRegistrationModel extends UserModel
         // create response        
         $response = TaskResponse::create();
         if ($response->assertTrue($success, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))){
+
             $response->setMessage(self::text('USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'));
         }
 
@@ -256,8 +260,8 @@ class UserRegistrationModel extends UserModel
 
         $mail = new Mailer();
         $mailSent = $mail->sendMail($userEmail, 
-            self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_FROM_EMAIL'),
-            self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_FROM_NAME'), 
+            self::config('AUTH_EMAIL_FROM_EMAIL'),
+            self::config('AUTH_EMAIL_FROM_NAME'), 
             self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_SUBJECT'), 
             $body, false
         );
