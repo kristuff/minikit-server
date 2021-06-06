@@ -60,7 +60,6 @@ use Kristuff\Miniweb\Auth\Model\UserInvitationModel;
  *  -------------                      ---     ----    ---     ------      ------
  *  200 (OK)                            X       -       X        -          JSON
  *  201 (Created)                       -       X       -        -          JSON
- *  204 (Empty)                         X       -       -        X          JSON 
  *  400 (bad requests)                  X       X       X        X          JSON
  *  401 (not allowed, require login)    X       X       X        X          JSON
  *  403 (not allowed, denied)           X       X       X        X          JSON
@@ -142,14 +141,21 @@ class ApiController extends BaseController
               
         switch ($this->request()->method()){
             
-            // get users list
             case Request::METHOD_GET:
                 $offset = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
                 $limit  = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
                 $order  = $this->request()->arg('order')  ?? 'name';  
 
-                $this->response = $action == 'settings' ?  UserSettingsModel::getUserSettings($userId) :  
-                                                           UserModel::getProfiles($userId, $limit, $offset, $order);
+                switch ($action){
+                    case 'settings':
+                        $this->response = UserSettingsModel::getUserSettings($userId);
+                        break;
+
+                    case '':
+                        // get users list
+                        $this->response = UserModel::getProfiles($userId, $limit, $offset, $order);
+                        break;
+                }
                 break;
             
             // create a user 
@@ -167,8 +173,7 @@ class ApiController extends BaseController
 
                     case 'create':
                         // create a new user
-                        //todo
-                        $userEmailRepeat    = $this->request()->arg('userEmailRepeat')    ?? null; 
+                        $userEmailRepeat    = $this->request()->arg('userEmailRepeat')    ?? null;   //todo
                         $userName           = $this->request()->arg('userName')           ?? null; 
                         $userPassword       = $this->request()->arg('userPassword')       ?? null; 
                         $userPasswordRepeat = $this->request()->arg('userPasswordRepeat') ?? null; 
@@ -178,13 +183,21 @@ class ApiController extends BaseController
                 }
                 break;
             
-            // delete a user 
+            // delete a user or reset user settings
             case Request::METHOD_DELETE:
-                $this->response = $action == 'settings' ? UserSettingsModel::resetUserSettings($userId, $this->token, $this->tokenKey) : 
-                                                          UserAdminModel::deleteUserAndSettings($userId, $this->token, $this->tokenKey);
+
+                switch ($action){
+                    case 'settings':
+                        $this->response =   UserSettingsModel::resetUserSettings($userId, $this->token, $this->tokenKey);
+                        break;
+
+                    case '':
+                        $this->response = UserAdminModel::deleteUserAndSettings($userId, $this->token, $this->tokenKey);
+                        break;
+                }
                 break;
             
-            // update user                       
+            // update user status or setting parameter                     
             case Request::METHOD_PUT:
                 switch ($action){
                     case 'suspend':
@@ -199,7 +212,7 @@ class ApiController extends BaseController
                     
                     // soft delete 
                     case 'delete':
-                         $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, true) ;
+                        $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, true) ;
                         break;
 
                     case 'settings':
@@ -219,16 +232,14 @@ class ApiController extends BaseController
     /** 
      * Profile api end points
      *
-     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
-     *  End points                              Method      Description                         parameters(s)           Response
-     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
-     *  /api/profile                            POST        Edit user name or email   
-     *  /api/profile/name                       POST        Edit user name   
-     *  /api/profile/email                      POST        Edit user email   
-     *  /api/profile/avatar                     POST        Edit user avatar 
-     *  /api/profile/avatar/delete              POST        Delete user avatar 
-     *  /api/profile/password                   POST        Edit user password
-     *  ----------------------------            ------      ------------------------------      --------------------    -------------------------
+     *  End points                              Method      Description                         parameters(s)       
+     *  ----------------------------            ------      ------------------------------      ---------------------------------
+     *  /api/profile                            POST        Edit user name or email             user_name, user_email, token 
+     *  /api/profile/name                       POST        Edit user name                      user_name, token 
+     *  /api/profile/email                      POST        Edit user email                     ser_email, token 
+     *  /api/profile/avatar                     POST        Edit user avatar                    token, USER_AVATAR_file
+     *  /api/profile/avatar/delete              POST        Delete user avatar                  token
+     *  /api/profile/password                   POST        Edit user password                  user_password_current, .._new, .._repaet
      */
     public function profile($process = '', $parameter = '')
     {
