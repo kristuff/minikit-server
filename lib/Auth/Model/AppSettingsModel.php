@@ -31,15 +31,15 @@ class AppSettingsModel extends UserModel
 {
     /**
      * Get app settings 
-     *
-     * Get the settings for a given user. Returns an indexed array
+     * 
+     * Get the settings for whole application. Returns an indexed array
      *
      * @access public
      * @static
      *
      * @return array        
      */
-    public static function getAppSettings()
+    public static function getAppSettings(): array
     {
         $data = [];
         foreach(self::getList() as $item) {
@@ -64,9 +64,8 @@ class AppSettingsModel extends UserModel
      *
      * @return TaskResponse
      */
-    public static function editAppSettings(string $paramName, $value, string $tokenValue, string $tokenKey)
+    public static function editAppSettings(string $paramName, $value, string $tokenValue, string $tokenKey): TaskResponse
     {
-        // the return response
         $response = TaskResponse::create();
 
         // token valid and is admin?
@@ -75,7 +74,7 @@ class AppSettingsModel extends UserModel
             
             // try to update    
             $query = self::updateAppSettingsByName($paramName, $value);
-            if ($response->assertTrue($query, 500, 'TODO')){
+            if ($response->assertTrue($query, 500, self::text('UNKNOWN_ERROR'))){
                 
                 // feedback
                 $response->setMessage('Application settings updated sucessfully TODO');             
@@ -106,9 +105,15 @@ class AppSettingsModel extends UserModel
     
 
     /**
-     * @return bool TODO
+     * 
+     * @access private
+     * @static 
+	 * @param string        $settingName
+     * @param mixed         $value
+     * 
+     * @return bool
      */
-    private static function updateAppSettingsByName(string $settingName, $value)
+    private static function updateAppSettingsByName(string $settingName, $value): bool
     {
         $query = self::database()->update('app_setting')
                                  ->setValue('settingValue', $value)
@@ -125,7 +130,7 @@ class AppSettingsModel extends UserModel
      * @static 
      *
      */
-    private static function getList($settingName = null, $limit = 0, $offset = 0, $orderBy = 'settingName')
+    private static function getList(?string $settingName = null, int $limit = 0, int $offset = 0, ?string $orderBy = 'settingName')
     {
         // prepare query
         $query = self::database()->select('settingName', 'settingValue')
@@ -168,12 +173,11 @@ class AppSettingsModel extends UserModel
             return false;
         }
         
-        // preparE query
+        // prepare query
         $query = $database->insert('app_setting')
                           ->prepare('settingName', 'settingValue');
 
         foreach (Json::fromFile($confileJsonFile) as $item){
-
             $query->values([
                 'settingName'   => $item['name'], 
                 'settingValue'  => $item['value'] 
@@ -199,7 +203,7 @@ class AppSettingsModel extends UserModel
     {
         return $database->table('app_setting')
                         ->create()
-                        ->column('settingId',   ' int', 'NOT NULL', 'PK',  'AI')               
+                        ->column('settingId',    'int', 'NOT NULL', 'PK',  'AI')               
                         ->column('settingName',  'varchar(64)', 'NULL')
                         ->column('settingValue', 'varchar(255)', 'NULL')
                         ->execute();
