@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -249,7 +249,7 @@ class UserSettingsModel extends UserModel
     }
 
     /** 
-     * Get an associtive array of settings for gibe userId
+     * Get an associtive array of settings for given userId
      * 
      * @access public
      * @static 
@@ -285,7 +285,7 @@ class UserSettingsModel extends UserModel
 
     /** 
      * Load the default setting 
-     * Will check for a json file named 'user.settings.default.json' in app config path
+     * Will check for a json file named 'user.settings.default.json' in app config default path
      * 
      * @access public
      * @static

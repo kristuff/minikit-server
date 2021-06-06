@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -19,7 +19,7 @@ namespace Kristuff\Miniweb\Data\Model;
 
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
-use Kristuff\Patabase\Database;
+use Kristuff\Mishell\Console;
 
 /** 
  * SetupModel
@@ -34,20 +34,36 @@ class SetupModel extends \Kristuff\Miniweb\Mvc\Model
      * 
      * @return bool
      */
-    protected static function isCommandLineInterface()
+    protected static function isCommandLineInterface(): bool
     {
         return (php_sapi_name() === 'cli');
     }
 
+    /** 
+     * Log a message if run as cli 
+     * 
+     * @access protected
+     * @static
+     * @param string    $dbname     The database full path 
+     * 
+     * @return void
+     */
+    protected static function logSuccessMessage(string $message): void
+    {
+        if (self::isCommandLineInterface()){
+            Console::log('  '.Console::text('[✓] ', 'green') . Console::text($message, 'white'));
+        }
+    }
+
     /**
-     * Check if application is installed or not (check for install.config file)
+     * Check if application is installed or not (check for db.config file)
      * 
      * @access public
      * @static
      * 
      * @return bool
      */
-    public static function isInstalled()
+    public static function isInstalled(): bool
     {
         $fileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
         return file_exists($fileName);
@@ -102,7 +118,7 @@ class SetupModel extends \Kristuff\Miniweb\Mvc\Model
      * 
      * @return array
      */
-    public static function getConfig()
+    public static function getConfig(): array
     {
        $fileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
        $config = require $fileName;
@@ -167,12 +183,12 @@ class SetupModel extends \Kristuff\Miniweb\Mvc\Model
  */
 return array(
     "DB_DRIVER"     => "'. $dbDriver .'",
-	"DB_HOST"       => "'. $dbHost .'",
+    "DB_HOST"       => "'. $dbHost .'",
     "DB_NAME"       => "'. $dbName .'",
     "DB_USER"       => "'. $dbUser .'",
     "DB_PASSWORD"   => "'. $dbPassword .'",
-  	"DB_PORT"       => "'. $dbPort .'",
-	"DB_CHARSET"    => "'. $dbCharset .'"
+    "DB_PORT"       => "'. $dbPort .'",
+    "DB_CHARSET"    => "'. $dbCharset .'"
 );';
 
              file_put_contents($fileName, $content);

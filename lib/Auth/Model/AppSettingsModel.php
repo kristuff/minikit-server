@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -31,15 +31,16 @@ class AppSettingsModel extends UserModel
 {
     /**
      * Get app settings 
-     *
-     * Get the settings for a given user. Returns an indexed array
+     * 
+     * Get the settings for whole application. Returns an indexed array
+     * Value is filtered by XssFilter
      *
      * @access public
      * @static
      *
      * @return array        
      */
-    public static function getAppSettings()
+    public static function getAppSettings(): array
     {
         $data = [];
         foreach(self::getList() as $item) {
@@ -64,25 +65,25 @@ class AppSettingsModel extends UserModel
      *
      * @return TaskResponse
      */
-    public static function editAppSettings(string $paramName, $value, string $tokenValue, string $tokenKey)
+    public static function editAppSettings(string $paramName, $value, string $tokenValue, string $tokenKey): TaskResponse
     {
-        // the return response
         $response = TaskResponse::create();
 
-        // token valid and is admin?
+        // token valid / is admin / name ok?
         if (self::validateAdminPermissions($response) &&
-            self::validateToken($response, $tokenValue, $tokenKey)){
+            self::validateToken($response, $tokenValue, $tokenKey) &&
+            self::validateSettingName($response, $paramName)){
             
             // try to update    
             $query = self::updateAppSettingsByName($paramName, $value);
-            if ($response->assertTrue($query, 500, 'TODO')){
-                
-                // feedback
-                $response->setMessage('Application settings updated sucessfully TODO');             
+            if ($response->assertTrue($query, 500, self::text('UNKNOWN_ERROR'))){
+                $response->setData([
+                    'parameter' => $paramName,
+                    'newValue'  => $value,
+                ]);
             }
         }
 
-        // return response        
         return $response;
     }
     
@@ -90,25 +91,30 @@ class AppSettingsModel extends UserModel
 	 * Validate the param/value given.
      *     
      * Gets whether the param name is valid or not (check for empty) and in case it not, register error(s) in response. 
+     * TODO length
 	 *
      * @access protected
      * @static
 	 * @param  TaskResponse    $response
-	 * @param  mixed            $UserIdXXXXXXXXXXXXXXX TODO
-	 * @param  mixed            $UserIdXXXXXXXXXXXXXXX TODO
-	 *
-	 * @return bool             True if the given XXXXXXXXX is valid, otherwise false.   
+	 * @param  string          $paramName
+     * 
+	 * @return bool                
 	 */
-    protected static function validateSettingNameAndValue(TaskResponse $response, $paramName, $value)
+    protected static function validateSettingName(TaskResponse $response, ?string $paramName = null)
     {
         return $response->assertFalse(empty($paramName), 405, sprintf(self::text('ERROR_PARAM_NULL_OR_EMPTY'), 'name'));
     }
-    
 
     /**
-     * @return bool TODO
+     * 
+     * @access private
+     * @static 
+	 * @param string        $settingName
+     * @param mixed         $value
+     * 
+     * @return bool
      */
-    private static function updateAppSettingsByName(string $settingName, $value)
+    private static function updateAppSettingsByName(string $settingName, $value): bool
     {
         $query = self::database()->update('app_setting')
                                  ->setValue('settingValue', $value)
@@ -118,32 +124,21 @@ class AppSettingsModel extends UserModel
     }
 
     /** 
-     * 
-     * todo
-     * 
-     * @access public
-     * @static 
+     * Get the settings for whole application stored in database. Returns an indexed array
      *
+     * @access private
+     * @static
+     * @param string    $orderBy
+     *
+     * @return array        
      */
-    private static function getList($settingName = null, $limit = 0, $offset = 0, $orderBy = 'settingName')
+    private static function getList(?string $orderBy = 'settingName')
     {
-        // prepare query
         $query = self::database()->select('settingName', 'settingValue')
                                  ->from('app_setting');
-
-        if ($limit > 0){
-            $query->limit($limit);
-            $query->offset($offset);
-        }                                 
-
-        // optional filter
-        if (!empty($settingName)){
-            $query->whereEqual('settingName', $settingName);
-            $query->limit(1);
-        }        
-
+       
         // order
-        if (in_array($orderBy, ['settingName'])){
+        if (in_array($orderBy, ['settingName', ])){
             $query->orderAsc($orderBy);
         }        
 
@@ -152,7 +147,7 @@ class AppSettingsModel extends UserModel
 
     /** 
      * Load the default setting 
-     * Will check for a json file named 'app.settings.default.json' in app config path
+     * Will check for a json file named 'app.settings.default.json' in app config default path
      * 
      * @access public
      * @static
@@ -168,12 +163,11 @@ class AppSettingsModel extends UserModel
             return false;
         }
         
-        // preparE query
+        // prepare query
         $query = $database->insert('app_setting')
                           ->prepare('settingName', 'settingValue');
 
         foreach (Json::fromFile($confileJsonFile) as $item){
-
             $query->values([
                 'settingName'   => $item['name'], 
                 'settingValue'  => $item['value'] 
@@ -199,8 +193,8 @@ class AppSettingsModel extends UserModel
     {
         return $database->table('app_setting')
                         ->create()
-                        ->column('settingId',   ' int', 'NOT NULL', 'PK',  'AI')               
-                        ->column('settingName',  'varchar(64)', 'NULL')
+                        ->column('settingId',    'int',         ' NOT NULL', 'PK',  'AI')               
+                        ->column('settingName',  'varchar(64)',  'NULL')
                         ->column('settingValue', 'varchar(255)', 'NULL')
                         ->execute();
     }

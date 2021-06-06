@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -163,7 +163,7 @@ abstract class UserBaseModel extends BaseModel
             && $response->assertEquals($newPassword, $repeatNewPassword, 400, self::text('USER_PASSWORD_ERROR_REPEAT_WRONG'))
 
 		    // TODO force strong password?
-            && $response->assertFalse(strlen($newPassword) < 6, 400, self::text('USER_PASSWORD_ERROR_TOO_SHORT'));
+            && $response->assertFalse(strlen($newPassword) < 8, 400, self::text('USER_PASSWORD_ERROR_TOO_SHORT'));
     }
     
     /**

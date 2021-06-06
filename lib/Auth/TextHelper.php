@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -38,6 +38,6 @@ class TextHelper
         $possibleOverideText = Application::text($key, $locale);
         
         return isset($possibleOverideText) ? $possibleOverideText :  
-               Application::textSection($key, 'miniweb-auth', $locale);
+               Application::textSection($key, 'miniweb', $locale);
     }         
 }

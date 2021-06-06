@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
@@ -21,7 +21,6 @@ use Kristuff\Miniweb\Auth;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
 use Kristuff\Patabase\Database;
-use Kristuff\Mishell\Console;
 
 /** 
  * SetupModel
@@ -29,13 +28,7 @@ use Kristuff\Mishell\Console;
 class SetupModel extends \Kristuff\Miniweb\Data\Model\SetupModel
 {
 
-    //todo
-    protected static function logSuccessMessage(string $message)
-    {
-        if (self::isCommandLineInterface()){
-            Console::log('  '.Console::text('[✓] ', 'green') . Console::text($message, 'white'));
-        }
-    }
+   
 
     /** 
      * Create db tables
@@ -49,15 +42,16 @@ class SetupModel extends \Kristuff\Miniweb\Data\Model\SetupModel
     protected static function createTables(&$database)
     {
         return Auth\Model\UserModel::createTable($database) &&
-               Auth\Model\UserSettingsModel::createTableSettings($database);
+               Auth\Model\UserSettingsModel::createTableSettings($database) &&
+               Auth\Model\AppSettingsModel::createTableSettings($database);
     }
 
-    protected static function validatesInput(TaskResponse &$response, string $adminName, string $adminPassword, string $adminEmail)
+    //TODO
+    protected static function validatesAdminUserInputs(TaskResponse &$response, string $adminName, string $adminPassword, string $adminEmail)
     {
         Auth\Model\UserModel::validateUserNamePattern($response, $adminName);
         Auth\Model\UserModel::validateUserEmailPattern($response, $adminEmail, $adminEmail);
         Auth\Model\UserModel::validateUserPassword($response, $adminPassword, $adminPassword);
-
         return $response;
     }
 
@@ -71,17 +65,9 @@ class SetupModel extends \Kristuff\Miniweb\Data\Model\SetupModel
      */
     public static function checkForInstall()
     {
-        // the return response
         $response = parent::checkForInstall();
-
-        // perform checks
         $response->assertTrue(file_exists(Auth\Model\UserAvatarModel::getPath()), 500, self::text('USER_ERROR_AVATAR_PATH_MISSING')) &&
         $response->assertTrue(is_writable(Auth\Model\UserAvatarModel::getPath()), 500, self::text('USER_ERROR_AVATAR_PATH_PERMISSIONS'));
-
-        if ( $response->success() ){
-            $response->setMessage('All checks was successful');        
-        }
-
         return $response;
     } 
     

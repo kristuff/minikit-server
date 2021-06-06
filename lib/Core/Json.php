@@ -1,6 +1,4 @@
-<?php 
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
  
 /** 
  *        _      _            _
@@ -13,7 +11,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.4
+ * @version    0.9.5
  * @copyright  2017-2021 Kristuff
  */
 
