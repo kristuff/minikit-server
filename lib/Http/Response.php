@@ -191,7 +191,7 @@ class Response
      */
     public static function setStatus(int $statusCode): bool
     {
-        // get status for given 
+        // get status for given code
         $status = self::getStatus($statusCode);
         
         if (isset($status)){

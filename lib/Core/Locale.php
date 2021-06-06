@@ -78,13 +78,13 @@ class Locale
      *
      * Example:
      * suppose the following files structure (two locales availables)
-     * /home/myapp/locales/en-US/app.locale.php
-     * /home/myapp/locales/fr-FR/app.locale.php
+     * /home/myapp/locales/en-US/locale.php
+     * /home/myapp/locales/fr-FR/locale.php
      *
      *    <?php
      *    use Kristuff\Miniweb\Core\Locale;
      *    $local = new Locale(); 
-     *    $locale->registerAutoloader('/home/myapp/locales', ['en-US', 'fr-FR'], 'app.locale.php'); 
+     *    $locale->registerAutoloader('/home/myapp/locales', ['en-US', 'fr-FR'], 'locale.php'); 
      *
      * @access public
      * @param string    $relativePath           The relative path where are stored locales
@@ -338,7 +338,7 @@ class Locale
      */
     protected function getDefaultLocale(): ?string
     {
-        // get the default locale if defines
+        // get the default locale if defined
         if (isset($this->defaultLocale)) {
             return $this->defaultLocale;
         } 
