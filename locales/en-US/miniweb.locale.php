@@ -69,7 +69,7 @@ return array(
     /* user email */
     'USER_EMAIL_ERROR_ALREADY_TAKEN'            => "Sorry, that email is already in use. Please choose another one.",
     'USER_EMAIL_ERROR_EMPTY'                    => "Email field was empty.",
-    'USER_EMAIL_ERROR_REPEAT_WRONG'             => "Email and email repeat are not the same",
+    'USER_EMAIL_ERROR_REPEAT_WRONG'             => "Email and email repeat are not the same.",
     'USER_EMAIL_ERROR_BAD_PATTERN'              => "Sorry, your chosen email does not fit into the email naming pattern.",
     'USER_EMAIL_ERROR_NEW_SAME_AS_OLD_ONE'      => "Sorry, that email address is the same as your current one. Please choose another one.",
     'USER_EMAIL_CHANGE_SUCCESSFUL'              => 'Your email address has been changed successfully.',
@@ -77,34 +77,33 @@ return array(
     /* user password */
     'USER_PASSWORD_ERROR_EMPTY'                 => "Password field was empty.",
     'USER_PASSWORD_ERROR_REPEAT_WRONG'          => "Password and password repeat are not the same.",
-	'USER_PASSWORD_ERROR_TOO_SHORT'             => "Password has a minimum length of 6 characters.",
-    'USER_PASSWORD_CHANGE_SUCCESSFUL'           => "Password successfully changed.",
+	'USER_PASSWORD_ERROR_TOO_SHORT'             => "Password has a minimum length of 8 characters.",
+    'USER_PASSWORD_CHANGE_SUCCESSFUL'           => "Your password has been successfully changed.",
     'USER_PASSWORD_CHANGE_FAILED'               => "Sorry, your password changing failed.",
     'USER_PASSWORD_CHANGE_NEW_SAME_AS_CURRENT'  => "New password is the same as the current password.",
-    'USER_PASSWORD_CHANGE_CURRENT_INCORRECT'    => "Current password entered was incorrect.",
-    'USER_PASSWORD_CHANGE_INVALID_TOKEN'        => "No or invalid password reset token.",
+    'USER_PASSWORD_CHANGE_INVALID_TOKEN'        => "The password reset token was invalid.",
     'USER_PASSWORD_CHANGE_ERROR_CURRENT_WRONG'  => "Current password entered was incorrect.",
   
      /* user new account */
     'USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'    => "Sorry, your registration failed. Please go back and try again.",
-    'USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'   => "Internal error: unable to insert defaults settings data",
-    'USER_NEW_ACCOUNT_SUCCESSFULLY_CREATED'     => "Your account has been created successfully and we have sent you an email. Please click the VERIFICATION LINK within that mail.",
+    'USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'   => "Error: unable to insert defaults settings data.",
+    'USER_NEW_ACCOUNT_SUCCESSFULLY_CREATED'     => "Your account has been created successfully and we have sent you an email. Please click activation link within that email.",
     'USER_NEW_ACCOUNT_MAIL_SENDING_ERROR'       => "Verification mail could not be sent due to: ",
-    'USER_NEW_ACCOUNT_MAIL_SENDING_SUCCESSFUL'  => "A verification mail has been sent successfully.",
     'USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'    => "Activation was successful! You can now log in.",
-	'USER_NEW_ACCOUNT_ACTIVATION_FAILED'        => "Sorry, no such id/verification code combination here! It might be possible that your mail provider (Yahoo? Hotmail?) automatically visits links in emails for anti-scam scanning, so this activation link might been clicked without your action. Please try to log in on the main page.",
+	'USER_NEW_ACCOUNT_ACTIVATION_FAILED'        => "Sorry, no such id/verification code combination here!",
+    'ss' => "It might be possible that your mail provider (Yahoo? Hotmail?) automatically visits links in emails for anti-scam scanning, so this activation link might been clicked without your action. Please try to log in on the main page.",    
     
-     /* user avatar */
+    /* user avatar */
 	'USER_AVATAR_UPLOAD_NO_FILE'                => "No upload file found.",
 	'USER_AVATAR_UPLOAD_FAILED'                 => "Something went wrong with the image upload.",
     'USER_AVATAR_UPLOAD_SUCCESSFUL'             => "Avatar upload was successful.",
 	'USER_AVATAR_UPLOAD_ERROR_WRONG_TYPE'       => "Only JPEG and PNG files are supported.",
-    'USER_AVATAR_UPLOAD_ERROR_TOO_SMALL'        => "Avatar source file's width/height is too small. Needs to be 100x100 pixel minimum.",
+    'USER_AVATAR_UPLOAD_ERROR_TOO_SMALL'        => "Avatar source file's width/height is too small. Needs to be 100x100 pixels minimum.",
 	'USER_AVATAR_UPLOAD_ERROR_TOO_BIG'          => "Avatar source file is too big. 1 Megabyte is the maximum.",
 	'USER_AVATAR_DELETE_ERROR_NO_FILE'          => "You don't have a custom avatar.",
 	'USER_AVATAR_DELETE_FAILED'                 => "Something went wrong while deleting your avatar.",
 	'USER_AVATAR_DELETE_SUCCESSFUL'             => "You successfully deleted your avatar.",
-    'USER_AVATAR_ERROR_PATH_MISSING'            => "Avatar path does not exist",
+    'USER_AVATAR_ERROR_PATH_MISSING'            => "Avatar path does not exist.",
     'USER_AVATAR_ERROR_PATH_PERMISSIONS'        => "Avatar path is not writable(invalid permissions)",
 
     /* user account admin */
@@ -118,7 +117,7 @@ return array(
 	
     /* user invitation */
     'USER_INVITATION_NOT_ENABLED'               => 'Invitation process is not enabled.',
-    'USER_INVITATION_VALIDATION_SUCCESSFUL'     => 'Please define your user name and password to complete your registration',
+    'USER_INVITATION_VALIDATION_SUCCESSFUL'     => 'Please define your user name and password to complete your registration.',
     'USER_INVITATION_EMAIL_SUBJECT'             => 'Invitation received from %s',
     'USER_INVITATION_EMAIL_CONTENT_TITLE'       => 'Welcome!',
     'USER_INVITATION_EMAIL_CONTENT_PART_1'      => 'You receive this email from %s. An account has been created for you.',

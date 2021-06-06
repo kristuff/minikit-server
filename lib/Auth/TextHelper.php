@@ -38,6 +38,6 @@ class TextHelper
         $possibleOverideText = Application::text($key, $locale);
         
         return isset($possibleOverideText) ? $possibleOverideText :  
-               Application::textSection($key, 'miniweb-auth', $locale);
+               Application::textSection($key, 'miniweb', $locale);
     }         
 }
