@@ -163,7 +163,7 @@ abstract class UserBaseModel extends BaseModel
             && $response->assertEquals($newPassword, $repeatNewPassword, 400, self::text('USER_PASSWORD_ERROR_REPEAT_WRONG'))
 
 		    // TODO force strong password?
-            && $response->assertFalse(strlen($newPassword) < 6, 400, self::text('USER_PASSWORD_ERROR_TOO_SHORT'));
+            && $response->assertFalse(strlen($newPassword) < 8, 400, self::text('USER_PASSWORD_ERROR_TOO_SHORT'));
     }
     
     /**
