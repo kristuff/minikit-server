@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.5
+ * @version    0.9.6
  * @copyright  2017-2021 Kristuff
  */
 
@@ -105,6 +105,7 @@ class UserLoginModel extends UserModel
             'redirect'      => self::request()->get('redirect'),
             'token'         => self::token()->value('login'),
             'allowCookie'   => self::config('AUTH_LOGIN_COOKIE_ENABLED'),
+            'allowRecovery' => UserRecoveryModel::isRecoveryEnabled(), 
         ];
     }
 

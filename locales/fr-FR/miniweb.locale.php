@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.5
+ * @version    0.9.6
  * @copyright  2017-2021 Kristuff
  */
 
@@ -26,7 +26,7 @@ return array(
     'ERROR_INVALID_AUTHENTFICATION'              => "Mauvaise authentification",
     'ERROR_INVALID_PERMISSIONS'                  => "Mauvaises permissions",
     'ERROR_INVALID_TOKEN'                        => "Token invalide",
-    'ERROR_INVALID_CAPTCHA'                      => "Le code de sécurité est incorrecte.",
+    'ERROR_INVALID_CAPTCHA'                      => "Le code de sécurité est incorrect.",
     'ERROR_UNKNOWN'                              => "Une erreur inconnue est survenue !",
 
     /* login error */
@@ -35,7 +35,7 @@ return array(
     "LOGIN_ERROR_ACCOUNT_NOT_ACTIVATED"          => "Votre compte n'est pas encore activé. Activez votre compte en cliquant sur le lien dans l'email qui vous a été envoyé.",
     "LOGIN_ERROR_FAILED_3_TIMES"                 => "3 tentatives de login incorrectes. Attendez 30 secondes pour essayer à nouveau.",
     "LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY"         => "Le nom d'utilisateur ou le mot de passe étaient vide.",
-    "LOGIN_ERROR_NAME_OR_PASSWORD_WRONG"         => "Le nom d'utilisateur ou le mot de passe est incorrecte. Veuillez réessayer.",
+    "LOGIN_ERROR_NAME_OR_PASSWORD_WRONG"         => "Le nom d'utilisateur ou le mot de passe est incorrect. Veuillez réessayer.",
     
     /* login cookie */
     "LOGIN_COOKIE_ERROR_INVALID"                 => "Votre remember-me-cookie est invalide.",
