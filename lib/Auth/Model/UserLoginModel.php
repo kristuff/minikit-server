@@ -105,6 +105,7 @@ class UserLoginModel extends UserModel
             'redirect'      => self::request()->get('redirect'),
             'token'         => self::token()->value('login'),
             'allowCookie'   => self::config('AUTH_LOGIN_COOKIE_ENABLED'),
+            'allowRecovery' => UserRecoveryModel::isRecoveryEnabled(), 
         ];
     }
 
