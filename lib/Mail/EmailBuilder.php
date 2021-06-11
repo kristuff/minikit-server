@@ -106,7 +106,8 @@ class EmailBuilder
     {
         $content = new HtmlElements\Row();
         foreach ($lines as $paragraph){
-            $content->add(new HtmlElements\Paragraph($paragraph, ['padding-top' => "15px"]));
+            $content->add(new HtmlElements\Paragraph($paragraph));
+            $content->add(new HtmlElements\BreakLine());
         }
         $builder->body()->add($content);
     }
