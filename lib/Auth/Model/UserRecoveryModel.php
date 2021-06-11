@@ -11,13 +11,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.6
+ * @version    0.9.7
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
 
 use Kristuff\Miniweb\Auth\Model\UserModel;
+use Kristuff\Miniweb\Mail\EmailBuilder;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Mvc\Application;
 use Kristuff\Miniweb\Mail\Mailer;
@@ -72,7 +73,7 @@ class UserRecoveryModel extends UserModel
     public static function verifyPasswordRecoveryRequest($userNameOrEmail, $captcha)
     {
         // the return response (default is valid)
-        $response = TaskResponse::create(200);
+        $response = TaskResponse::create();
   
         // check captcha
         if ($response->assertTrue(\Kristuff\Miniweb\Security\CaptchaModel::captcha()->validate($captcha, 'recovery_captcha'), 400, self::text('ERROR_INVALID_CAPTCHA'))){
@@ -80,12 +81,10 @@ class UserRecoveryModel extends UserModel
             // user name or email empty?
             if ($response->assertFalse(empty($userNameOrEmail), 400, self::text('LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'))){
 
-                // get the user
-                $user = self::getUserByUserNameOrEmail($userNameOrEmail);
-                
-                // check if that username exists
+                // get the userand check if that username exists
                 // we need to check is the user exists, but we do not tell end user if so 
                 // it could be an attacker who is testing for existing email/name 
+                $user = self::getUserByUserNameOrEmail($userNameOrEmail);
                 if ($user !== false) {
 
                     // generate integer-timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
@@ -95,15 +94,9 @@ class UserRecoveryModel extends UserModel
                     $userPasswordResetHash = sha1(uniqid(mt_rand(), true)); //TODO
 
                     // set token (= a random hash string and a timestamp) into database ...
-                    if ($response->assertTrue(
-                        self::savePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, 
-                        self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL'))){
-                    
-                        // ... and send a mail to the user, containing a link with username and token hash string
-                        $emailSent = self::sendPasswordResetMail($user->userName, $userPasswordResetHash, $user->userEmail);
-        
-                        // register error if mail has not been  sent
-                        $response->assertTrue($emailSent, 500, self::text('LOGIN_RECOVERY_MAIL_SENDING_ERROR'));
+                    // and send a mail to the user, containing a link with username and token hash string
+                    if ($response->assertTrue(self::savePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL'))){
+                        $response->assertTrue(self::sendPasswordResetMail($user->userName, $userPasswordResetHash, $user->userEmail), 500, self::text('LOGIN_RECOVERY_MAIL_SENDING_ERROR'));
                     }
                 }
             }
@@ -233,28 +226,70 @@ class UserRecoveryModel extends UserModel
      *
      * @access protected
      * @static
-     * @param string $userName              username
-     * @param string $passwordResetHash     password reset hash
-     * @param string $userEmail             user email
+     * @param string    $userName              username
+     * @param string    $passwordResetHash     password reset hash
+     * @param string    $userEmail             user email
      *
-     * @return bool success status
+     * @return bool     success status
      */
     protected static function sendPasswordResetMail($userName, $passwordResetHash, $userEmail)
     {
-        // create email body
-        $body = self::config('AUTH_PASSWORD_RESET_MAIL_CONTENT') . ' ' . Application::getUrl() .
-                self::config('AUTH_PASSWORD_RESET_VERIFY_URL') . '/' . urlencode($userName) . '/' . urlencode($passwordResetHash);
+        $useHtml          = self::isHtmlEmailEnabled();
+        $mailSubject      = sprintf(self::text('LOGIN_RECOVERY_EMAIL_SUBJECT'), $userEmail);
+        $appName          = self::config('APP_NAME');
+        $politePhrase     = self::text('AUTH_EMAIL_POLITE_PHRASE');
+        $mailSignature    = sprintf(self::text('AUTH_EMAIL_SIGNATURE'), $appName);
+        $mailCopyright    = "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
 
-        // create instance of Mail class, try sending and check
+        $intro            = sprintf(self::text('LOGIN_RECOVERY_EMAIL_INTRO'), $userEmail, $appName);
+        $message          = self::text('LOGIN_RECOVERY_EMAIL_LINK_MESSAGE');
+        $linkTitle        = self::text('LOGIN_RECOVERY_EMAIL_LINK_TITLE');
+        $resetLink        = Application::getUrl().self::config('AUTH_PASSWORD_RESET_VERIFY_URL').'/'.urlencode($userName).'/'.urlencode($passwordResetHash);
+        $expireNotice     = self::text('LOGIN_RECOVERY_EMAIL_EXPIRE_NOTICE');
+        $notYouNotice = self::text('LOGIN_RECOVERY_EMAIL_NOT_YOU_NOTICE');
+      
+        if ($useHtml){
+            $builder = EmailBuilder::getEmailBuilder();
+            EmailBuilder::createHeader($builder, $mailSubject, '');
+            EmailBuilder::createContent($builder, [$intro, $message]);
+            EmailBuilder::createButton($builder, $linkTitle, $resetLink);
+            EmailBuilder::createContent($builder, [$expireNotice, $notYouNotice]);
+            EmailBuilder::createContent($builder, [$politePhrase, $mailSignature]);
+            EmailBuilder::createFooter($builder, $appName, $mailCopyright);
+            $content = $builder->getHtml();
+
+        } else {
+            $content  = $intro ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $message ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $linkTitle . PHP_EOL . $resetLink ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $expireNotice;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $notYouNotice;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $politePhrase ;
+            $content .= PHP_EOL ;
+            $content .= $mailSignature;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $appName . ' | ' . $mailCopyright ;
+        }
         $mail = new Mailer();
         $sent = $mail->sendMail($userEmail, 
-            self::config('AUTH_PASSWORD_RESET_MAIL_FROM_EMAIL'), 
-            self::config('AUTH_PASSWORD_RESET_MAIL_FROM_NAME'), 
-            self::config('AUTH_PASSWORD_RESET_MAIL_SUBJECT'), 
-            $body, false);
+                                self::config('AUTH_EMAIL_FROM_EMAIL'), 
+                                self::config('AUTH_EMAIL_FROM_NAME'), 
+                                $mailSubject, 
+                                $content, 
+                                $useHtml);
 
-        // return response
-        return $sent;
+        return $sent ? true : false;
     }
 
     /**

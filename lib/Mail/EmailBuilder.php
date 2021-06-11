@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.6
+ * @version    0.9.7
  * @copyright  2017-2021 Kristuff
  */
     
@@ -106,7 +106,8 @@ class EmailBuilder
     {
         $content = new HtmlElements\Row();
         foreach ($lines as $paragraph){
-            $content->add(new HtmlElements\Paragraph($paragraph, ['padding-top' => "15px"]));
+            $content->add(new HtmlElements\Paragraph($paragraph));
+            $content->add(new HtmlElements\BreakLine());
         }
         $builder->body()->add($content);
     }

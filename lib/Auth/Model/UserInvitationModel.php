@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.6
+ * @version    0.9.7
  * @copyright  2017-2021 Kristuff
  */
 
@@ -248,21 +248,22 @@ class UserInvitationModel extends UserRegistrationModel
 	 */
 	protected static function sendInvitationEmail($userId, $userEmail, $userActivationHash)
 	{
-        $useHtml = self::isHtmlEmailEnabled();
+        $useHtml          = self::isHtmlEmailEnabled();
         $mailSubject      = sprintf(self::text('USER_INVITATION_EMAIL_SUBJECT'), self::config('APP_NAME'));
 		$mailTitle        = self::text('USER_INVITATION_EMAIL_CONTENT_TITLE');
         $mailAppName      = self::config('APP_NAME') ;
 
-        $mailContentpart1 = sprintf(self::text('USER_INVITATION_EMAIL_CONTENT_PART_1'), self::config('APP_NAME') . ' on ' . Application::getUrl());
-		$mailContentpart2 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_2');
-		$mailContentpart3 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_3');
-        $mailContentpart4 = self::text('USER_INVITATION_EMAIL_CONTENT_PART_4');
-        $mailSignature    = sprintf(self::text('USER_INVITATION_EMAIL_SIGNATURE'), $mailAppName);
+        $mailContentpart1 = sprintf(self::text('USER_INVITATION_EMAIL_INTRO'), self::config('APP_NAME'),  Application::getUrl());
+		$mailContentpart2 = self::text('USER_INVITATION_EMAIL_LINK_MESSAGE');
+		$mailContentpart3 = self::text('USER_INVITATION_EMAIL_EXPIRE_NOTICE');
+        $politePhrase     = self::text('AUTH_EMAIL_POLITE_PHRASE');
+        $mailSignature    = sprintf(self::text('AUTH_EMAIL_SIGNATURE'), $mailAppName);
         $mailLinkTitle    = self::text('USER_INVITATION_EMAIL_LINK_TITLE');
 
         $mailLinkUrl      = Application::getUrl() . self::config('AUTH_INVITATION_EMAIL_VERIFICATION_URL') . 
                           '/' . urlencode($userId) . 
                           '/' . urlencode($userActivationHash);
+
         $mailCopyright   =  "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
 
         if ($useHtml){
@@ -270,7 +271,7 @@ class UserInvitationModel extends UserRegistrationModel
             EmailBuilder::createHeader($builder, $mailSubject, '');
             EmailBuilder::createContent($builder, [$mailTitle, $mailContentpart1, $mailContentpart2]);
             EmailBuilder::createButton($builder, $mailLinkTitle, $mailLinkUrl);
-            EmailBuilder::createContent($builder, [$mailContentpart4, $mailSignature]);
+            EmailBuilder::createContent($builder, [$politePhrase, $mailSignature]);
             EmailBuilder::createFooter($builder, $mailAppName, $mailCopyright);
             $content = $builder->getHtml();
 
@@ -290,7 +291,7 @@ class UserInvitationModel extends UserRegistrationModel
             //$content .= $mailContentpart3;
             //$content .= PHP_EOL ;
             //$content .= PHP_EOL ;
-            $content .= $mailContentpart4 ;
+            $content .= $politePhrase ;
             $content .= PHP_EOL ;
             $content .= $mailSignature;
             $content .= PHP_EOL ;

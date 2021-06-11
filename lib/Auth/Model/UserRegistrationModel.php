@@ -11,14 +11,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.6
+ * @version    0.9.7
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Mail\Mailer;
 use Kristuff\Miniweb\Auth\Model\UserModel;
+use Kristuff\Miniweb\Mail\Mailer;
+use Kristuff\Miniweb\Mail\EmailBuilder;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Mvc\Application;
 
@@ -243,13 +244,22 @@ class UserRegistrationModel extends UserModel
      */
     protected static function sendVerificationEmail($userId, $userEmail, $userActivationHash)
     {
-        // TODO Html mail
+        $useHtml          = self::isHtmlEmailEnabled();
+        $appName          = self::config('APP_NAME') ;
+        $mailSubject      = sprintf(self::text('USER_SIGNUP_EMAIL_VERIFICATION_SUBJECT'), $appName, Application::getUrl());
+        $intro            = self::text('USER_SIGNUP_EMAIL_VERIFICATION_INTRO');
+        $message          = self::text('USER_SIGNUP_EMAIL_VERIFICATION_LINK_MESSAGE');
+        $linkTitle        = self::text('USER_SIGNUP_EMAIL_VERIFICATION_LINK_TITLE');
+        $linkUrl          = Application::getUrl().self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_URL') . '/' . urlencode($userId) . '/' . urlencode($userActivationHash);
+        $politePhrase     = self::text('AUTH_EMAIL_POLITE_PHRASE');
+        $mailSignature    = sprintf(self::text('AUTH_EMAIL_SIGNATURE'), $appName);
+        $mailCopyright    = "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
+
+        // TODO Html mai
         // TODO locale
-
         // create email body
-        $body = self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_CONTENT') . ' ' . Application::getUrl() .
-                self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_URL') . '/' . urlencode($userId) . '/' . urlencode($userActivationHash);
-
+        //$body = self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_CONTENT') . ' ' . Application::getUrl() .
+        //        self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_URL') . '/' . urlencode($userId) . '/' . urlencode($userActivationHash);
         // $mailBody = Application::config('EMAIL_VERIFICATION_CONTENT') ;
         // $mailBody .= '<a href="'. Application::getUrl() . Application::config('EMAIL_VERIFICATION_URL') ;
         // $mailBody .=  '/' . urlencode($user_id) . '/' . urlencode($user_activation_hash) ;
@@ -258,12 +268,41 @@ class UserRegistrationModel extends UserModel
         // $body = Mail::getHtmlMailString(Application::config('APP_NAME'), Application::config('EMAIL_PASSWORD_RESET_SUBJECT'), 
         // $mailBody, $mailFooter);
 
+
+        if ($useHtml){
+            $builder =  EmailBuilder::getEmailBuilder();
+            EmailBuilder::createHeader($builder, $mailSubject, '');
+            EmailBuilder::createContent($builder, [$intro, $message]);
+            EmailBuilder::createButton($builder, $linkTitle, $linkUrl);
+            EmailBuilder::createContent($builder, [$politePhrase, $mailSignature]);
+            EmailBuilder::createFooter($builder, $appName, $mailCopyright);
+            $content = $builder->getHtml();
+
+        } else {
+            $content  = $intro ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $message ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $linkTitle . PHP_EOL . $linkUrl ;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $politePhrase ;
+            $content .= PHP_EOL ;
+            $content .= $mailSignature;
+            $content .= PHP_EOL ;
+            $content .= PHP_EOL ;
+            $content .= $appName . ' | ' . $mailCopyright ;
+        }
+
         $mail = new Mailer();
         $mailSent = $mail->sendMail($userEmail, 
             self::config('AUTH_EMAIL_FROM_EMAIL'),
             self::config('AUTH_EMAIL_FROM_NAME'), 
-            self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_SUBJECT'), 
-            $body, false
+            $mailSubject, 
+            $content, 
+            $useHtml
         );
 
         return $mailSent ? true : false;

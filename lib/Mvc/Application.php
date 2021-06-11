@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.6
+ * @version    0.9.7
  * @copyright  2017-2021 Kristuff
  */
 
@@ -62,11 +62,7 @@ class Application
         self::$config = new Config();
         
         // load default config
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-core.conf.php');
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-auth.conf.php');
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-data.conf.php');
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-captcha.conf.php');
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb-mailer.conf.php');
+        $this->loadConfigFile(__DIR__ . '/../../config/miniweb.conf.php');
         
         // Overwrite default config
         $this->loadLocalConfig();
