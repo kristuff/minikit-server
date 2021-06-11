@@ -37,14 +37,15 @@ return array(
 	"LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY"        => "Username or password field was empty.",
 	"LOGIN_ERROR_NAME_OR_PASSWORD_WRONG"        => "The username or password is incorrect. Please try again.",
    
+    /* auth */
+    'AUTH_EMAIL_POLITE_PHRASE'                  => 'Regards,', 
+    'AUTH_EMAIL_SIGNATURE'                      => 'The %s team', 
+
     /* login cookie */
     "LOGIN_COOKIE_ERROR_INVALID"                => "Your remember-me-cookie is invalid.",
 	"LOGIN_COOKIE_SUCCESSFUL"                   => "You were successfully logged in via the remember-me-cookie.",
    
     /* login recovery */
-    'LOGIN_RECOVERY_TITLE'                      => "Request a password reset",
-    'LOGIN_RECOVERY_TEXT'                       => "Enter your username or email and you'll get a mail with instructions:", 
-    'LOGIN_RECOVERY_BUTTON'                     => "Send me a password-reset mail", 
 	'LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'     => "Username or email field was empty.",
     'LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL'     => "Could not write token to database.",
     'LOGIN_RECOVERY_MAIL_SENDING_ERROR'         => "Password reset mail could not be sent due to: ",
@@ -52,8 +53,12 @@ return array(
     'LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'        => "Username/Verification code combination does not exist.",
     'LOGIN_RECOVERY_MAIL_LINK_VALIDATED'        => "Password reset validation link is valid. Please change the password now.",
 	'LOGIN_RECOVERY_MAIL_LINK_EXPIRED'          => "Your reset link has expired. Please use the reset link within one hour.",
-
-    'xx'            => 'If you did not initiate this account recovery request, just ignore this email. We’ll keep your account safe.' ,
+    'LOGIN_RECOVERY_EMAIL_SUBJECT'              => 'Password reset request for %s',
+    'LOGIN_RECOVERY_EMAIL_INTRO'                => "We received an account recovery request on %s for %s.",
+    'LOGIN_RECOVERY_EMAIL_LINK_MESSAGE'         => "If you initiated this request, click on link bellow to reset your password:",
+    'LOGIN_RECOVERY_EMAIL_LINK_TITLE'           => 'Reset my password', 
+    'LOGIN_RECOVERY_EMAIL_EXPIRE_NOTICE'        => "Don't wait! This link will expire on within one hour.", 
+    'LOGIN_RECOVERY_EMAIL_NOT_YOU_NOTICE'       => "If you did not initiate this account recovery request, just ignore this email. We’ll keep your account safe.", 
 
     /* user errors */
     'USER_ID_ERROR_EMPTY'                       => "User id field was empty.",
@@ -91,7 +96,10 @@ return array(
     'USER_NEW_ACCOUNT_MAIL_SENDING_ERROR'       => "Verification mail could not be sent due to: ",
     'USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'    => "Activation was successful! You can now log in.",
 	'USER_NEW_ACCOUNT_ACTIVATION_FAILED'        => "Sorry, no such id/verification code combination here!",
-    'ss' => "It might be possible that your mail provider (Yahoo? Hotmail?) automatically visits links in emails for anti-scam scanning, so this activation link might been clicked without your action. Please try to log in on the main page.",    
+    'USER_SIGNUP_EMAIL_VERIFICATION_SUBJECT'    => 'Account activation for %s on %s',
+    'USER_SIGNUP_EMAIL_VERIFICATION_INTRO'      => "Thank you for creating an account. You have to activate it to be able to connect with this account.",
+    'USER_SIGNUP_EMAIL_VERIFICATION_LINK_MESSAGE'    => 'Please click on this link to activate your account: ',
+    'USER_SIGNUP_EMAIL_VERIFICATION_LINK_TITLE' => "Activate my account",
     
     /* user avatar */
 	'USER_AVATAR_UPLOAD_NO_FILE'                => "No upload file found.",
@@ -120,12 +128,10 @@ return array(
     'USER_INVITATION_VALIDATION_SUCCESSFUL'     => 'Please define your user name and password to complete your registration.',
     'USER_INVITATION_EMAIL_SUBJECT'             => 'Invitation received from %s',
     'USER_INVITATION_EMAIL_CONTENT_TITLE'       => 'Welcome!',
-    'USER_INVITATION_EMAIL_CONTENT_PART_1'      => 'You receive this email from %s. An account has been created for you.',
-    'USER_INVITATION_EMAIL_CONTENT_PART_2'      => 'You need to click on link bellow to complete your registration and activate your account. You will be ask to define your user name and a password.',
-    'USER_INVITATION_EMAIL_CONTENT_PART_3'      => 'Don\'t wait ! This link will expire on %s.', 
+    'USER_INVITATION_EMAIL_INTRO'               => 'You receive this email from %s on %s. An account has been created for you.',
+    'USER_INVITATION_EMAIL_LINK_MESSAGE'        => 'You need to click on link bellow to complete your registration and activate your account. You will be ask to define your user name and a password.',
+    'USER_INVITATION_EMAIL_EXPIRE_NOTICE'       => 'Don\'t wait ! This link will expire on %s.', 
     'USER_INVITATION_EMAIL_LINK_TITLE'          => 'Complete registration', 
-    'USER_INVITATION_EMAIL_CONTENT_PART_4'      => 'Regards,', 
-    'USER_INVITATION_EMAIL_SIGNATURE'           => 'The %s team', 
     'USER_INVITATION_EMAIL_SENT_SUCCESSFULLY'   => 'An invitation mail has been sent successfully. The user will need to complete its registration before to log in.', 
     "USER_INVITATION_PROCESS_COMPLETE"          => 'An account has been created successfully (temporary user name: %s) and we have sent an email at %s. <br>This account will not be active until the user completes its registration.' ,
 

@@ -29,6 +29,10 @@ return array(
     'ERROR_INVALID_CAPTCHA'                      => "Le code de sécurité est incorrect.",
     'ERROR_UNKNOWN'                              => "Une erreur inconnue est survenue !",
 
+    /* auth */
+    'AUTH_EMAIL_POLITE_PHRASE'                  => 'Cordialement,', 
+    'AUTH_EMAIL_SIGNATURE'                      => "L'équipe %s", 
+
     /* login error */
     "LOGIN_ERROR_ACCOUNT_DELETED"                => "Votre compte a été supprimé.",
     "LOGIN_ERROR_ACCOUNT_SUSPENDED"              => "Votre compte est suspendu pendant encore %s heure(s).",
@@ -43,17 +47,21 @@ return array(
     
     /* login recovery */
     'LOGIN_RECOVERY_TITLE'                       => "Demander une récupération de mot de passe",
-    'LOGIN_RECOVERY_TEXT'                        => "Entrez votre nom d'utilisateur ou votre adresse email et nous vous enverrons un mail avec des instructions :", 
+    'LOGIN_RECOVERY_TEXT'                        => "Entrez votre nom d'utilisateur ou votre adresse email et nous vous enverrons un email avec des instructions.", 
     'LOGIN_RECOVERY_BUTTON'                      => "Envoyer un mail de récupération", 
     'LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'      => "Le nom d'utilisateur ou l'adresse email étaient vide.",
     'LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL'      => "Impossible d'écrire le tocken dans la base de données.",
     'LOGIN_RECOVERY_MAIL_SENDING_ERROR'          => "Le mail récupération de mot de passe n'a pas pu être envoyé : ",
-    'LOGIN_RECOVERY_SUCCESSFUL_HANDLING'         => "Votre demande a été enregistrée. Nous avons envoyé un mail avec des instructions. Surveillez votre boite le réception.",
+    'LOGIN_RECOVERY_SUCCESSFUL_HANDLING'         => "Votre demande a été enregistrée. Nous vous avons envoyé un mail avec des instructions. Surveillez votre boite de réception.",
     'LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'         => "La combinaison nom d'utilisateur/code de vérification est incorrecte.",
     'LOGIN_RECOVERY_MAIL_LINK_VALIDATED'         => "Le lien de récupération est correct. Vous pouvez changer votre mot de passe.",
     'LOGIN_RECOVERY_MAIL_LINK_EXPIRED'           => "Le lien de récupération a expiré. Le lien expire au bout d'une heure.",
-
-    'xx'            => 'If you did not initiate this account recovery request, just ignore this email. We’ll keep your account safe.' ,
+    'LOGIN_RECOVERY_EMAIL_SUBJECT'               => "Demande de récupération de mot de passe reçue pour %s",
+    'LOGIN_RECOVERY_EMAIL_INTRO'                 => "Nous avons reçu une demande de récupération de mot de passe pour %s sur %s.",
+    'LOGIN_RECOVERY_EMAIL_LINK_MESSAGE'          => "Si vous avez initié cette demande, cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :",
+    'LOGIN_RECOVERY_EMAIL_LINK_TITLE'            => 'Réinitialiser mon mot de passe', 
+    'LOGIN_RECOVERY_EMAIL_EXPIRE_NOTICE'         => "N'attendez pas ! Ce lien expirera dans une heure.", 
+    'LOGIN_RECOVERY_EMAIL_NOT_YOU_NOTICE'        => "Si vous n'avez pas effectué cette demande de récupération de compte, veuillez simplement ignorer cet e-mail. Nous garderons votre compte en sécurité.", 
 
     /* user errors */
     'USER_ID_ERROR_EMPTY'                       => "Le champ 'User id' était vide.",
@@ -91,7 +99,11 @@ return array(
     'USER_NEW_ACCOUNT_MAIL_SENDING_ERROR'       => "Le mail de vérification n'a pas pu être envoyé. ",
     'USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'    => "L'activation a réussi ! Vous pouvez vous connecter dès maintenant.",
     'USER_NEW_ACCOUNT_ACTIVATION_FAILED'        => "Désolé, le code de vérification ne peut être vérifié ! Il est possible que automatically visits links in emails for anti-scam scanning, so this activation link might been clicked without your action. Please try to log in on the main page.",
-    
+    'USER_SIGNUP_EMAIL_VERIFICATION_SUBJECT'    => 'Activation du compte %s sur %s',
+    'USER_SIGNUP_EMAIL_VERIFICATION_INTRO'      => "Merci d'avoir créé un compte. Il vous reste à l'activer pour pouvoir vous connecter avec ce compte.",
+    'USER_SIGNUP_EMAIL_VERIFICATION_LINK_MESSAGE'    => 'Veuillez cliquer sur le lien pour activer votre compte : ',
+    'USER_SIGNUP_EMAIL_VERIFICATION_LINK_TITLE' => "Activer mon compte",
+
     /* user avatar */
     'USER_AVATAR_UPLOAD_NO_FILE'                => "Aucun fichier n'a été envoyé.",
     'USER_AVATAR_UPLOAD_FAILED'                 => "Une erreur est survenue durant le téléchargement de l'image.",
@@ -119,16 +131,10 @@ return array(
     'USER_INVITATION_VALIDATION_SUCCESSFUL'     => "Veuillez définir votre nom d'utilisateur et votre mot de passe pour terminer votre inscription",
     'USER_INVITATION_EMAIL_SUBJECT'             => 'Invitation reçue de %s',
     'USER_INVITATION_EMAIL_CONTENT_TITLE'       => 'Bienvenue !',
-    'USER_INVITATION_EMAIL_CONTENT_PART_1'      => "Vous recevez cet e-mail de %s. Un compte a été créé pour vous.",
-    'USER_INVITATION_EMAIL_CONTENT_PART_2'      => "Vous devez cliquer sur le lien ci-dessous pour terminer votre inscription et activer votre compte. Il vous sera demandé de définir votre nom d'utilisateur et un mot de passe.",
-    'USER_INVITATION_EMAIL_CONTENT_PART_3'      => "N'attendez pas ! Ce lien expirera le %s.",
+    'USER_INVITATION_EMAIL_INTRO'               => "Vous recevez cet e-mail de %s. Un compte a été créé pour vous.",
+    'USER_INVITATION_EMAIL_LINK_MESSAGE'        => "Vous devez cliquer sur le lien ci-dessous pour terminer votre inscription et activer votre compte. Il vous sera demandé de définir votre nom d'utilisateur et un mot de passe.",
+    'USER_INVITATION_EMAIL_EXPIRE_NOTICE'       => "N'attendez pas ! Ce lien expirera le %s.",
     'USER_INVITATION_EMAIL_LINK_TITLE'          => "Terminer l'inscription",
-    'USER_INVITATION_EMAIL_CONTENT_PART_4'      => "Cordialement,",
-    'USER_INVITATION_EMAIL_CONTENT_PART_2'      => 'You need to click on link bellow to complete your registration and activate your account. You will be ask to define your user name and a password.',
-    'USER_INVITATION_EMAIL_CONTENT_PART_3'      => 'Don\'t wait ! This link will expire on %s.', 
-    'USER_INVITATION_EMAIL_LINK_TITLE'          => 'Complete registration', 
-    'USER_INVITATION_EMAIL_CONTENT_PART_4'      => 'Regards,', 
-    'USER_INVITATION_EMAIL_SIGNATURE'           => "L'équipe %s", 
     'USER_INVITATION_EMAIL_SENT_SUCCESSFULLY'   => "Un e-mail d'invitation a été envoyé avec succès. L'utilisateur devra compléter son inscription avant de se connecter.",
     "USER_INVITATION_PROCESS_COMPLETE"          => "Un compte a été créé avec succès (nom d'utilisateur temporaire : %s) et nous avons envoyé un email à %s. <br>Ce compte ne sera pas actif tant que l'utilisateur n'aura pas terminé son inscription." , 
 
