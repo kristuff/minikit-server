@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.7
+ * @version    0.9.8
  * @copyright  2017-2021 Kristuff
  */
 
@@ -193,7 +193,7 @@ class AppSettingsModel extends UserModel
     {
         return $database->table('app_setting')
                         ->create()
-                        ->column('settingId',    'int',         ' NOT NULL', 'PK',  'AI')               
+                        ->column('settingId',    'int',          'NOT NULL', 'PK',  'AI')               
                         ->column('settingName',  'varchar(64)',  'NULL')
                         ->column('settingValue', 'varchar(255)', 'NULL')
                         ->execute();

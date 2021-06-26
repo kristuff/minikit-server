@@ -196,11 +196,11 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($app->handleRequest());
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         $this->assertStringContainsString('Content-Type: application/json', $headers);
         $this->assertEquals(201, http_response_code()); 

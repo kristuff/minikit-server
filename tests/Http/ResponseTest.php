@@ -18,11 +18,11 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         Response::setError404();
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         //$this->assertStringContainsString('HTTP/1.0 404 Not Found', $headers);
         //$this->assertEquals(404, http_response_code()); 
@@ -36,11 +36,11 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(!$isWrong, Response::setStatus($statusCode));
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         if (!empty($expectedHeader)){
             $this->assertStringContainsString($expectedHeader, $headers);

@@ -143,7 +143,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($app->handleRequest());
 
-        $header = print_r(xdebug_get_headers(), true);
+        $header = print_r(\xdebug_get_headers(), true);
         $this->assertStringContainsString('Set-Cookie: test=value;', $header);
         $this->assertStringContainsString('; Max-Age=22222;', $header); 
         $this->assertStringContainsString('; expires=', $header); // ...

@@ -15,7 +15,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
     public function testPathIsReadable()
     {
         $this->assertTrue(Path::exists('/tmp'));
-        $this->assertTrue(Path::isReadable('/home/travis/build'));
+        $this->assertTrue(Path::isReadable('/home/scrutinizer/build'));
         $this->assertFalse(Path::isReadable('/home/totototo'));
         // TODO+ real existing non readable path
     }
@@ -37,7 +37,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
         
         // don't know the real path so 
         $dir = Path::getDirName($path);
-        $this->assertEquals($dir, '/home/travis/build/kristuff/miniweb/tests/_data/model');
+        $this->assertEquals($dir, '/home/scrutinizer/build/tests/_data/model');
     }
 
     public function testPathFileExists()

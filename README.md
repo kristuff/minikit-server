@@ -1,7 +1,7 @@
 # Miniweb
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/kristuff/miniweb/?branch=main)
-[![Build Status](https://travis-ci.org/kristuff/miniweb.svg?branch=main)](https://travis-ci.org/kristuff/miniweb)
+[![Build Status](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/build.png?b=main)](https://scrutinizer-ci.com/g/kristuff/miniweb/build-status/main)
 [![codecov](https://codecov.io/gh/kristuff/miniweb/branch/main/graph/badge.svg?token=8e9XoS8HnV)](https://codecov.io/gh/kristuff/miniweb)
 [![Latest Stable Version](https://poser.pugx.org/kristuff/miniweb/v/stable)](https://packagist.org/packages/kristuff/miniweb)
 [![License](https://poser.pugx.org/kristuff/miniweb/license)](https://packagist.org/packages/kristuff/miniweb)
