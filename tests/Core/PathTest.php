@@ -37,7 +37,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
         
         // don't know the real path so 
         $dir = Path::getDirName($path);
-        $this->assertEquals($dir, '/home/travis/build/kristuff/miniweb/tests/_data/model');
+        $this->assertEquals($dir, '/home/scrutinizer/build/tests/_data/model');
     }
 
     public function testPathFileExists()
