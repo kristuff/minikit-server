@@ -22,11 +22,11 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         Redirect::url('http://www.example.com/', 302, true);
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         // this test should failed, 
         // but won't be reported as exit() should be called by Redirect::url() 
@@ -46,11 +46,11 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         Redirect::url('http://www.example.com/', 302, false);
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         $this->assertStringContainsString('Location: http://www.example.com/', $headers);
         $this->assertEquals(302, http_response_code()); 
@@ -68,11 +68,11 @@ class RedirectTest extends \PHPUnit\Framework\TestCase
         Redirect::url('http://www.example.com/', 301);
 
         /**
-         * use xdebug_get_headers() to retreive header as headers_list() wont 
+         * use \xdebug_get_headers() to retreive header as headers_list() wont 
          * return statut header (tested and confirmed in comment from 
          * http://www.php.net/headers_list)
          */
-        $headers =  print_r(xdebug_get_headers(), TRUE);
+        $headers =  print_r(\xdebug_get_headers(), TRUE);
 
         $this->assertStringContainsString('Location: http://www.example.com/', $headers);
         $this->assertEquals(301, http_response_code()); 

@@ -15,7 +15,7 @@ class PathTest extends \PHPUnit\Framework\TestCase
     public function testPathIsReadable()
     {
         $this->assertTrue(Path::exists('/tmp'));
-        $this->assertTrue(Path::isReadable('/home/travis/build'));
+        $this->assertTrue(Path::isReadable('/home/scrutinizer/build'));
         $this->assertFalse(Path::isReadable('/home/totototo'));
         // TODO+ real existing non readable path
     }
