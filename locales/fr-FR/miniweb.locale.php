@@ -121,9 +121,9 @@ return array(
     'USER_ACCOUNT_ERROR_DELETE_SUSPEND_OWN'             => 'Vous ne pouvez pas supprimer ou suspendre votre propre compte.',
     'USER_ACCOUNT_SUSPENSION_DELETION_STATUS_CHANGED'   => "Le status de suspension / suppression  de l'utilisateur a été modifié.",
     'USER_ACCOUNT_SUCCESSFULLY_KICKED'                  => "L'utilisateur sélectionné a été expulsé du système avec succès.",
-    'USER_ACCOUNT_SUCCESSFULLY_DELETED'                 => "Le compte de utilisateur a été supprimé avec succès.",
+    'USER_ACCOUNT_SUCCESSFULLY_DELETED'                 => "Le compte utilisateur a été supprimé avec succès.",
     'USER_ACCOUNT_ERROR_DELETETION_FAILED'              => "La suppression du compte utilisateur a échoué !",
-    'USER_ACCOUNT_SUCCESSFULLY_CREATED'                 => "Le compte de utilisateur a été créé avec succès.",
+    'USER_ACCOUNT_SUCCESSFULLY_CREATED'                 => "Le compte utilisateur a été créé avec succès.",
     'USER_ACCOUNT_SUSPENSION_ERROR_DAYS'                => "Les jours de suspension étaient invalides.",
     
     /* user invitation */
