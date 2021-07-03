@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.8
+ * @version    0.9.9
  * @copyright  2017-2021 Kristuff
  */
 
@@ -119,8 +119,17 @@ class AppSettingsModel extends UserModel
         $query = self::database()->update('app_setting')
                                  ->setValue('settingValue', $value)
                                  ->whereEqual('settingName', $settingName);
+        
+        if ($query->execute() && $query->rowCount() === 1){
+            return true;
+        } else {
+            // try to insert missing parameter
+            $query = self::database()->insert('app_setting')
+                ->setValue('settingValue', $value)
+                ->setValue('settingName', $settingName);
 
-        return $query->execute() && $query->rowCount() === 1;          
+            return $query->execute() && $query->rowCount() === 1;
+        }          
     }
 
     /** 
