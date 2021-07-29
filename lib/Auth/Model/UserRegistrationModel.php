@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.9
+ * @version    0.9.10
  * @copyright  2017-2021 Kristuff
  */
 
@@ -98,9 +98,9 @@ class UserRegistrationModel extends UserModel
 
             // crypt the password with the PHP 5.5's password_hash() function, results in a 60 character hash string.
             // @see php.net/manual/en/function.password-hash.php for more, especially for potential options
-            // and generate random hash for email verification (40 char string)
+            // and generate random hash for email verification (40 char bytes)
             $userPasswordHash = password_hash($userPassword, PASSWORD_DEFAULT);
-            $userActivationHash = sha1(uniqid(mt_rand(), true));
+            $userActivationHash = bin2hex(random_bytes(40));
 
             // write user data to database
             if ($response->assertTrue(self::writeNewUser($userEmail, $userName, $userPasswordHash, $userActivationHash), 500, 
@@ -219,7 +219,7 @@ class UserRegistrationModel extends UserModel
      * was not successful.
      *
      * @access protected
-     * @method static
+     * @static
      * @param  int              $useId                  The user's id
      *
      * @return bool
@@ -235,7 +235,7 @@ class UserRegistrationModel extends UserModel
      * Sends the verification email to confirm the account.
      *
      * @access protected
-     * @method static
+     * @static
      * @param int       $userId                 The user's id
      * @param string    $userEmail              The user's email
      * @param string    $userActivationHash     The user's mail verification hash string
@@ -254,20 +254,6 @@ class UserRegistrationModel extends UserModel
         $politePhrase     = self::text('AUTH_EMAIL_POLITE_PHRASE');
         $mailSignature    = sprintf(self::text('AUTH_EMAIL_SIGNATURE'), $appName);
         $mailCopyright    = "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
-
-        // TODO Html mai
-        // TODO locale
-        // create email body
-        //$body = self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_CONTENT') . ' ' . Application::getUrl() .
-        //        self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_URL') . '/' . urlencode($userId) . '/' . urlencode($userActivationHash);
-        // $mailBody = Application::config('EMAIL_VERIFICATION_CONTENT') ;
-        // $mailBody .= '<a href="'. Application::getUrl() . Application::config('EMAIL_VERIFICATION_URL') ;
-        // $mailBody .=  '/' . urlencode($user_id) . '/' . urlencode($user_activation_hash) ;
-        // $mailBody .=  '" style="color:#f26522">Activate my account now</a>' ;
-        // $mailFooter = "Copyright ". (date("Y"))." ". Application::config('FOOTER_COPYRIGHT');
-        // $body = Mail::getHtmlMailString(Application::config('APP_NAME'), Application::config('EMAIL_PASSWORD_RESET_SUBJECT'), 
-        // $mailBody, $mailFooter);
-
 
         if ($useHtml){
             $builder =  EmailBuilder::getEmailBuilder();
