@@ -88,10 +88,10 @@ class UserRecoveryModel extends UserModel
                 if ($user !== false) {
 
                     // generate integer-timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
-                    // generate random hash for email password reset verification (40 char string)
+                    // generate random hash for email password reset verification (40 char bytes)
                     // expire in one hour (3600 secs)
                     $tempTimestamp = time() + 3600 ;
-                    $userPasswordResetHash = sha1(uniqid(mt_rand(), true)); //TODO
+                    $userPasswordResetHash = bin2hex(random_bytes(40)); //TODO
 
                     // set token (= a random hash string and a timestamp) into database ...
                     // and send a mail to the user, containing a link with username and token hash string

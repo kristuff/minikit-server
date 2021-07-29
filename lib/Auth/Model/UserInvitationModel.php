@@ -101,8 +101,8 @@ class UserInvitationModel extends UserRegistrationModel
                 self::validateUserEmailPattern($response, $userEmail, $userEmail) &&
                 self::validateUserEmailNoConflict($response, $userEmail)){
 
-                // generate random hash for email verification (40 char string)
-		        $userActivationHash = sha1(uniqid(mt_rand(), true));
+                // generate random hash for email verification (40 char bytes)
+		        $userActivationHash = bin2hex(random_bytes(40));
 
 		        // write user data to database WITHOUT PASSWORD
 		        if ($response->assertTrue(self::writeNewUser($userEmail, $userName, null, $userActivationHash), 500, 

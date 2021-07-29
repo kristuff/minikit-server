@@ -91,7 +91,6 @@ class UserAdminModel extends UserLoginModel
                 
             // crypt the password with the PHP 5.5's password_hash() function, results in a 60 character hash string.
 		    // @see php.net/manual/en/function.password-hash.php for more, especially for potential options
-            // and generate random hash for email verification (40 char string)
 		    $userPasswordHash = password_hash($userPassword, PASSWORD_DEFAULT);
 		
             // write user data to database
