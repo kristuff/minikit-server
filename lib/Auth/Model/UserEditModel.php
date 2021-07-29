@@ -30,7 +30,7 @@ class UserEditModel extends UserModel
     /** 
      * Edit the user's name
      * 
-     * @method static
+     * @static
      * @access public
      * @param  string   $newName        The new user's name
      * @param  string   $token          The token
@@ -73,7 +73,7 @@ class UserEditModel extends UserModel
     /** 
      * Edit the user's email
      *
-     * @method static
+     * @static
      * @access public
      * @param string        $newEmail           The new user's email
      * @param string        $token              The token value
@@ -173,7 +173,7 @@ class UserEditModel extends UserModel
      * Writes new username to database
      *
      * @access private
-     * @method static
+     * @static
      * @param  int          $userId             The user's id.
      * @param  string       $newName            The new user's name.
      *
@@ -192,7 +192,7 @@ class UserEditModel extends UserModel
      * Writes new email address to database
      *
      * @access private
-     * @method static
+     * @static
      * @param  int          $userId             The user's id.
      * @param  string       $newEmail           The new user's email address.
      *
@@ -211,7 +211,7 @@ class UserEditModel extends UserModel
 	 * Writes the new password hash to the database
 	 *
      * @access private
-     * @method static
+     * @static
      * @param  int          $userId             The user's id.
 	 * @param  string       $passwordHash       The hashed user's password
 	 *

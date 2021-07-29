@@ -222,7 +222,7 @@ class UserAdminModel extends UserLoginModel
 	 * Deletes the user from user table and delete its settings
 	 *
      * @access public
-     * @method static
+     * @static
      * @param  int          $userId             The user's id
      * @param  string       $token              The token
      *

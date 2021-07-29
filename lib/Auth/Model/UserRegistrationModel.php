@@ -219,7 +219,7 @@ class UserRegistrationModel extends UserModel
      * was not successful.
      *
      * @access protected
-     * @method static
+     * @static
      * @param  int              $useId                  The user's id
      *
      * @return bool
@@ -235,7 +235,7 @@ class UserRegistrationModel extends UserModel
      * Sends the verification email to confirm the account.
      *
      * @access protected
-     * @method static
+     * @static
      * @param int       $userId                 The user's id
      * @param string    $userEmail              The user's email
      * @param string    $userActivationHash     The user's mail verification hash string
@@ -254,20 +254,6 @@ class UserRegistrationModel extends UserModel
         $politePhrase     = self::text('AUTH_EMAIL_POLITE_PHRASE');
         $mailSignature    = sprintf(self::text('AUTH_EMAIL_SIGNATURE'), $appName);
         $mailCopyright    = "Copyright ". (date("Y"))." ".self::config('APP_COPYRIGHT');
-
-        // TODO Html mai
-        // TODO locale
-        // create email body
-        //$body = self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_CONTENT') . ' ' . Application::getUrl() .
-        //        self::config('AUTH_SIGNUP_EMAIL_VERIFICATION_URL') . '/' . urlencode($userId) . '/' . urlencode($userActivationHash);
-        // $mailBody = Application::config('EMAIL_VERIFICATION_CONTENT') ;
-        // $mailBody .= '<a href="'. Application::getUrl() . Application::config('EMAIL_VERIFICATION_URL') ;
-        // $mailBody .=  '/' . urlencode($user_id) . '/' . urlencode($user_activation_hash) ;
-        // $mailBody .=  '" style="color:#f26522">Activate my account now</a>' ;
-        // $mailFooter = "Copyright ". (date("Y"))." ". Application::config('FOOTER_COPYRIGHT');
-        // $body = Mail::getHtmlMailString(Application::config('APP_NAME'), Application::config('EMAIL_PASSWORD_RESET_SUBJECT'), 
-        // $mailBody, $mailFooter);
-
 
         if ($useHtml){
             $builder =  EmailBuilder::getEmailBuilder();
