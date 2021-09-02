@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.10
+ * @version    0.9.11
  * @copyright  2017-2021 Kristuff
  */
 
@@ -19,6 +19,27 @@
  * Texts used in the application.
  */
 return array(
+
+    /* system */
+    'LOCAL_NAME'                                => "English",
+    'LOCAL_CODE'                                => "en-US",
+
+    /* time */
+    'TIME_YEAR'                                 => "year",
+    'TIME_MONTH'                                => "month",
+    'TIME_DAY'                                  => "day",
+    'TIME_HOUR'                                 => "hour",
+    'TIME_MINUTE'                               => "minute",
+    'TIME_SECOND'                               => "second",
+    'REL_TIME_YEAR'                             => "%d year%s ago",
+    'REL_TIME_MONTH'                            => "%d month%s ago",
+    'REL_TIME_DAY'                              => "%d day%s ago",
+    'REL_TIME_WEEK'                             => "%d week%s ago",
+    'REL_TIME_HOUR'                             => "%d hour%s ago",
+    'REL_TIME_MINUTE'                           => "%d minute%s ago",
+    'REL_TIME_SECOND'                           => "%d second%s ago",
+
+
 
     /* commons errors */
     'ERROR_INVALID_REQUEST'                     => "Invalid request",

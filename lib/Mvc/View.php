@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.10
+ * @version    0.9.11
  * @copyright  2017-2021 Kristuff
  */
 
@@ -58,7 +58,7 @@ class View
      * This is important to avoid XSS attacks, and attempts to inject malicious code in your page.
      *
      * @access public
-     * @param  string   $str    The string.
+     * @param string    $str    The string.
      * 
      * @return string
      */
@@ -71,7 +71,7 @@ class View
      * Gets/returns the data value for the given key
      *
      * @access public
-     * @param  string   $key        The key
+     * @param string    $key        The key
      *
      * @return mixed    The key value is the key exists, otherwise null.
      */
@@ -84,12 +84,12 @@ class View
      * Set the data value for the given key
      *
      * @access public
-     * @param  string   $key        The key
-     * @param  mixed    $value      The key value
+     * @param string    $key        The key
+     * @param mixed     $value      The key value
      *
      * @return void
      */
-    public function setData(string $key, $value)
+    public function setData(string $key, $value): void
     {
         $this->data[$key] = $value;
     }   
@@ -98,7 +98,7 @@ class View
      * Add data 
      *
      * @access public
-     * @param  array    $data       The key/value array
+     * @param array     $data       The key/value array
      *
      * @return void
      */
@@ -111,8 +111,8 @@ class View
      * Gets/returns the locale value for the given key (localized apps)
      *
      * @access public
-     * @param  string   $key        The key
-     * @param  string   $locale     (optional) The locale to use. Default is null so the default one is used.
+     * @param string    $key        The key
+     * @param string    $locale     (optional) The locale to use. Default is null so the default one is used.
      *
      * @return mixed    The key value is the key exists, otherwise null.
      */
@@ -125,9 +125,9 @@ class View
      * Gets/returns the locale value for the given key in given section (localized apps)
      *
      * @access public
-     * @param  string   $key        The key
-     * @param  string   $section    The application section
-     * @param  string   $locale     The locale to use (the default is used if null). (optional)
+     * @param string    $key        The key
+     * @param string    $section    The application section
+     * @param string    $locale     The locale to use (the default is used if null). (optional)
      *
      * @return mixed    The key value is the key exists, otherwise null.
      */
@@ -141,9 +141,9 @@ class View
      * Includes file(s) to be rendered
      *
      * @access public
-     * @param  array|string     $files          Path of view(s) to include, usually folder(s)/file(s)
-     * @param  array            $data           (optional) The data to be passed to the view. Default is an empty array.
-     * @param  string           $template       (optional) The template to use.
+     * @param array|string  $files          Path of view(s) to include, usually folder(s)/file(s)
+     * @param array         $data           (optional) The data to be passed to the view. Default is an empty array.
+     * @param string        $template       (optional) The template to use.
      *
      * @return bool         true if the files exist and have been included, otherwise false
      */
@@ -190,7 +190,7 @@ class View
      *
      * @return void
      */
-    public function renderJson(array $data = [], int $httpCode = 200)
+    public function renderJson(array $data = [], int $httpCode = 200): void
     {
         // clear the old headers
         header_remove();
@@ -215,12 +215,12 @@ class View
      * Renders jpeg Image 
      *
      * @access public
-     * @param  array    $image         The image data.
-     * @param  int      $quality       (optional) The image quality. Default is 90.
+     * @param resource  $image         The image data.
+     * @param int       $quality       (optional) The image quality. Default is 90.
      *
      * @return void
      */
-    public function renderJpeg($image, $quality = 90)
+    public function renderJpeg($image, int $quality = 90): void
     {
         // define header
 		header('Content-type: image/jpeg');
@@ -236,12 +236,12 @@ class View
      * Renders jpeg Image 
      *
      * @access public
-     * @param  array    $image         The image data.
-     * @param  int      $quality       (optional) The image quality. Default is 90.
+     * @param resource  $image         The image data.
+     * @param int       $quality       (optional) The image quality. Default is 90.
      *
      * @return void
      */
-    public function renderPng(string $image, int $quality = 90)
+    public function renderPng(string $image, int $quality = 90): void
     {
         // define header
 		header('Content-type: image/png');
@@ -253,15 +253,15 @@ class View
         imagedestroy($image);
     }
 
-   /** 
-    * Renders js file
-    *
-    * @access public
-    * @param  string    $filePath       The full path file to render
-    *
-    * @return void
-    */
-    public function renderJs(string $filePath)
+    /** 
+     * Renders js file
+     *
+     * @access public
+     * @param string    $filePath       The full path file to render
+     *
+     * @return void
+     */
+    public function renderJs(string $filePath): void
     {
         // set content-type
         header('Content-Type: application/javascript', true);
@@ -274,11 +274,11 @@ class View
     * Renders audio file
     *
     * @access public
-    * @param  string    $filePath       The full file path to render
+    * @param string     $filePath       The full file path to render
     *
     * @return void
     */
-    public function renderAudio(string $filePath)
+    public function renderAudio(string $filePath): void
     {
         // set content-type
         header("Content-Type:audio/mpeg"); 

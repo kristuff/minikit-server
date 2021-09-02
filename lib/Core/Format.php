@@ -11,11 +11,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.10
+ * @version    0.9.11
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Core;
+
+use Kristuff\Miniweb\Auth\TextHelper;
+use Kristuff\Miniweb\Mvc\Application;
 
 /**
  * Class Format
@@ -130,6 +133,73 @@ class Format
         }
         
         return round($filesize, $precision).' '.$units[$idUnit].'B';
+    }
+
+    /**
+     * Get a localized message according to given key.
+     *
+     * @access public
+     * @static
+     * @param string     $localKey              The key in local file              
+     * @param mixed      $diff                  
+     *
+     * @return string            
+     */
+    private static function formatRelativeTime(string $localKey, $diff)
+    {
+        
+        $mask = TextHelper::text($localKey);
+        $plur = ($diff > 1 && substr($mask, -3, 1) !== 's') ? 's' : '';
+        return sprintf($mask, $diff, $plur);
+    }
+
+    /**
+     * Returns the relative time compared to the given date.
+     *
+     * @access public
+     * @static
+     * @param int       $timestamp              
+     * @param string    $fallbackDateFormat     The fallback date format
+     *
+     * @return string            
+     */
+    public static function relativeTime(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i')
+    {
+        $diff = time() - $timestamp;
+        if ($diff < 0) {
+            return date($fallbackDateFormat, $timestamp);
+        }
+
+        if ($diff < 60) {
+            return self::formatRelativeTime('REL_TIME_SECOND', $diff);
+        }
+
+        $diff = floor($diff / 60);
+         if ($diff < 60) {
+            return self::formatRelativeTime('REL_TIME_MINUTE', $diff);
+        }
+
+        $diff = floor($diff / 60);
+        if ($diff < 24) {
+            return self::formatRelativeTime('REL_TIME_HOUR', $diff);
+        }
+
+        $diff = floor($diff / 24);
+        if ($diff < 7) {
+            return self::formatRelativeTime('REL_TIME_DAY', $diff);
+        }
+
+        $diff = floor($diff / 7);
+        if ($diff < 4) {
+            return self::formatRelativeTime('REL_TIME_WEEK', $diff);
+        }
+
+        $diff = floor($diff / 4);
+        if ($diff < 12) {
+            return self::formatRelativeTime('REL_TIME_MONTH', $diff);
+        }
+
+        return date($fallbackDateFormat, $timestamp);
     }
 
     /**
