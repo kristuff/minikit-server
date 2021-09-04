@@ -40,7 +40,7 @@ return array(
     'REL_TIME_SECOND'                           => "Il y a %d seconde%s",
 
     /* commons errors */
-    'ERROR_INVALID_REQUEST'                      => "Requête inavalide",
+    'ERROR_INVALID_REQUEST'                      => "Requête invalide",
     'ERROR_PARAM_NULL_OR_EMPTY'                  => "Le paramètre '%s' était vide.",
     'ERROR_INVALID_AUTHENTFICATION'              => "Mauvaise authentification",
     'ERROR_INVALID_PERMISSIONS'                  => "Mauvaises permissions",
