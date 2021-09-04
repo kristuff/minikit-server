@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.11
+ * @version    0.9.12
  * @copyright  2017-2021 Kristuff
  */
 
@@ -147,14 +147,15 @@ class Format
      */
     private static function formatRelativeTime(string $localKey, $diff)
     {
-        
         $mask = TextHelper::text($localKey);
+        
+        // pluralize with 's' if localized mask doesn't end with 's%s'
         $plur = ($diff > 1 && substr($mask, -3, 1) !== 's') ? 's' : '';
         return sprintf($mask, $diff, $plur);
     }
 
     /**
-     * Returns the relative time compared to the given date.
+     * Returns the relative time compared to the given timestamp.
      *
      * @access public
      * @static
@@ -199,7 +200,7 @@ class Format
             return self::formatRelativeTime('REL_TIME_MONTH', $diff);
         }
 
-        return date($fallbackDateFormat, $timestamp);
+        return self::formatRelativeTime('REL_TIME_YEAR', $diff);
     }
 
     /**

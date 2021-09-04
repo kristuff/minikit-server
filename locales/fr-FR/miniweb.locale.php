@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.11
+ * @version    0.9.12
  * @copyright  2017-2021 Kristuff
  */
 
@@ -40,7 +40,7 @@ return array(
     'REL_TIME_SECOND'                           => "Il y a %d seconde%s",
 
     /* commons errors */
-    'ERROR_INVALID_REQUEST'                      => "Requête inavalide",
+    'ERROR_INVALID_REQUEST'                      => "Requête invalide",
     'ERROR_PARAM_NULL_OR_EMPTY'                  => "Le paramètre '%s' était vide.",
     'ERROR_INVALID_AUTHENTFICATION'              => "Mauvaise authentification",
     'ERROR_INVALID_PERMISSIONS'                  => "Mauvaises permissions",

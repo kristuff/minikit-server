@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.11
+ * @version    0.9.12
  * @copyright  2017-2021 Kristuff
  */
 
@@ -37,7 +37,7 @@ class View
      * Include a file to be rendered
      *
      * @access protected
-     * @param  string       $filename       Path of view to include, usually folder/file with extension
+     * @param  string       $filename       Relative path to the view to include, usually folder/file with extension
      *
      * @return bool         true if the file exists and has been included, otherwise false
      */
@@ -138,14 +138,14 @@ class View
 
    
     /**
-     * Includes file(s) to be rendered
+     * Include file(s) to be rendered
      *
      * @access public
      * @param array|string  $files          Path of view(s) to include, usually folder(s)/file(s)
      * @param array         $data           (optional) The data to be passed to the view. Default is an empty array.
      * @param string        $template       (optional) The template to use.
      *
-     * @return bool         true if the files exist and have been included, otherwise false
+     * @return bool         true if the file(s) exist(s) and has/have been included, otherwise false
      */
     public function renderHtml($files, array $data = [], $template = ''): bool
     {
@@ -159,17 +159,14 @@ class View
         // optional header
         $this->includeFile($template.'/header.template.php');
         
-        // if argument is a string
+        // content file|files[]
         if (is_string($files)) {
             $return = $this->includeFile($files);
 
-        // if argument is an array 
         } else if (is_array($files)) {
-
-            // load all files
             foreach($files as $file){
 
-                // return file if a file is not found
+                // return false if a file is not found
                 if (!$this->includeFile($file)){
                     $return = false;   
                 }
@@ -182,7 +179,7 @@ class View
     }
 
     /** 
-     * Renders JSON data
+     * Render JSON data
      *
      * @access public
      * @param  array    $data          The data to render
@@ -192,19 +189,11 @@ class View
      */
     public function renderJson(array $data = [], int $httpCode = 200): void
     {
-        // clear the old headers
+        // need to clear the old headers to set status code
         header_remove();
-        
-         // set the header response code                                                        
         Response::setStatus($httpCode);                                             
-        
-        // make sure cache is forced
         header("Cache-Control: no-transform,public,max-age=300,s-maxage=900");  
-        
-        // set content-type
         header('Content-Type: application/json');                               
-       
-        // echo the encoded json data
         echo json_encode($data, JSON_UNESCAPED_UNICODE | 
                                 JSON_UNESCAPED_SLASHES | 
                                 JSON_NUMERIC_CHECK | 
@@ -212,7 +201,7 @@ class View
     }
     
     /** 
-     * Renders jpeg Image 
+     * Render jpeg Image 
      *
      * @access public
      * @param resource  $image         The image data.
@@ -222,18 +211,13 @@ class View
      */
     public function renderJpeg($image, int $quality = 90): void
     {
-        // define header
 		header('Content-type: image/jpeg');
-
-        //render image
         imagejpeg($image, null, $quality);
-        
-        // Free up memory
         imagedestroy($image);
     }
 
     /** 
-     * Renders jpeg Image 
+     * Render jpeg Image 
      *
      * @access public
      * @param resource  $image         The image data.
@@ -241,51 +225,82 @@ class View
      *
      * @return void
      */
-    public function renderPng(string $image, int $quality = 90): void
+    public function renderPng($image, int $quality = 90): void
     {
-        // define header
 		header('Content-type: image/png');
-
-        //render image
         imagepng($image, null, $quality);
-
-        // Free up memory
         imagedestroy($image);
     }
 
     /** 
-     * Renders js file
+     * Render js content
      *
      * @access public
-     * @param string    $filePath       The full path file to render
+     * @param string    $content       The content to render
      *
      * @return void
      */
-    public function renderJs(string $filePath): void
+    public function renderJs(string $content): void
     {
-        // set content-type
         header('Content-Type: application/javascript', true);
-        
-        // Render file
+        echo $content; 
+    }
+
+    /** 
+     * Render audio file
+     *
+     * @access public
+     * @param string     $filePath       The full path to file to render
+     *
+     * @return void
+     */
+    public function renderAudio(string $filePath): void
+    {
+        header("Content-Type:audio/mpeg"); 
+        header("Content-LEngth:". filesize($filePath)); 
         readfile($filePath); 
     }
 
-   /** 
-    * Renders audio file
-    *
-    * @access public
-    * @param string     $filePath       The full file path to render
-    *
-    * @return void
-    */
-    public function renderAudio(string $filePath): void
+    /** 
+     * Render rss/xml content
+     *
+     * @access public
+     * @param string    $content       The content to render
+     *
+     * @return void
+     */
+    public function renderRssXml($content)
     {
-        // set content-type
-        header("Content-Type:audio/mpeg"); 
-        header("Content-LEngth:". filesize($filePath)); 
-        
-        // Render file
-        readfile($filePath); 
+		header('Content-type: application/rss+xml');
+        echo $content; 
+    }
+
+    /** 
+     * Render xml content
+     *
+     * @access public
+     * @param string    $content       The content to render
+     *
+     * @return void
+     */
+    public function renderXml($content)
+    {
+		header('Content-type: text/xml');
+        echo $content; 
+    }
+
+    /** 
+     * Render css content
+     *
+     * @access public
+     * @param string    $content       The content to render
+     *
+     * @return void
+     */
+    public function renderCss($content)
+    {
+		header('Content-type: text/css');
+        echo $content; 
     }
 
     

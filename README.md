@@ -13,7 +13,7 @@ Features
 
 - MVC Rooter system with rewrite url
 - Http helper class: Cookie, Redirect, Request, Session, Server, Response
-- Misc: Localization, Encryption, Token
+- Misc: Localization, Encryption, Token, Feed creator
 - Auth: Login, recovery, registration and invitation
 
 Requirements
