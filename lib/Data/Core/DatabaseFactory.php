@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.12
+ * @version    0.9.13
  * @copyright  2017-2021 Kristuff
  */
 
@@ -41,7 +41,7 @@ class DatabaseFactory
      * Gets or creates a DatabaseFactory Instance
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return DatabaseFactory
      */

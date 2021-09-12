@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.12
+ * @version    0.9.13
  * @copyright  2017-2021 Kristuff
  */
 
@@ -131,7 +131,7 @@ class Rooter
         $this->checkForNoControllerOrAction();
 
          // create and register HttpRequest (after knowing the name/action) 
-        $request = new Http\Request($uri, $method, $this->controllerName, $this->actionName);
+        $request = new Http\Request($uri, $method, $this->controllerName, $this->actionName, $this->parameters);
         Factory::getFactory()->setRequest($request);
 
         // load controller

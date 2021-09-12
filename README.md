@@ -25,7 +25,6 @@ Requirements
 Dependencies
 ----------
 
-- Captcha extension is using [Gregwar/Captcha](https://github.com/Gregwar/Captcha)
 - Mailer extension is using [phpmailer/phpmailer](https://github.com/PHPMailer/PHPMailer)
 - Database extension is using [kristuff/patabase](https://github.com/kristuff/patabase)
 

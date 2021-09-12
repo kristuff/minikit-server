@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.12
+ * @version    0.9.13
  * @copyright  2017-2021 Kristuff
  */
 
@@ -22,6 +22,7 @@ use Kristuff\Miniweb\Mail\Mailer;
 use Kristuff\Miniweb\Mail\EmailBuilder;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Miniweb\Security\CaptchaModel;
 
 /** 
  * Class RegistrationModel
@@ -53,8 +54,7 @@ class UserRegistrationModel extends UserModel
      */
     public static function outputCaptcha()
     {
-        \Kristuff\Miniweb\Security\CaptchaModel::captcha()->create('AUTH_SIGNUP_captcha');
-        \Kristuff\Miniweb\Security\CaptchaModel::captcha()->output();
+        CaptchaModel::captcha()->createAndOutput('AUTH_SIGNUP_captcha');
     }
         
     /**

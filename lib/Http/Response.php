@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.12
+ * @version    0.9.13
  * @copyright  2017-2021 Kristuff
  */
 
@@ -171,7 +171,7 @@ class Response
      * Defines the HTTP 404 header and status code
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return void
      */

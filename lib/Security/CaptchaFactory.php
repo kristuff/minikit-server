@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.12
+ * @version    0.9.13
  * @copyright  2017-2021 Kristuff
  */
 
@@ -35,7 +35,7 @@ class CaptchaFactory
 
     /**
      * @access private
-     * @var Security\Captcha        $captcha        The Captcha instance
+     * @var Security\CaptchaMath        $captcha        The Captcha instance
      */
     private $captcha;
 
@@ -63,12 +63,13 @@ class CaptchaFactory
      * @param int               $witdh          The captcha image width
      * @param int               $height         The captcha image height
      * 
-     * @return Security\Captcha
+     * @return Security\CaptchaMath
      */
-    public function getCaptcha(Http\Session $session, int $width, int $height)
+    public function getCaptcha(Http\Session $session) //, int $width, int $height)
     {
         if (!$this->captcha) {
-            $this->captcha = new Security\Captcha($session, $width, $height);
+            //$this->captcha = new Security\Captcha($session, $width, $height);
+            $this->captcha = new Security\CaptchaMath($session);//, $width, $height);
         }
         return $this->captcha;
     }
