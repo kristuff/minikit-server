@@ -22,6 +22,7 @@ use Kristuff\Miniweb\Mail\EmailBuilder;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 use Kristuff\Miniweb\Mvc\Application;
 use Kristuff\Miniweb\Mail\Mailer;
+use Kristuff\Miniweb\Security\CaptchaModel;
 
 /**
  * Class UserRecoveryModel
@@ -58,8 +59,7 @@ class UserRecoveryModel extends UserModel
      */
     public static function outputCaptcha()
     {
-        \Kristuff\Miniweb\Security\CaptchaModel::captcha()->create('recovery_captcha');
-        \Kristuff\Miniweb\Security\CaptchaModel::captcha()->output();
+        CaptchaModel::captcha()->createAndOutput('recovery_captcha');
     }
     
     /**

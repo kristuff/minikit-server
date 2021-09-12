@@ -18,9 +18,8 @@
 namespace Kristuff\Miniweb\Security;
 
 use Kristuff\Miniweb\Mvc\Model;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Security\Captcha;
 use Kristuff\Miniweb\Security\CaptchaFactory;
+use Kristuff\Miniweb\Security\CaptchaMath;
 
 /** 
  * class CaptchaModel 
@@ -29,23 +28,18 @@ use Kristuff\Miniweb\Security\CaptchaFactory;
  */
 class CaptchaModel extends Model
 {
-    
     /**
      * Gets/Returns the global Captcha instance
      *
-     * The Captcha is build on demand (created the first time function is called)
+     * The Captcha instance is created on demand (created the first time function is called)
      *
      * @access public 
-     * @static method
+     * @static
      *
-     * @return Security\Captcha
+     * @return CaptchaMath
      */
     public static function captcha()
     {
-         return CaptchaFactory::getFactory()->getCaptcha( self::session(), 
-                                                          self::config('CAPTCHA_WIDTH'), 
-                                                          self::config('CAPTCHA_HEIGHT'));
+         return CaptchaFactory::getFactory()->getCaptcha(self::session());
     }
-
-  
 }
