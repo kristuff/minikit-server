@@ -54,6 +54,27 @@ class View
     }
 
     /**
+     * Read and return the content of a file
+     *
+     * @access protected
+     * @param string        $filename       Relative path to the view to include, usually folder/file with extension
+     * @param bool          $addNewLine     Add a trailine new line. Default is true
+     * @param bool          $strictCheck    If false, return empty string instead of false on error. Default is false
+     *  
+     * @return string|bool  False if the file does not exist and strictCheck is true, otherwise the content of the file or
+     *                      empty string
+     */
+    public function getFileContent(string $fileName, bool $addNewLine = true, bool $strictCheck = false)
+    {
+        $content = file_get_contents(Application::config('VIEW_PATH') . $fileName);
+        if ($content === false && $strictCheck === true) {
+            return false;
+        }
+
+        return $content . $addNewLine ? PHP_EOL : '';
+    }
+
+    /**
      * Converts characters to HTML entities
      * This is important to avoid XSS attacks, and attempts to inject malicious code in your page.
      *
@@ -135,7 +156,6 @@ class View
     {
         return Application::textSection($key, $section, $locale);
     }         
-
    
     /**
      * Include file(s) to be rendered
@@ -194,10 +214,7 @@ class View
         Response::setStatus($httpCode);                                             
         header("Cache-Control: no-transform,public,max-age=300,s-maxage=900");  
         header('Content-Type: application/json');                               
-        echo json_encode($data, JSON_UNESCAPED_UNICODE | 
-                                JSON_UNESCAPED_SLASHES | 
-                                JSON_NUMERIC_CHECK | 
-                                JSON_PRETTY_PRINT);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
     }
     
     /** 
@@ -285,7 +302,7 @@ class View
      */
     public function renderXml($content)
     {
-		header('Content-type: text/xml');
+		header('Content-type: text/xml', true);
         echo $content; 
     }
 
@@ -299,7 +316,7 @@ class View
      */
     public function renderCss($content)
     {
-		header('Content-type: text/css');
+        header("Content-type: text/css; charset=utf-8", true); 
         echo $content; 
     }
 
