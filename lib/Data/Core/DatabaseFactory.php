@@ -41,7 +41,7 @@ class DatabaseFactory
      * Gets or creates a DatabaseFactory Instance
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return DatabaseFactory
      */

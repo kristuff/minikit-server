@@ -171,7 +171,7 @@ class Response
      * Defines the HTTP 404 header and status code
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return void
      */

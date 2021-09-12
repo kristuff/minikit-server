@@ -30,7 +30,7 @@ abstract class DatabaseModel extends Model
      * Gets and returns the global Database instance
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return \kristuff\Patabase\Database
      * @throw  ?

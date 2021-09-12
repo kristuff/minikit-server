@@ -68,7 +68,7 @@ class Factory
      * Gets or creates a global static Factory instance
      *
      * @access public
-     * @static method
+     * @static
      *
      * @return Factory
      */
