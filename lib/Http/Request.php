@@ -65,18 +65,24 @@ class Request extends RequestMethod
     protected $actionName = null;
 
     /** 
+     * @var array           $parameters          URL parameters, will be passed to controller's method 
+     */
+    private $parameters = array();
+
+    /** 
      * Constructor
      *
      * @access public
-     * @param   //TODO
+     * @var array           $parameters          URL parameters, will be passed to controller's method 
      */
-    public function __construct(string $uri, string $method = self::METHOD_GET, ?string $controllerName = null, ?string $actionName = null)
+    public function __construct(string $uri, string $method = self::METHOD_GET, ?string $controllerName = null, ?string $actionName = null, array $parameters = [])
     {
         $this->uri      = $uri;
         //TODO check method passed . make case insensitive
         $this->method   = $method;
         $this->controllerName = $controllerName;
         $this->actionName = $actionName;
+        $this->parameters = $parameters;
     }
 
     /** 
@@ -125,6 +131,18 @@ class Request extends RequestMethod
     public function actionName(): string
     {
         return $this->actionName;
+    }
+
+    /** 
+     * Gets/returns the parameters (part after controller name and action in url)
+     *
+     * @access public
+     *
+     * @return array
+     */
+    public function parameters(): array
+    {
+        return $this->parameters;
     }
 
     /** 

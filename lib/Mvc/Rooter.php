@@ -131,7 +131,7 @@ class Rooter
         $this->checkForNoControllerOrAction();
 
          // create and register HttpRequest (after knowing the name/action) 
-        $request = new Http\Request($uri, $method, $this->controllerName, $this->actionName);
+        $request = new Http\Request($uri, $method, $this->controllerName, $this->actionName, $this->parameters);
         Factory::getFactory()->setRequest($request);
 
         // load controller
