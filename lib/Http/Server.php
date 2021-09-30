@@ -119,5 +119,33 @@ class Server
         return self::getServerValue('SERVER_SOFTWARE');
     }
 
+    /**
+     * Gets/returns The name of the server host under which the current script is executing. If the 
+     * script is running on a virtual host, this will be the value defined for that virtual host. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function serverName(): ?string
+    {
+        return self::getServerValue('SERVER_NAME');
+    }
+
+    /**
+     * Gets/returns The value given to the SERVER_ADMIN (for Apache) directive in the web server 
+     * configuration file. If the script is running on a virtual host, this will be the value defined 
+     * for that virtual host. 
+     *
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function serverAdmin(): ?string
+    {
+        return self::getServerValue('SERVER_ADMIN');
+    }    
 
 }
