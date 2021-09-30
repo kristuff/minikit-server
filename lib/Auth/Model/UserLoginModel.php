@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.13
+ * @version    0.9.14
  * @copyright  2017-2021 Kristuff
  */
 
@@ -23,7 +23,6 @@ use Kristuff\Miniweb\Auth\Model\UserModel;
 use Kristuff\Miniweb\Auth\Model\UserSettingsModel;
 use Kristuff\Miniweb\Auth\Model\UserAvatarModel;
 use Kristuff\Miniweb\Http\Request;
-use Kristuff\Miniweb\Http\Server;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 
 /**
