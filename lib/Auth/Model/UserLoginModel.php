@@ -22,6 +22,8 @@ use Kristuff\Miniweb\Security\Encryption;
 use Kristuff\Miniweb\Auth\Model\UserModel;
 use Kristuff\Miniweb\Auth\Model\UserSettingsModel;
 use Kristuff\Miniweb\Auth\Model\UserAvatarModel;
+use Kristuff\Miniweb\Http\Request;
+use Kristuff\Miniweb\Http\Server;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 
 /**
@@ -219,7 +221,7 @@ class UserLoginModel extends UserModel
     public static function loginWithCookie($cookie)
     {
         $response = TaskResponse::create();
-        $errorMsg = self::text('LOGIN_COOKIE_ERROR_INVALID');
+        $errorMsg = ''; //self::text('LOGIN_COOKIE_ERROR_INVALID');
 
         // make sure cookie is set and
         if ( $response->assertFalse(empty($cookie), 400, $errorMsg)){
@@ -290,7 +292,8 @@ class UserLoginModel extends UserModel
 
                     // increment the user not found count, helps mitigate user enumeration
                     self::incrementUserNotFoundCounter();
-
+                    self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
+ 
                     // user does not exist, but we won't to give a potential attacker this details
                     return false;
                 };
@@ -305,6 +308,7 @@ class UserLoginModel extends UserModel
 		    
                         //  +1 failed-login counter
                         self::incrementFailedLoginCounter($user->userName);
+                        self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
                         return false;   
 		            }
 
@@ -569,4 +573,6 @@ class UserLoginModel extends UserModel
         // delete remember_me cookie in browser
         self::cookie()->delete('remember_me');
     }
+
+  
 }
