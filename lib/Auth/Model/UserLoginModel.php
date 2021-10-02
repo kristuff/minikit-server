@@ -230,9 +230,9 @@ class UserLoginModel extends UserModel
             // before list(), check it can be split into 3 strings.
             if ( count (explode(':', $cookieString)) === 3 ) {
 
-                // check cookie's contents, check if cookie contents belong together or token is empty
                 list($userId, $token, $hash) = explode(':', $cookieString);
-
+                
+                // check cookie's contents, check if cookie contents belong together or token is empty
                 if (!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token) ) {
 
                     // get data of user that has this id and this token

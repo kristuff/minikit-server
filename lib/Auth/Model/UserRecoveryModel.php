@@ -297,10 +297,10 @@ class UserRecoveryModel extends UserModel
      *
      * @access protected
      * @static
-     * @param  string   $userName
-     * @param  string   $userPasswordResetHash
-     * @param  string   $newPassword
-     * @param  string   $repeatNewPassword
+     * @param string    $userName
+     * @param string    $userPasswordResetHash
+     * @param string    $newPassword
+     * @param string    $repeatNewPassword
      *
      * @return bool|array
      */
@@ -326,7 +326,7 @@ class UserRecoveryModel extends UserModel
      * @param string    $passwordHash
      * @param string    $passwordResetHash
      *
-     * @return bool     True if the passwordwas succesfully saved, otherwise false.
+     * @return bool     True if the password was succesfully saved, otherwise false.
      */
     protected static function saveNewPasswordByNameAndResetToken($userName, $passwordHash, $passwordResetHash)
     {
