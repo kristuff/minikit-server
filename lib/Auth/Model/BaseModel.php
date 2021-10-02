@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.13
+ * @version    0.9.14
  * @copyright  2017-2021 Kristuff
  */
 
@@ -19,6 +19,7 @@ namespace Kristuff\Miniweb\Auth\Model;
 
 use Kristuff\Miniweb\Auth\TextHelper;
 use Kristuff\Miniweb\Data\Model\DatabaseModel;
+use Kristuff\Miniweb\Http\Server;
 
 /**
  * Class BaseModel 
@@ -58,4 +59,18 @@ abstract class BaseModel extends DatabaseModel
         return self::config('AUTH_EMAIL_HTML') === true; 
     }
 
+    /**
+     * Log a message using the LOG_USER facility
+     * 
+     * @param int       $facility
+     * @param string    $message
+     *
+     * @return void
+     */
+    protected static function log(int $facility, string $message): void
+    {
+        openlog(Server::serverName(), LOG_PERROR | LOG_CONS | LOG_PID, LOG_USER);
+        syslog($facility, $message);
+        closelog();
+    }
 }

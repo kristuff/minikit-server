@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.13
+ * @version    0.9.14
  * @copyright  2017-2021 Kristuff
  */
 
@@ -22,6 +22,7 @@ use Kristuff\Miniweb\Security\Encryption;
 use Kristuff\Miniweb\Auth\Model\UserModel;
 use Kristuff\Miniweb\Auth\Model\UserSettingsModel;
 use Kristuff\Miniweb\Auth\Model\UserAvatarModel;
+use Kristuff\Miniweb\Http\Request;
 use Kristuff\Miniweb\Mvc\TaskResponse;
 
 /**
@@ -212,34 +213,33 @@ class UserLoginModel extends UserModel
      *
      * @access public
      * @static
-     * @param  string   $cookie     The "remember_me" cookie 
+     * @param string    $cookie     The "remember_me" cookie 
      *
      * @return TaskResponse    
      */
     public static function loginWithCookie($cookie)
     {
-        $response = TaskResponse::create();
-        $errorMsg = self::text('LOGIN_COOKIE_ERROR_INVALID');
+        $response = TaskResponse::create(400); // error response by defaut
 
         // make sure cookie is set and
-        if ( $response->assertFalse(empty($cookie), 400, $errorMsg)){
+        if ( !empty($cookie) ){
 
             // decrypt cookiestring
             $cookieString =  Encryption::decrypt($cookie, self::config('ENCRYPTION_KEY'), self::config('HMAC_SALT'));
 
             // before list(), check it can be split into 3 strings.
-            if ( $response->assertTrue(count (explode(':', $cookieString)) === 3, 400, $errorMsg)) {
+            if ( count (explode(':', $cookieString)) === 3 ) {
 
-                // check cookie's contents, check if cookie contents belong together or token is empty
                 list($userId, $token, $hash) = explode(':', $cookieString);
-
-                if ($response->assertTrue(!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token), 400, $errorMsg . '(compare)'  )) {
+                
+                // check cookie's contents, check if cookie contents belong together or token is empty
+                if (!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token) ) {
 
                     // get data of user that has this id and this token
                     $result = self::getUserByUserIdAndToken(intval($userId), $token);
 
                     // if user with that id and exactly that cookie token exists in database
-                    if ($response->assertFalse($result === false, 400, $errorMsg)) {
+                    if ( $result !== false ) {
                         
                         // successfully logged in, so we write all necessary data into the session and set "userIsLoggedIn" to true
                         self::saveSuccessfulLoginInSession($result);
@@ -250,7 +250,7 @@ class UserLoginModel extends UserModel
                         // again from time to time. This is good and safe ! ;)
                         // This is done by setting the $remerberMeToken to False in saveSuccessfulLoginInDatabase(). 
                         self::saveSuccessfulLoginInDatabase($result->userId, session_id(), false);
-                
+                        $response->setCode(200);
                         $response->setMessage(self::text('LOGIN_COOKIE_SUCCESSFUL'));
                     }
                 }
@@ -290,7 +290,8 @@ class UserLoginModel extends UserModel
 
                     // increment the user not found count, helps mitigate user enumeration
                     self::incrementUserNotFoundCounter();
-
+                    self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
+ 
                     // user does not exist, but we won't to give a potential attacker this details
                     return false;
                 };
@@ -305,6 +306,7 @@ class UserLoginModel extends UserModel
 		    
                         //  +1 failed-login counter
                         self::incrementFailedLoginCounter($user->userName);
+                        self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
                         return false;   
 		            }
 
@@ -569,4 +571,6 @@ class UserLoginModel extends UserModel
         // delete remember_me cookie in browser
         self::cookie()->delete('remember_me');
     }
+
+  
 }
