@@ -69,7 +69,7 @@ abstract class BaseModel extends DatabaseModel
      */
     protected static function log(int $facility, string $message): void
     {
-        openlog(Server::serverName(), LOG_PERROR | LOG_CONS, LOG_USER);
+        openlog(Server::serverName(), LOG_PERROR | LOG_CONS | LOG_PID, LOG_USER);
         syslog($facility, $message);
         closelog();
     }
