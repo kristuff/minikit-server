@@ -18,7 +18,6 @@
 namespace Kristuff\Miniweb\Core;
 
 use Kristuff\Miniweb\Auth\TextHelper;
-use Kristuff\Miniweb\Mvc\Application;
 
 /**
  * Class Format
@@ -200,6 +199,7 @@ class Format
             return self::formatRelativeTime('REL_TIME_MONTH', $diff);
         }
 
+        $diff = floor($diff / 12);
         return self::formatRelativeTime('REL_TIME_YEAR', $diff);
     }
 
