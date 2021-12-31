@@ -11,7 +11,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.14
+ * @version    0.9.15
  * @copyright  2017-2021 Kristuff
  */
 
@@ -112,8 +112,12 @@ class Application
     }
           
     /** 
-	 * Sets a configuration
+	 * Sets or overwrites a configuration
 	 *
+     * Merge the existing config with given configuration.
+     * If a key already exists in current config, the value is overwritten.
+     * Missing values in current configuartion are added
+     * 
      * @access public
      * @param array     $parameters     The keys/values parameters
      * @param string    $configName     (optional) The name of the configuration
@@ -219,7 +223,14 @@ class Application
     }
 
     /** 
-	 * helper to load conf file
+	 * Helper to load a php configuration file.
+     * File must return an indexed array 
+     * 
+     *      <?php
+     *      return array( 
+     *          'key'  => 'value',
+     *          ...
+     *      )
      * 
      * @access protected
      * @param string        $path           The config file full path
@@ -230,6 +241,28 @@ class Application
     {
         if (file_exists($path)) {
             $conf = require($path); 
+            $this->setConfig($conf);
+        }
+    }
+
+    /** 
+	 * Helper to load INI configuration file.
+     * File must be in INI format
+     * 
+     * @access protected
+     * @param string        $path           The config file full path
+     * @param bool          $withSection    Load or not INI sections. Default is false
+     * 
+     * @return void
+     * @throws \RuntimeException                                
+	 */
+    protected function loadIniConfigFile(string $path, bool $withSection = false): void
+    {
+        if (file_exists($path) && is_file($path)){
+            $conf = parse_ini_file($path, $withSection, INI_SCANNER_TYPED);
+            if ($conf === false){
+                throw new \RuntimeException('Unable to read configuration file ['.$path.'].');
+            }
             $this->setConfig($conf);
         }
     }

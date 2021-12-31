@@ -11,14 +11,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @version    0.9.14
+ * @version    0.9.15
  * @copyright  2017-2021 Kristuff
  */
 
 namespace Kristuff\Miniweb\Core;
 
 use Kristuff\Miniweb\Auth\TextHelper;
-use Kristuff\Miniweb\Mvc\Application;
 
 /**
  * Class Format
@@ -200,6 +199,7 @@ class Format
             return self::formatRelativeTime('REL_TIME_MONTH', $diff);
         }
 
+        $diff = floor($diff / 12);
         return self::formatRelativeTime('REL_TIME_YEAR', $diff);
     }
 
