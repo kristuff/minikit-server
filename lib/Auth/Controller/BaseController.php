@@ -38,9 +38,6 @@ abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
     {
         parent::__construct($application);
 
-        // set basic data
-        $this->view->setData('userIsLoggedIn', UserLoginModel::isUserLoggedIn());
-        $this->view->setData('userIsAdmin',    UserLoginModel::isUserLoggedInAndAdmin());
 
         // if user is not logged and the login with cookie is enabled and cookie is set, 
         $loginCookie = $this->cookie()->get('remember_me');
@@ -68,6 +65,9 @@ abstract class BaseController extends \Kristuff\Miniweb\Mvc\Controller
             $loginProccess->toFeedback();
         }
 
+        // set basic data
+        $this->view->setData('userIsLoggedIn', UserLoginModel::isUserLoggedIn());
+        $this->view->setData('userIsAdmin',    UserLoginModel::isUserLoggedInAndAdmin());
     }
  
     /** 
