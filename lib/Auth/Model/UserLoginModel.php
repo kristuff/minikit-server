@@ -1,29 +1,25 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Core\Format;
-use Kristuff\Miniweb\Security\Encryption;
-use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Auth\Model\UserSettingsModel;
-use Kristuff\Miniweb\Auth\Model\UserAvatarModel;
-use Kristuff\Miniweb\Http\Request;
-use Kristuff\Miniweb\Mvc\TaskResponse;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Core\Format;
+use Kristuff\Minikit\Security\Encryption;
+use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Auth\Model\UserSettingsModel;
+use Kristuff\Minikit\Auth\Model\UserAvatarModel;
+use Kristuff\Minikit\Http\Request;
+use Kristuff\Minikit\Mvc\TaskResponse;
 
 /**
  * UserLoginModel
@@ -404,7 +400,7 @@ class UserLoginModel extends UserModel
      
         // filter user data: all elements of array passed to Filter::XSSFilter for XSS sanitation.
         // Removes (possibly bad) JavaScript etc from the user's values
-        \Kristuff\Miniweb\Core\Filter::XssFilter($user);
+        \Kristuff\Minikit\Core\Filter::XssFilter($user);
         
         self::session()->set('userId', $user->userId);
         self::session()->set('userName', $user->userName);

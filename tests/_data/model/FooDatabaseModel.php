@@ -1,6 +1,6 @@
 <?php
 
-use Kristuff\Miniweb\Data\Model\DatabaseModel;
+use Kristuff\Minikit\Data\Model\DatabaseModel;
 
 class FooDatabaseModel extends DatabaseModel
 {

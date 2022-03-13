@@ -1,13 +1,13 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 
 require_once __DIR__.'/../_data/mvc_app/model/DummySessionModel.php';
 require_once __DIR__.'/../_data/mvc_app/model/DummyModel.php';
 
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Mvc\Controller;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Http\Session;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Mvc\Controller;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Http\Session;
 
 class ModelTest extends \PHPUnit\Framework\TestCase
 {

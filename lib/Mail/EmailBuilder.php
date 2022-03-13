@@ -1,21 +1,17 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
+
     
-namespace Kristuff\Miniweb\Mail;
+namespace Kristuff\Minikit\Mail;
 
 use Kristuff\Phtemail\HtmlEmailBuilder;
 use Kristuff\Phtemail\HtmlElements;
@@ -51,7 +47,7 @@ class EmailBuilder
         $builder->footer()->setPadding(20); 
         $builder->footer()->setFontSize('13px'); 
         $divFooter = new HtmlElements\Div();
-        $divFooter->add(new HtmlElements\Span('Miniweb | Copyright © 2017-2021 '));
+        $divFooter->add(new HtmlElements\Span('Minikit | Copyright © 2017-2022 '));
         $divFooter->add(new HtmlElements\Link('Kristuff', 'https://kristuff.fr/', 'Kristuff'));
         $builder->footer()->add($divFooter);
 

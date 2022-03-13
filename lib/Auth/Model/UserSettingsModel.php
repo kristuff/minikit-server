@@ -1,27 +1,23 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Auth\Model\UserLoginModel;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Core\Json;
-use Kristuff\Miniweb\Core\Path;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Auth\Model\UserLoginModel;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Core\Json;
+use Kristuff\Minikit\Core\Path;
 use Kristuff\Patabase\Database;
 
 /**
@@ -71,7 +67,7 @@ class UserSettingsModel extends UserModel
             
             // get users settings data
             foreach(self::getSettings($userId) as $item) {
-                $data[$item['settingName']] = \Kristuff\Miniweb\Core\Filter::XssFilter($item['settingValue']);
+                $data[$item['settingName']] = \Kristuff\Minikit\Core\Filter::XssFilter($item['settingValue']);
             }
         }
 

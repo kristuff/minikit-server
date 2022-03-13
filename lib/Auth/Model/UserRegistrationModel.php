@@ -1,28 +1,24 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Mail\Mailer;
-use Kristuff\Miniweb\Mail\EmailBuilder;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Security\CaptchaModel;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Mail\Mailer;
+use Kristuff\Minikit\Mail\EmailBuilder;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Security\CaptchaModel;
 
 /** 
  * Class RegistrationModel
@@ -181,7 +177,7 @@ class UserRegistrationModel extends UserModel
      */
     protected static function validateRegistrationCaptcha(TaskResponse $response, $captcha)
     {
-        $isvalid = \Kristuff\Miniweb\Security\CaptchaModel::captcha()->validate($captcha, 'AUTH_SIGNUP_captcha');
+        $isvalid = \Kristuff\Minikit\Security\CaptchaModel::captcha()->validate($captcha, 'AUTH_SIGNUP_captcha');
         return $response->assertTrue($isvalid, 400, self::text('ERROR_INVALID_CAPTCHA'));
     }
 
@@ -199,7 +195,7 @@ class UserRegistrationModel extends UserModel
      */
     protected static function writeNewUser($userEmail, $userName, $userPasswordHash, $activationHash)
     {
-        $userDirectory = \Kristuff\Miniweb\Security\Token::getNewToken(16);
+        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
         $query = self::database()->insert('user')
                         ->setValue('userName', $userName)
                         ->setValue('userEmail', $userEmail)

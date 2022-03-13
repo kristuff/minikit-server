@@ -1,7 +1,7 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Core;
+namespace Kristuff\Minikit\Tests\Core;
 
-use Kristuff\Miniweb\Core\Filter;
+use Kristuff\Minikit\Core\Filter;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {

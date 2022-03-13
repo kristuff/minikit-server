@@ -1,10 +1,10 @@
-# Miniweb
+# Minikit Server
 
-[![Build Status](https://www.travis-ci.com/kristuff/miniweb.svg?branch=main)](https://www.travis-ci.com/kristuff/miniweb)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/miniweb/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/kristuff/miniweb/?branch=main)
-[![codecov](https://codecov.io/gh/kristuff/miniweb/branch/main/graph/badge.svg?token=8e9XoS8HnV)](https://codecov.io/gh/kristuff/miniweb)
-[![Latest Stable Version](https://poser.pugx.org/kristuff/miniweb/v/stable)](https://packagist.org/packages/kristuff/miniweb)
-[![License](https://poser.pugx.org/kristuff/miniweb/license)](https://packagist.org/packages/kristuff/miniweb)
+[![Build Status](https://www.travis-ci.com/kristuff/minikit-server.svg?branch=main)](https://www.travis-ci.com/kristuff/minikit-server)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kristuff/minikit-server/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/kristuff/minikit-server/?branch=main)
+[![codecov](https://codecov.io/gh/kristuff/minikit-server/branch/main/graph/badge.svg?token=8e9XoS8HnV)](https://codecov.io/gh/kristuff/minikit-server)
+[![Latest Stable Version](https://poser.pugx.org/kristuff/minikit-server/v/stable)](https://packagist.org/packages/kristuff/minikit-server)
+[![License](https://poser.pugx.org/kristuff/minikit-server/license)](https://packagist.org/packages/kristuff/minikit-server)
 
 > Mini PHP web Framework.
 
@@ -33,7 +33,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2017-2021 Kristuff
+Copyright (c) 2017-2022 Kristuff
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,25 +1,21 @@
 <?php declare(strict_types=1);
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Mvc;
 
-use Kristuff\Miniweb\Mvc\View;
-use Kristuff\Miniweb\Mvc\Factory;
-use Kristuff\Miniweb\Http\Redirect;
+namespace Kristuff\Minikit\Mvc;
+
+use Kristuff\Minikit\Mvc\View;
+use Kristuff\Minikit\Mvc\Factory;
+use Kristuff\Minikit\Http\Redirect;
 
 /** 
  * class Controller 
@@ -30,7 +26,7 @@ abstract class Controller
 {
     /** 
      * @access protected
-     * @var \Kristuff\Miniweb\Mvc\View            $view       The View instance
+     * @var \Kristuff\Minikit\Mvc\View            $view       The View instance
      */
     protected $view = null;
 
@@ -56,9 +52,9 @@ abstract class Controller
      * Gets/Returns the global Session instance
      *
      * @access protected
-     * @return \Kristuff\Miniweb\Http\Session
+     * @return \Kristuff\Minikit\Http\Session
      */
-    protected function session(): \Kristuff\Miniweb\Http\Session
+    protected function session(): \Kristuff\Minikit\Http\Session
     {
         return Factory::getFactory()->getSession();
     }
@@ -67,9 +63,9 @@ abstract class Controller
      * Gets/Returns the global Cookie instance
      *
      * @access protected 
-     * @return \Kristuff\Miniweb\Http\Cookie 
+     * @return \Kristuff\Minikit\Http\Cookie 
      */
-    protected function cookie(): \Kristuff\Miniweb\Http\Cookie
+    protected function cookie(): \Kristuff\Minikit\Http\Cookie
     {
         return Factory::getFactory()->getCookie();
     }
@@ -78,9 +74,9 @@ abstract class Controller
      * Gets the global instance of Http Request
      *
      * @access public
-     * @return \Kristuff\Miniweb\Http\Request
+     * @return \Kristuff\Minikit\Http\Request
      */
-    public function request(): \Kristuff\Miniweb\Http\Request
+    public function request(): \Kristuff\Minikit\Http\Request
     {
         return Factory::getFactory()->getRequest();
     }
@@ -89,9 +85,9 @@ abstract class Controller
      * Gets/Returns global the Token (AntiCsrf) instance
      *
      * @access protected
-     * @return \Kristuff\Miniweb\Security\Token
+     * @return \Kristuff\Minikit\Security\Token
      */
-    protected function token(): \Kristuff\Miniweb\Security\Token
+    protected function token(): \Kristuff\Minikit\Security\Token
     {
          return Factory::getFactory()->getToken($this->session());
     }  

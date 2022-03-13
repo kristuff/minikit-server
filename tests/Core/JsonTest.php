@@ -1,7 +1,7 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Core;
+namespace Kristuff\Minikit\Tests\Core;
 
-use Kristuff\Miniweb\Core\Json;
+use Kristuff\Minikit\Core\Json;
 
 class FormatTest extends \PHPUnit\Framework\TestCase
 {

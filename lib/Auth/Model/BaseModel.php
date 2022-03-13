@@ -1,25 +1,21 @@
 <?php declare(strict_types=1);
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Auth\TextHelper;
-use Kristuff\Miniweb\Data\Model\DatabaseModel;
-use Kristuff\Miniweb\Http\Server;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Auth\TextHelper;
+use Kristuff\Minikit\Data\Model\DatabaseModel;
+use Kristuff\Minikit\Http\Server;
 
 /**
  * Class BaseModel 

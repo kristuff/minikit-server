@@ -1,6 +1,6 @@
 <?php
 namespace MyAwesomeApp;
-use Kristuff\Miniweb\Mvc\Controller;
+use Kristuff\Minikit\Mvc\Controller;
 
 class BarController extends Controller
 {

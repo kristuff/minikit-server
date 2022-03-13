@@ -1,29 +1,25 @@
 <?php declare(strict_types=1);
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Mvc;
 
-use Kristuff\Miniweb\Http;
-use Kristuff\Miniweb\Http\Server;
-use Kristuff\Miniweb\Http\Session;
-use Kristuff\Miniweb\Core\Config;
-use Kristuff\Miniweb\Core\Locale;
-use Kristuff\Miniweb\Mvc\Rooter;
-use Kristuff\Miniweb\Mvc\Factory;
+namespace Kristuff\Minikit\Mvc;
+
+use Kristuff\Minikit\Http;
+use Kristuff\Minikit\Http\Server;
+use Kristuff\Minikit\Http\Session;
+use Kristuff\Minikit\Core\Config;
+use Kristuff\Minikit\Core\Locale;
+use Kristuff\Minikit\Mvc\Rooter;
+use Kristuff\Minikit\Mvc\Factory;
 
 /**
  * Class Application
@@ -35,19 +31,19 @@ class Application
 
     /** 
      * @access private
-     * @var \Kristuff\Miniweb\Core\Config     $conf               The Config instance
+     * @var \Kristuff\Minikit\Core\Config     $conf               The Config instance
      */
     private static $config = null;
 
     /** 
      * @access private
-     * @var \Kristuff\Miniweb\Core\Locale     $locale             The Locale instance
+     * @var \Kristuff\Minikit\Core\Locale     $locale             The Locale instance
      */
     private static $locale = null;
 
     /** 
      * @access protected
-     * @var \Kristuff\Miniweb\Mvc\Rooter      $rooter             The Rooter instance
+     * @var \Kristuff\Minikit\Mvc\Rooter      $rooter             The Rooter instance
      */
     protected $rooter;
 
@@ -62,7 +58,7 @@ class Application
         self::$config = new Config();
         
         // load default config
-        $this->loadConfigFile(__DIR__ . '/../../config/miniweb.conf.php');
+        $this->loadConfigFile(__DIR__ . '/../../config/minikit-server.conf.php');
         
         // Overwrite default config
         $this->loadLocalConfig();
@@ -93,9 +89,9 @@ class Application
 	 * Gets the static Locale instance 
      *
      * @access public
-     * @return \Kristuff\Miniweb\Core\Locale
+     * @return \Kristuff\Minikit\Core\Locale
      */
-    public function locales(): \Kristuff\Miniweb\Core\Locale
+    public function locales(): \Kristuff\Minikit\Core\Locale
     {
         return self::$locale;
     }
@@ -104,9 +100,9 @@ class Application
 	 * Gets the Rooter instance 
      *
      * @access public
-     * @return \Kristuff\Miniweb\Mvc\Rooter
+     * @return \Kristuff\Minikit\Mvc\Rooter
      */
-    public function rooter(): \Kristuff\Miniweb\Mvc\Rooter
+    public function rooter(): \Kristuff\Minikit\Mvc\Rooter
     {
         return $this->rooter;
     }

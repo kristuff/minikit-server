@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Cookie;
+use Kristuff\Minikit\Http\Cookie;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
 {

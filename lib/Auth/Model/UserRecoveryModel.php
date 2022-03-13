@@ -1,28 +1,24 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Mail\EmailBuilder;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Mail\Mailer;
-use Kristuff\Miniweb\Security\CaptchaModel;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Mail\EmailBuilder;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Mail\Mailer;
+use Kristuff\Minikit\Security\CaptchaModel;
 
 /**
  * Class UserRecoveryModel
@@ -76,7 +72,7 @@ class UserRecoveryModel extends UserModel
         $response = TaskResponse::create();
   
         // check captcha
-        if ($response->assertTrue(\Kristuff\Miniweb\Security\CaptchaModel::captcha()->validate($captcha, 'recovery_captcha'), 400, self::text('ERROR_INVALID_CAPTCHA'))){
+        if ($response->assertTrue(\Kristuff\Minikit\Security\CaptchaModel::captcha()->validate($captcha, 'recovery_captcha'), 400, self::text('ERROR_INVALID_CAPTCHA'))){
         
             // user name or email empty?
             if ($response->assertFalse(empty($userNameOrEmail), 400, self::text('LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'))){

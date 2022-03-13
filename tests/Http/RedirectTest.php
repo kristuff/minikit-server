@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Redirect;
+use Kristuff\Minikit\Http\Redirect;
 
 class RedirectTest extends \PHPUnit\Framework\TestCase
 {

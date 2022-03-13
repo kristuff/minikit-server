@@ -1,10 +1,10 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 require_once __DIR__.'/../_data/mvc_app/model/DummyFeedbackModel.php';
 
-use Kristuff\Miniweb\Mvc\Feedback;
-use Kristuff\Miniweb\Http\Session;
+use Kristuff\Minikit\Mvc\Feedback;
+use Kristuff\Minikit\Http\Session;
 
 class FeedbackTest extends \PHPUnit\Framework\TestCase
 {

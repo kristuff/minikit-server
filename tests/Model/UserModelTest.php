@@ -1,5 +1,5 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
 
 class UserModelTest extends \PHPUnit\Framework\TestCase
@@ -10,8 +10,8 @@ class UserModelTest extends \PHPUnit\Framework\TestCase
         $params = ['driver' => 'sqlite', 'database' => ':memory:'];
         $db = new \Kristuff\Patabase\Database($params);
 
-        $this->assertTrue(\Kristuff\Miniweb\Auth\Model\UserModel::createTable($db));
-        $this->assertTrue(\Kristuff\Miniweb\Auth\Model\UserSettingsModel::createTableSettings($db));
+        $this->assertTrue(\Kristuff\Minikit\Auth\Model\UserModel::createTable($db));
+        $this->assertTrue(\Kristuff\Minikit\Auth\Model\UserSettingsModel::createTableSettings($db));
         
     }
 }

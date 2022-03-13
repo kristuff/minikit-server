@@ -1,7 +1,7 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Request;
+use Kristuff\Minikit\Http\Request;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {

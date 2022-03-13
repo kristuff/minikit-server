@@ -1,5 +1,5 @@
 <?php
-use Kristuff\Miniweb\Security\CaptchaModel;
+use Kristuff\Minikit\Security\CaptchaModel;
 
 class DummyModel extends CaptchaModel
 {

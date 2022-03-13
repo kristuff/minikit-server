@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Server;
+use Kristuff\Minikit\Http\Server;
 
 class ServerTest extends \PHPUnit\Framework\TestCase
 {

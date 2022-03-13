@@ -1,8 +1,8 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Security;
+namespace Kristuff\Minikit\Tests\Security;
 
-use Kristuff\Miniweb\Http\Session;
-use Kristuff\Miniweb\Security\Token;
+use Kristuff\Minikit\Http\Session;
+use Kristuff\Minikit\Security\Token;
 
 class TokenTest extends \PHPUnit\Framework\TestCase
 {

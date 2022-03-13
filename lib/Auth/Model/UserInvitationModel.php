@@ -1,28 +1,24 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Model;
 
-use Kristuff\Miniweb\Mail\Mailer;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Auth\Model\UserRegistrationModel;
-use Kristuff\Miniweb\Auth\Model\UserLoginModel;
-use Kristuff\Miniweb\Mail\EmailBuilder;
+namespace Kristuff\Minikit\Auth\Model;
+
+use Kristuff\Minikit\Mail\Mailer;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Auth\Model\UserRegistrationModel;
+use Kristuff\Minikit\Auth\Model\UserLoginModel;
+use Kristuff\Minikit\Mail\EmailBuilder;
 
 /** 
  * Class UserInvitationModel
@@ -222,7 +218,7 @@ class UserInvitationModel extends UserRegistrationModel
 	 */
 	protected static function updateAndActivateInvitedUser($userId, $userName, $userPasswordHash,  $userActivationHash)
 	{
-        $userDirectory = \Kristuff\Miniweb\Security\Token::getNewToken(16);
+        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
         $query = self::database()->update('user')
                                  ->setValue('userName', $userName)
                                  ->setValue('userPasswordHash', $userPasswordHash)

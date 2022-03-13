@@ -1,5 +1,5 @@
 {
-    "name": "kristuff/miniweb",
+    "name": "kristuff/minikit-server",
     "description": "Mini php web framework",
     "type": "library",
     "license": "MIT",
@@ -17,11 +17,11 @@
         "phpmailer/phpmailer": "^6.1-stable"
     },
      "autoload": {
-        "psr-4": {"Kristuff\\Miniweb\\": "lib/"}
+        "psr-4": {"Kristuff\\Minikit\\": "lib/"}
     },
     "autoload-dev": {
         "psr-4": {
-            "Kristuff\\Miniweb\\Tests\\": "tests/",
+            "Kristuff\\Minikit\\Tests\\": "tests/",
             "MyAwesomeApp\\": "tests/_data/mvc_app_namespace/controller/"
         }
     },

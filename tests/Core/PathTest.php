@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Core;
+namespace Kristuff\Minikit\Tests\Core;
 
-use Kristuff\Miniweb\Core\Path;
+use Kristuff\Minikit\Core\Path;
 
 class PathTest extends \PHPUnit\Framework\TestCase
 {

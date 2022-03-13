@@ -1,9 +1,9 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 
-use Kristuff\Miniweb\Core\Locale;
-use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Minikit\Core\Locale;
+use Kristuff\Minikit\Mvc\Application;
 
 class ApplicationLocaleTest extends \PHPUnit\Framework\TestCase
 {

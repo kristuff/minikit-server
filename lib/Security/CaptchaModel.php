@@ -1,25 +1,21 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Security;
 
-use Kristuff\Miniweb\Mvc\Model;
-use Kristuff\Miniweb\Security\CaptchaFactory;
-use Kristuff\Miniweb\Security\CaptchaMath;
+namespace Kristuff\Minikit\Security;
+
+use Kristuff\Minikit\Mvc\Model;
+use Kristuff\Minikit\Security\CaptchaFactory;
+use Kristuff\Minikit\Security\CaptchaMath;
 
 /** 
  * class CaptchaModel 

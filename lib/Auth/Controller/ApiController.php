@@ -1,32 +1,28 @@
 <?php
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Auth\Controller;
 
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Mvc\TaskResponse;
-use Kristuff\Miniweb\Http\Request;
-use Kristuff\Miniweb\Auth\Model\UserModel;
-use Kristuff\Miniweb\Auth\Model\UserAdminModel;
-use Kristuff\Miniweb\Auth\Model\UserLoginModel;
-use Kristuff\Miniweb\Auth\Model\UserEditModel;
-use Kristuff\Miniweb\Auth\Model\UserAvatarModel;
-use Kristuff\Miniweb\Auth\Model\UserSettingsModel;
-use Kristuff\Miniweb\Auth\Model\UserInvitationModel;
+namespace Kristuff\Minikit\Auth\Controller;
+
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Http\Request;
+use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Auth\Model\UserAdminModel;
+use Kristuff\Minikit\Auth\Model\UserLoginModel;
+use Kristuff\Minikit\Auth\Model\UserEditModel;
+use Kristuff\Minikit\Auth\Model\UserAvatarModel;
+use Kristuff\Minikit\Auth\Model\UserSettingsModel;
+use Kristuff\Minikit\Auth\Model\UserInvitationModel;
 
 /** 
  * Class Api Controller

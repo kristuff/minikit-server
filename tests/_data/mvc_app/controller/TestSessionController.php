@@ -1,5 +1,5 @@
 <?php
-use Kristuff\Miniweb\Mvc\Controller;
+use Kristuff\Minikit\Mvc\Controller;
 require_once __DIR__.'/../model/DummySessionModel.php';
 
 class TestSessionController extends Controller

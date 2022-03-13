@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Session;
+use Kristuff\Minikit\Http\Session;
 
 class SessionTest extends \PHPUnit\Framework\TestCase
 {

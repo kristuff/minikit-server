@@ -1,5 +1,5 @@
 <?php
-use Kristuff\Miniweb\Mvc\Controller;
+use Kristuff\Minikit\Mvc\Controller;
 
 class TestDataController extends Controller
 {

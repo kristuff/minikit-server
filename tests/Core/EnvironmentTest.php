@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Core;
+namespace Kristuff\Minikit\Tests\Core;
 
-use Kristuff\Miniweb\Core\Environment;
+use Kristuff\Minikit\Core\Environment;
 
 class EnvironmentTest extends \PHPUnit\Framework\TestCase
 {

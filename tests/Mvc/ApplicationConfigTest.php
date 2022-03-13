@@ -1,10 +1,10 @@
 <?php
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 
-use Kristuff\Miniweb\Core\Config;
-use Kristuff\Miniweb\Core\Locale;
-use Kristuff\Miniweb\Core\Environment;
-use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Minikit\Core\Config;
+use Kristuff\Minikit\Core\Locale;
+use Kristuff\Minikit\Core\Environment;
+use Kristuff\Minikit\Mvc\Application;
 
 class ApplicationConfigTest extends \PHPUnit\Framework\TestCase
 {

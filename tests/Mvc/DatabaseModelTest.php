@@ -1,9 +1,9 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 require_once __DIR__.'/../_data/model/FooDatabaseModel.php';
 
-use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Minikit\Mvc\Application;
 
 class DatabaseModelTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Mvc;
+namespace Kristuff\Minikit\Tests\Mvc;
 
-use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Minikit\Mvc\Application;
 
 class ApplicationControllerTest extends \PHPUnit\Framework\TestCase
 {

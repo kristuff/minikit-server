@@ -1,5 +1,5 @@
 <?php
-use Kristuff\Miniweb\Mvc\Model;
+use Kristuff\Minikit\Mvc\Model;
 
 class DummySessionModel extends Model
 {

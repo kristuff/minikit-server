@@ -1,25 +1,21 @@
 <?php declare(strict_types=1);
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Mvc;
 
-use Kristuff\Miniweb\Mvc\Factory;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Mvc\TaskResponse;
+namespace Kristuff\Minikit\Mvc;
+
+use Kristuff\Minikit\Mvc\Factory;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Mvc\TaskResponse;
 
 /** 
  * class Model 
@@ -39,9 +35,9 @@ abstract class Model
 	 * @param string       [$message]         The message to add. Default is null (no message added).
 	 * @param bool         [$isPositive]      True or false to add positive/negative messages. Default is true.
      *
-     * @return \Kristuff\Miniweb\Mvc\Feedback
+     * @return \Kristuff\Minikit\Mvc\Feedback
      */
-    public static function feedback(?string $message = null, bool $isPositive = true): \Kristuff\Miniweb\Mvc\Feedback
+    public static function feedback(?string $message = null, bool $isPositive = true): \Kristuff\Minikit\Mvc\Feedback
     {
         // get the Feedback instance
         $feed = Factory::getFactory()->getFeedback();
@@ -69,9 +65,9 @@ abstract class Model
 	 * @param array        [$data]          The response data (if any)
 	 * @param array        [$errors]        The response data (if any)
      *
-     * @return \Kristuff\Miniweb\Mvc\TaskResponse    
+     * @return \Kristuff\Minikit\Mvc\TaskResponse    
      */
-    public static function createResponse(int $code = 200, string $message = '', array $data = [], array $errors = []): \Kristuff\Miniweb\Mvc\TaskResponse
+    public static function createResponse(int $code = 200, string $message = '', array $data = [], array $errors = []): \Kristuff\Minikit\Mvc\TaskResponse
     {
         return new TaskResponse($code, $message, $data, $errors); 
     }
@@ -80,9 +76,9 @@ abstract class Model
      * Gets (or creates) and returns a Session instance
      *
      * @access public
-     * @return \Kristuff\Miniweb\Http\Session
+     * @return \Kristuff\Minikit\Http\Session
      */
-    public static function session(): \Kristuff\Miniweb\Http\Session
+    public static function session(): \Kristuff\Minikit\Http\Session
     {
         return Factory::getFactory()->getSession();
     }
@@ -91,9 +87,9 @@ abstract class Model
      * Gets the global instance of Http Request
      *
      * @access public
-     * @return \Kristuff\Miniweb\Http\Request
+     * @return \Kristuff\Minikit\Http\Request
      */
-    public static function request(): \Kristuff\Miniweb\Http\Request
+    public static function request(): \Kristuff\Minikit\Http\Request
     {
         return Factory::getFactory()->getRequest();
     }
@@ -102,9 +98,9 @@ abstract class Model
      * Gets the global instance of Cookie 
      *
      * @access public 
-     * @return \Kristuff\Miniweb\Http\Cookie 
+     * @return \Kristuff\Minikit\Http\Cookie 
      */
-    public static function cookie(): \Kristuff\Miniweb\Http\Cookie
+    public static function cookie(): \Kristuff\Minikit\Http\Cookie
     {
         return Factory::getFactory()->getCookie();
     }
@@ -117,9 +113,9 @@ abstract class Model
      * @access public 
      * @static
      *
-     * @return \Kristuff\Miniweb\Security\Token
+     * @return \Kristuff\Minikit\Security\Token
      */
-    public static function token(): \Kristuff\Miniweb\Security\Token
+    public static function token(): \Kristuff\Minikit\Security\Token
     {
          return Factory::getFactory()->getToken(self::session(), self::config('TOKEN_VALIDITY'));
     }

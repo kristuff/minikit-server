@@ -1,30 +1,26 @@
 <?php declare(strict_types=1);
 
-/** 
- *        _      _            _
- *  _ __ (_)_ _ (_)_ __ _____| |__
- * | '  \| | ' \| \ V  V / -_) '_ \
- * |_|_|_|_|_||_|_|\_/\_/\___|_.__/
- *
- * This file is part of Kristuff\MiniWeb.
+/**
+ *        _      _ _   _ _
+ *  _ __ (_)_ _ (_) |_(_) |_
+ * | '  \| | ' \| | / / |  _|
+ * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @version    0.9.15
- * @copyright  2017-2021 Kristuff
+ * This file is part of Kristuff/Minikit v0.9.16 
+ * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-namespace Kristuff\Miniweb\Mvc;
 
-use Kristuff\Miniweb\Http;
-use Kristuff\Miniweb\Http\Request;
-use Kristuff\Miniweb\Http\Response;
-use Kristuff\Miniweb\Http\Session;
-use Kristuff\Miniweb\Http\Server;
-use Kristuff\Miniweb\Mvc\Application;
-use Kristuff\Miniweb\Mvc\Controller;
-use Kristuff\Miniweb\Mvc\Factory;
+namespace Kristuff\Minikit\Mvc;
+
+use Kristuff\Minikit\Http;
+use Kristuff\Minikit\Http\Request;
+use Kristuff\Minikit\Http\Response;
+use Kristuff\Minikit\Http\Session;
+use Kristuff\Minikit\Http\Server;
+use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Mvc\Controller;
+use Kristuff\Minikit\Mvc\Factory;
 
 /**
  * Class Rooter

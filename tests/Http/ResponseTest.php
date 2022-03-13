@@ -1,9 +1,9 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Http;
+namespace Kristuff\Minikit\Tests\Http;
 
-use Kristuff\Miniweb\Http\Response;
-use Kristuff\Miniweb\Http\Server;
+use Kristuff\Minikit\Http\Response;
+use Kristuff\Minikit\Http\Server;
 
 class ResponseTest extends \PHPUnit\Framework\TestCase
 {

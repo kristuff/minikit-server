@@ -1,6 +1,6 @@
 <?php
-use Kristuff\Miniweb\Mvc\Model;
-use Kristuff\Miniweb\Mvc\TaskResponse;
+use Kristuff\Minikit\Mvc\Model;
+use Kristuff\Minikit\Mvc\TaskResponse;
 
 
 class DummyModel extends Model

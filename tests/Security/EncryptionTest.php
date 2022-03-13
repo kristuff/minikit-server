@@ -1,8 +1,8 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Security;
+namespace Kristuff\Minikit\Tests\Security;
 
-use Kristuff\Miniweb\Security\Encryption;
+use Kristuff\Minikit\Security\Encryption;
 
 class EncryptionTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Kristuff\Miniweb\Tests\Core;
+namespace Kristuff\Minikit\Tests\Core;
 
-use Kristuff\Miniweb\Core\Locale;
-use Kristuff\Miniweb\Core\Config;
-use Kristuff\Miniweb\Mvc\Application;
+use Kristuff\Minikit\Core\Locale;
+use Kristuff\Minikit\Core\Config;
+use Kristuff\Minikit\Mvc\Application;
 
 class LocaleTest extends \PHPUnit\Framework\TestCase
 {
