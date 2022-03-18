@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.16 
+ * This file is part of Kristuff/Minikit v0.9.17 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -23,11 +23,55 @@ use Kristuff\Minikit\Http\Response;
  */
 class View
 {
+
+    public $title = ''; 
+    public $description = ''; 
+    public $keywords = ''; 
+    protected $baseUrl = '';
+    protected $controlerName = '';
+    protected $scripts = [];
+    protected $styles = [];
+
     /**
      * @access private
      * @var array       $data       The data to pass to the view
      */
     private $data = [];
+
+    /** 
+     *
+     */
+    public function __construct()
+    {
+       $this->title =   Application::config('APP_NAME'); 
+       $this->baseUrl = Application::getUrl();
+    }
+
+    /**
+     * Add a public script file (js) to the collection
+     *
+     * @access protected
+     * @param  string       $path
+     * 
+     * @return void
+     */
+    public function addScriptFile(string $path): void
+    {
+        $this->scripts[] = $path;
+    }
+
+    /**
+     * Add a public style file (css) to the collection
+     *
+     * @access protected
+     * @param  string       $path
+     * 
+     * @return void
+     */
+    public function addStyleFile(string $path): void
+    {
+        $this->styles[] = $path;
+    }
 
     /**
      * Include a file to be rendered

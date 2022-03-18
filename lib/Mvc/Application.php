@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.16 
+ * This file is part of Kristuff/Minikit v0.9.17 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -58,7 +58,7 @@ class Application
         self::$config = new Config();
         
         // load default config
-        $this->loadConfigFile(__DIR__ . '/../../config/minikit-server.conf.php');
+        $this->loadConfigFile(__DIR__ . '/../../config/minikit.conf.php');
         
         // Overwrite default config
         $this->loadLocalConfig();

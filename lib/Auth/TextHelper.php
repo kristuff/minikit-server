@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.16 
+ * This file is part of Kristuff/Minikit v0.9.17 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -33,6 +33,6 @@ class TextHelper
         $possibleOverideText = Application::text($key, $locale);
         
         return isset($possibleOverideText) ? $possibleOverideText :  
-               Application::textSection($key, 'minikit-server', $locale);
+               Application::textSection($key, 'minikit', $locale);
     }         
 }
