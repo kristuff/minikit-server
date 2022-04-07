@@ -16,8 +16,8 @@ namespace Kristuff\Minikit\Security;
 use Kristuff\Minikit\Http\Session;
 
 /**
- * Class AntiCsrf
- *
+ * Class AntiCsrf utils.
+ * 
  *
  */
 class Token
@@ -80,10 +80,11 @@ class Token
    
     /**
      * Generates and returns a new token 
-     *
+     * 
      * @access public
      * @static
-     * @param int           $lenght
+     * @param int           $lenght         The lenght of the base bytes. The string returned 
+     *                                      by this function will the double of this value 
      *
      * @return string       The token   
      */
@@ -113,10 +114,8 @@ class Token
             return $token;    
         }
 
-        // generate a new one
+        // generate a new one and register it in session
         $token = self::getNewToken(32);
-
-        // register it in session
         $this->session->set('token_'.$identifier, $token);
         $this->session->set('token_'.$identifier.'_time', time());
         return $token;
