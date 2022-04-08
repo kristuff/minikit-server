@@ -15,6 +15,7 @@ namespace Kristuff\Minikit\Auth\Controller;
 use Kristuff\Minikit\Mvc\Application;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Http\Request;
+use Kristuff\Minikit\Http\RequestMethod as HTTP;
 use Kristuff\Minikit\Auth\Model\UserModel;
 use Kristuff\Minikit\Auth\Model\UserAdminModel;
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
@@ -83,14 +84,16 @@ class ApiController extends BaseController
 
         // api need auth
         if (!UserLoginModel::isUserLoggedIn() || !UserLoginModel::isSessionValid()) {
-            $this->view->renderJson(TaskResponse::create(401, $this->text('ERROR_INVALID_AUTHENTFICATION'))->toArray(), 401);
+            $this->response = TaskResponse::create(401, $this->text('ERROR_INVALID_AUTHENTFICATION'));
+            $this->json();
             exit();
         } 
 
         // api need a token
         $token = $this->request()->arg('token') ? $this->request()->arg('token') : null;
         if (!$this->token()->isTokenValid($token, $apiTokenKey)) {
-            $this->view->renderJson(TaskResponse::create(401, $this->text('ERROR_INVALID_TOKEN'))->toArray(), 401);
+            $this->response = TaskResponse::create(401, $this->text('ERROR_INVALID_TOKEN'));
+            $this->json();
             exit();
         }
 
@@ -101,7 +104,18 @@ class ApiController extends BaseController
         // the defaut response (invalid)
         $this->response = TaskResponse::create(400,  $this->text('ERROR_INVALID_REQUEST'));
     }
-      
+
+    /** 
+     * Render reponse as Json
+     * 
+     * @access private
+     * @return void      
+     */
+    private function json()
+    {
+        $this->view->renderJson($this->response->toArray(), $this->response->code());
+    }
+
     /** 
      * Default controller action returns an error 
      * 
@@ -110,7 +124,7 @@ class ApiController extends BaseController
      */
     public function index()
     {
-        $this->view->renderJson($this->response->toArray(), $this->response->code());
+        $this->json();
     }
     
     /** 
@@ -134,34 +148,28 @@ class ApiController extends BaseController
     {
         // In case userId has 'self' value, replace it with the real userId
         $userId = ($userId === 'self') ? $this->session()->get("userId") : $userId;
-              
-        switch ($this->request()->method()){
-            
-            case Request::METHOD_GET:
-                $offset = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
-                $limit  = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
-                $order  = $this->request()->arg('order')  ?? 'name';  
-
-                switch ($action){
-                    case 'settings':
-                        $this->response = UserSettingsModel::getUserSettings($userId);
-                        break;
-
-                    case '':
-                        // get users list
-                        $this->response = UserModel::getProfiles($userId, $limit, $offset, $order);
-                        break;
-                }
+        $route = $this->request()->method().'/users'.($userId ? '/{userId}' : '') . ($action ? '/'.$action : ''); 
+        
+        switch ($route){
+            case HTTP::METHOD_GET.'/users':
+                $offset         = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
+                $limit          = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
+                $order          = $this->request()->arg('order')  ?? 'name';  
+                $this->response = UserModel::getProfiles($userId, $limit, $offset, $order);
                 break;
-            
-            // create a user 
-            case Request::METHOD_POST:
-                
+
+            case HTTP::METHOD_GET.'/users/{userId}/settings':
+                $offset         = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
+                $limit          = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
+                $order          = $this->request()->arg('order')  ?? 'name';  
+                $this->response = UserSettingsModel::getUserSettings($userId);
+                break;
+         
+            case Request::METHOD_POST.'/users':
                 $action    = $this->request()->arg('action')    ?? 'create';
-                $userEmail = $this->request()->arg('userEmail') ?? null; 
+                $userEmail = $this->request()->arg('user_email') ?? null; 
                        
                 switch ($action){
-
                     case 'invite':
                         // invite a new user
                         $this->response = UserInvitationModel::inviteNewUser($userEmail, $this->token, $this->tokenKey);
@@ -169,59 +177,46 @@ class ApiController extends BaseController
 
                     case 'create':
                         // create a new user
-                        $userEmailRepeat    = $this->request()->arg('userEmailRepeat')    ?? null;   //todo
-                        $userName           = $this->request()->arg('userName')           ?? null; 
-                        $userPassword       = $this->request()->arg('userPassword')       ?? null; 
-                        $userPasswordRepeat = $this->request()->arg('userPasswordRepeat') ?? null; 
+                        $userEmailRepeat    = $this->request()->arg('user_email_repeat')    ?? null;   //todo
+                        $userName           = $this->request()->arg('user_name')            ?? null; 
+                        $userPassword       = $this->request()->arg('user_password')        ?? null; 
+                        $userPasswordRepeat = $this->request()->arg('user_password_repeat') ?? null; 
                         $this->response = UserAdminModel::createNewAccount($userName, $userEmail, $userPassword, 
                                                                            $userPasswordRepeat, $this->token, $this->tokenKey);
                         break;
                 }
                 break;
             
-            // delete a user or reset user settings
-            case Request::METHOD_DELETE:
+            case Request::METHOD_DELETE.'/users/{userId}/settings':
+                $this->response =   UserSettingsModel::resetUserSettings($userId, $this->token, $this->tokenKey);
+                break;
 
-                switch ($action){
-                    case 'settings':
-                        $this->response =   UserSettingsModel::resetUserSettings($userId, $this->token, $this->tokenKey);
-                        break;
-
-                    case '':
-                        $this->response = UserAdminModel::deleteUserAndSettings($userId, $this->token, $this->tokenKey);
-                        break;
-                }
+            case Request::METHOD_DELETE.'/users/{userId}':
+                $this->response = UserAdminModel::deleteUserAndSettings($userId, $this->token, $this->tokenKey);
                 break;
             
-            // update user status or setting parameter                     
-            case Request::METHOD_PUT:
-                switch ($action){
-                    case 'suspend':
-                        $suspensionDays = $this->request()->arg('suspensionDays') ? (int) $this->request()->arg('suspensionDays') : null;
-                        $this->response = UserAdminModel::updateSuspensionStatus($userId, $this->token, $this->tokenKey, $suspensionDays, false);
-                        break;
-                    
-                    // undelete a user 
-                    case 'undelete':
-                        $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, false) ;
-                        break;  
-                    
-                    // soft delete 
-                    case 'delete':
-                        $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, true) ;
-                        break;
+            case Request::METHOD_PUT.'/users/{userId}/suspend':
+                $suspensionDays = $this->request()->arg('suspension_days') ? (int) $this->request()->arg('suspension_days') : null;
+                $this->response = UserAdminModel::updateSuspensionStatus($userId, $this->token, $this->tokenKey, $suspensionDays, false);
+                break;
+            
+            case Request::METHOD_PUT.'/users/{userId}/undelete':
+                $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, false) ;
+                break;  
+            
+            // soft delete
+            case Request::METHOD_PUT.'/users/{userId}/delete':
+                $this->response =  UserAdminModel::updateDeletionStatus($userId, $this->token, $this->tokenKey, true) ;
+                break;
 
-                    case 'settings':
-                        $param = $this->request()->arg('parameter')  ?? null;  
-                        $value = $this->request()->arg('value')      ?? null;
-                        $this->response = UserSettingsModel::editUserSettings($userId, $param, $value, $this->token, $this->tokenKey); 
-                        break;
-                }
+            case Request::METHOD_PUT.'/users/{userId}/settings':
+                $param = $this->request()->arg('parameter')  ?? null;  
+                $value = $this->request()->arg('value')      ?? null;
+                $this->response = UserSettingsModel::editUserSettings($userId, $param, $value, $this->token, $this->tokenKey); 
                 break;                   
         }
 
-        // render response
-        $this->view->renderJson($this->response->toArray(), $this->response->code());
+        $this->json();
     }
 
 
@@ -290,8 +285,6 @@ class ApiController extends BaseController
             }
         }
 
-        // render
-        $this->view->renderJson($this->response->toArray(), $this->response->code());
-    }
-
+        $this->json();
+   }
 }
