@@ -386,7 +386,7 @@ class UserLoginModel extends UserModel
         self::session()->set('userCreationTimestamp', $user->userCreationTimestamp);
         
         // set avatar url      
-        UserAvatarModel::setAvatarInSession($user->userId, ($user->userHasAvatar == 1));
+        UserAvatarModel::setAvatarInSession($user->userAvatarId, ($user->userHasAvatar == 1));
                 
         // get and set user settings data into session
         $settingsData = UserSettingsModel::getUserSettings(intval($user->userId), true);
