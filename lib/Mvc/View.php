@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.18 
+ * This file is part of Kristuff/Minikit v0.9.19 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -351,12 +351,12 @@ class View
      * Support for .png .jpeg .jpg
      * todo cache, gif
      * 
-     * @access protected
+     * @access public
      * @param string    $path   The image file full path
      * 
      * @return void
      */
-    protected function renderImage(string $path)
+    public function renderImage(string $path)
     {
         $ext =  pathinfo($path, PATHINFO_EXTENSION);
         switch($ext){
@@ -378,8 +378,6 @@ class View
 
         }    
     }
-
-    
 
     /** 
      * Render rss/xml content

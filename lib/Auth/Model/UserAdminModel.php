@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.18 
+ * This file is part of Kristuff/Minikit v0.9.19 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -14,7 +14,7 @@ namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
 use Kristuff\Minikit\Auth\Data\UsersCollection;
-use Kristuff\Minikit\Data\Auth\UserSettingsCollection;
+use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 
 /** 
