@@ -308,7 +308,7 @@ class UserModel extends BaseModel
             
             //prepare query
             $query = self::database()->select('userId','userName', 'userEmail', 'userAccountType', 
-                                                'userIdentifier', 'userHasAvatar', 'userDeleted', 'userActivated', 
+                                                'userIdentifier', 'userHasAvatar', 'userAvatarId', 'userDeleted', 'userActivated', 
                                                 'userLastLoginTimestamp', 'userCreationTimestamp', 'userDeletionTimestamp',
                                                 'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
                                      ->from('user');
