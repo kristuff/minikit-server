@@ -337,7 +337,7 @@ class UserModel extends BaseModel
             
                 $users[$key]['userAvatarUrl'] =  UserAvatarModel::getAvatarUrl(
                     $users[$key]['userHasAvatar'], 
-                    $users[$key]['userId'],
+                    $users[$key]['userAvatarId'],
                     Application::getUrl()
                 );
                 $users[$key]['userAccountTypeRendered'] = self::getReadableAccountType( $users[$key]['userAccountType']);
