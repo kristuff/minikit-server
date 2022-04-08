@@ -6,13 +6,13 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-
 namespace Kristuff\Minikit\Auth\Model;
 
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 use Kristuff\Minikit\Mail\Mailer;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
@@ -54,7 +54,6 @@ class UserInvitationModel extends UserRegistrationModel
     {
         return $response->assertTrue(self::isInvitationEnabled(), 405, self::text('USER_INVITATION_NOT_ENABLED'));
     }
-
 
     /** 
      * Invite new user
@@ -105,7 +104,7 @@ class UserInvitationModel extends UserRegistrationModel
                                           self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'))){
 
 		            // get user_id of the user that has been created, to keep things clean we DON'T use lastInsertId() here
-		            $userId = self::getUserIdByUsername($userName);
+		            $userId = UsersCollection::getUserIdByUsername($userName);
                     if ($response->assertTrue($userId !== false, 500, self::text('UNKNOWN_ERROR'))){
 
                         // send verification email
@@ -218,12 +217,12 @@ class UserInvitationModel extends UserRegistrationModel
 	 */
 	protected static function updateAndActivateInvitedUser($userId, $userName, $userPasswordHash,  $userActivationHash)
 	{
-        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
+        $useUid = \Kristuff\Minikit\Security\Token::getNewToken(16);
         $query = self::database()->update('user')
                                  ->setValue('userName', $userName)
                                  ->setValue('userPasswordHash', $userPasswordHash)
                                  ->setValue('userActivationHash', null)
-                                 ->setValue('userDataDirectory', $userDirectory)
+                                 ->setValue('userIdentifier', $useUid)
                                  ->setValue('userActivated', 1)
                                  ->whereEqual('userId', (int) $userId)
                                  ->whereEqual('userActivationHash', $userActivationHash);

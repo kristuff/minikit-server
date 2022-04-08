@@ -6,14 +6,16 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model; 
 
 use Kristuff\Minikit\Auth;
+use Kristuff\Minikit\Data\Auth\SettingsCollection;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
+use Kristuff\Minikit\Data\Auth\UserSettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
 use Kristuff\Patabase\Database;
@@ -23,9 +25,6 @@ use Kristuff\Patabase\Database;
  */
 class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
 {
-
-   
-
     /** 
      * Create db tables
      * 
@@ -37,9 +36,9 @@ class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
      */
     protected static function createTables(&$database)
     {
-        return Auth\Model\UserModel::createTable($database) &&
-               Auth\Model\UserSettingsModel::createTableSettings($database) &&
-               Auth\Model\AppSettingsModel::createTableSettings($database);
+        return UsersCollection::createTable($database) &&
+               UserSettingsCollection::createTableSettings($database) &&
+               SettingsCollection::createTableSettings($database);
     }
 
     //TODO
@@ -109,7 +108,7 @@ class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
                 self::logSuccessMessage('Database successfully created.');
     
                 // create admin user and get its id
-                $adminId = Auth\Model\UserAdminModel::insertAdminUser($adminEmail, $adminName, $adminPassword, $database);
+                $adminId = UsersCollection::insertAdminUser($adminEmail, $adminName, $adminPassword, $database);
                                 
                 if ($response->assertFalse($adminId === false, 500, 'Internal error : unable to insert admin user')) {
 

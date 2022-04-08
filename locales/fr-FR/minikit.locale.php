@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -19,6 +19,11 @@ return array(
     /* system */
     'LOCAL_NAME'                                => "Français",
     'LOCAL_CODE'                                => "fr-FR",
+
+    /* formats */
+    'FIELD_ENDING'                              => ' :',
+    'DATE_FORMAT'                               => 'd/m/Y',
+    'DATE_TIME_FORMAT'                          => 'd/m/Y H:i:s',
 
     /* time */
     'TIME_YEAR'                                 => "année",
@@ -137,7 +142,7 @@ return array(
     'USER_ACCOUNT_SUSPENSION_DELETION_STATUS_CHANGED'   => "Le status de suspension / suppression  de l'utilisateur a été modifié.",
     'USER_ACCOUNT_SUCCESSFULLY_KICKED'                  => "L'utilisateur sélectionné a été expulsé du système avec succès.",
     'USER_ACCOUNT_SUCCESSFULLY_DELETED'                 => "Le compte utilisateur a été supprimé avec succès.",
-    'USER_ACCOUNT_ERROR_DELETETION_FAILED'              => "La suppression du compte utilisateur a échoué !",
+    'USER_ACCOUNT_ERROR_DELETION_FAILED'              => "La suppression du compte utilisateur a échoué !",
     'USER_ACCOUNT_SUCCESSFULLY_CREATED'                 => "Le compte utilisateur a été créé avec succès.",
     'USER_ACCOUNT_SUSPENSION_ERROR_DAYS'                => "Les jours de suspension étaient invalides.",
     

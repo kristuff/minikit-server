@@ -6,20 +6,21 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 
 /** 
  * Class UserEditModel
  *
- *
+ * Handle user name, user email, and user password changes.
+ * For avatar, see UserAvatarModel class.
  */
 class UserEditModel extends UserModel
 {
@@ -28,14 +29,13 @@ class UserEditModel extends UserModel
      * 
      * @static
      * @access public
-     * @param  string   $newName        The new user's name
-     * @param  string   $token          The token
+     * @param string    $newName        The new user's name
+     * @param string    $token          The token
      *
      * @return 
      */
     public static function editCurrentUserName($newName, $token, $tokenKey)
     {
-        // the return response
         $response = TaskResponse::create();
  
         // validate token
@@ -50,19 +50,21 @@ class UserEditModel extends UserModel
         
             // save in database
             $userId = self::getCurrentUserId();
-            $saved = self::writeUserName($userId, $newName);
+            $saved = UsersCollection::updateUserName($userId, $newName);
 
             // saved?
             if ($response->assertTrue($saved, 500, self::text('ERROR_UNKNOWN'))){
 
-                // save new name in session
+                // save new name in session and set success message
                 self::session()->set('userName', $newName);
-            
-                // set success message
+
                 $response->setMessage(self::text('USER_NAME_CHANGE_SUCCESSFUL'));
+                $response->addData([ 
+                    'newName'   => self::session()->get('userName'),
+                    'newEmail'  => self::session()->get('userEmail'),
+                ]);
             }
         }
-
         return $response;
     }
 
@@ -71,15 +73,14 @@ class UserEditModel extends UserModel
      *
      * @static
      * @access public
-     * @param string        $newEmail           The new user's email
-     * @param string        $token              The token value
-     * @param string        $tokenKey           The token key
+     * @param string    $newEmail           The new user's email
+     * @param string    $token              The token value
+     * @param string    $tokenKey           The token key
      *
-     * @return 
+     * @return TaskResponse
      */
-    public static function editCurrentUserEmail(string $newEmail, string $token, string $tokenKey)
+    public static function editCurrentUserEmail(string $newEmail, string $token, string $tokenKey): TaskResponse
     {
-        // the return response
         $response = TaskResponse::create();
 
         // validate token
@@ -97,7 +98,7 @@ class UserEditModel extends UserModel
 
             // write to database
             $userId = self::getCurrentUserId();
-            $saved = self::writeUserEmail($userId, $newEmail);    
+            $saved  = UsersCollection::updateUserEmail($userId, $newEmail);    
 
             // if successful ...
             if ($response->assertTrue($saved, 500, self::text('ERROR_UNKNOWN'))){
@@ -109,6 +110,10 @@ class UserEditModel extends UserModel
                 UserAvatarModel::setAvatarInSession($userId, $userHasAvatar);
 
                 $response->setMessage(self::text('USER_EMAIL_CHANGE_SUCCESSFUL'));
+                $response->addData([ 
+                    'newName'   => self::session()->get('userName'),
+                    'newEmail'  => self::session()->get('userEmail'),
+                ]);
             }
         }
 
@@ -125,12 +130,11 @@ class UserEditModel extends UserModel
      * @param string        $token                      The token value
      * @param string        $tokenKey                   The token key
 	 *
-	 * @return bool     
+	 * @return TaskResponse   
 	 */
     public static function editCurrentUserPassword(string $currentPassword, string $newPassword, 
-                                                   string $repeatNewPassword, string $token, string $tokenKey)
+                                    string $repeatNewPassword, string $token, string $tokenKey): TaskResponse
 	{
-        // the return response
         $response = TaskResponse::create();
        
         // validate token
@@ -139,7 +143,7 @@ class UserEditModel extends UserModel
             // get current user (pass hash not stored in session)
             $currentUserName = self::session()->get('userName');
             $currentUserId = self::getCurrentUserId();
-            $user = self::getUserByUserNameOrEmail($currentUserName);
+            $user = UsersCollection::getUserByUserNameOrEmail($currentUserName);
 
             // user exists?
             if ($response->assertTrue($user !== false, 500, self::text('USER_PASSWORD_CHANGE_FAILED'))){
@@ -150,76 +154,15 @@ class UserEditModel extends UserModel
                         
                     // crypt the password (with the PHP 5.5+'s password_hash() function, result is a 60 character hash string)
 		            $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+                    $updated = UsersCollection::updateUserPasswordHash($currentUserId, $passwordHash);    
 
-		            // write the password to database (as hashed and salted string), reset userPasswordResetHash
-		            if ($response->assertTrue(self::writeUserPasswordHash($currentUserId, $passwordHash), 500, self::text('USER_PASSWORD_CHANGE_FAILED'))) {
-			            
-                        // set message
+                    // write the password to database (as hashed and salted string), reset userPasswordResetHash
+		            if ($response->assertTrue($updated, 500, self::text('USER_PASSWORD_CHANGE_FAILED'))) {
                         $response->setMessage(self::text('USER_PASSWORD_CHANGE_SUCCESSFUL'));
 		            } 
 		        } 
 		    } 
         }
-
-        // return response
         return $response;
-	}
-
-    /** 
-     * Writes new username to database
-     *
-     * @access private
-     * @static
-     * @param  int          $userId             The user's id.
-     * @param  string       $newName            The new user's name.
-     *
-     * @return bool         True if the username has been successfully changed, otherwise false.
-     */
-    private static function writeUserName($userId, $newName)
-    {
-        $query = self::database()->update('user')
-                                 ->setValue('userName', $newName)
-                                 ->whereEqual('userId', $userId);
-
-        return $query->execute() && $query->rowCount() === 1;          
-    }
-
-    /** 
-     * Writes new email address to database
-     *
-     * @access private
-     * @static
-     * @param  int          $userId             The user's id.
-     * @param  string       $newEmail           The new user's email address.
-     *
-     * @return bool         True if the email has been successfully changed, otherwise false.
-     */
-    private static function writeUserEmail(int $userId, string $newEmail)
-    {
-        $query = self::database()->update('user')
-                                 ->setValue('userEmail', $newEmail)
-                                 ->whereEqual('userId', $userId);
-
-        return $query->execute() && $query->rowCount() === 1;          
-    }
-    
-	/**
-	 * Writes the new password hash to the database
-	 *
-     * @access private
-     * @static
-     * @param  int          $userId             The user's id.
-	 * @param  string       $passwordHash       The hashed user's password
-	 *
-	 * @return bool         True if the password was succesfully saved, otherwise false.
-	 */
-	private static function writeUserPasswordHash(int $userId, string $passwordHash)
-	{
-        $query = self::database()->update('user')
-                                 ->setValue('userPasswordHash', $passwordHash)
-                                 ->whereEqual('userId', $userId);
-
-		// check if exactly one row was successfully changed
-		return $query->execute() && $query->rowCount() == 1;
 	}
 }

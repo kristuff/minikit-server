@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Security;
 
@@ -18,7 +17,6 @@ use Kristuff\Minikit\Http\Session;
 /**
  * Class AntiCsrf utils.
  * 
- *
  */
 class Token
 {
@@ -38,8 +36,8 @@ class Token
      * Constructor
      *
      * @access public
-     * @param  Http\Session     $session        The Session instance
-     * @param  int              $validity       (optional) The token validity in seconds. Default is 86400 (1 day)
+     * @param Http\Session  $session        The Session instance
+     * @param int           $validity       (optional) The token validity in seconds. Default is 86400 (1 day)
      */
     public function __construct(Session $session, int $validity = 86400)
     {
@@ -51,7 +49,7 @@ class Token
      * Gets/returns the CSRF token
      *
      * @access public
-     * @param  string       $identifier     (optional) Identifier. Default is 'global'.
+     * @param string        $identifier     (optional) Identifier. Default is 'global'.
      *
      * @return string       
      */
@@ -61,20 +59,19 @@ class Token
     }
 
     /**
-     * Checks if CSRF token in session is same as in the form submitted
-     *
+     * Checks if the the given CSRF token is valid according to 
+     * the value stored in session.
+     * 
      * @access public
-     * @param  string       $value          The value to compare
-     * @param  string       $identifier     (optional) Identifier. Default is 'global'.
+     * @param string        $value          The value to compare
+     * @param string        $identifier     (optional) Identifier. Default is 'global'.
      *
      * @return bool         true if the given value matchs the value registered in session, otherwise false 
      */
     public function isTokenValid(string $value = null, string $identifier = 'global'): bool
     {
-        // get token from session
+        // get token from session and compare
         $token = $this->session->get('token_'.$identifier);    
-
-        // compare
         return !empty($value) && !empty($token) && ($token == $value);
     }
    

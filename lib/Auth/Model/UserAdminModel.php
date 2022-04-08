@@ -6,16 +6,16 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
+use Kristuff\Minikit\Data\Auth\UserSettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
-use Kristuff\Patabase\Database;
 
 /** 
  * Class UserAdminModel
@@ -25,7 +25,6 @@ use Kristuff\Patabase\Database;
  */
 class UserAdminModel extends UserLoginModel
 {
-
     /**
      * Return an array with data for users management.
 	 *
@@ -54,23 +53,19 @@ class UserAdminModel extends UserLoginModel
      *
      * @access public
      * @static
-     * @param  string           $userName               The user's name.
-     * @param  string           $userEmail              The user's email address.
-     * @param  string           $userPassword           The user's password.
-     * @param  string           $userPasswordRepeat     The repeated user's password.
-     * @param  string           $token                  The token value.
-     * @param  string           $tokenKey               The token key
+     * @param string    $userName               The user's name.
+     * @param string    $userEmail              The user's email address.
+     * @param string    $userPassword           The user's password.
+     * @param string    $userPasswordRepeat     The repeated user's password.
+     * @param string    $token                  The token value.
+     * @param string    $tokenKey               The token key
      *
 	 * @return TaskResponse
 	 */
-    public static function createNewAccount(string $userName = null, 
-                                            string $userEmail = null, 
-                                            string $userPassword = null,
-                                            string $userPasswordRepeat = null, 
-                                            string $token = null, 
-                                            string $tokenkey = null)
+    public static function createNewAccount(string $userName = null, string $userEmail = null, 
+                                string $userPassword = null, string $userPasswordRepeat = null, 
+                                string $token = null, string $tokenkey = null)
     {
-        // the return response
         $response = TaskResponse::create();
     
         // clean the inputs
@@ -90,7 +85,7 @@ class UserAdminModel extends UserLoginModel
 		    $userPasswordHash = password_hash($userPassword, PASSWORD_DEFAULT);
 		
             // write user data to database
-            $userId = self::writeNewAccount($userName, $userEmail, $userPasswordHash);
+            $userId = UsersCollection::insertNewAccount($userName, $userEmail, $userPasswordHash);
 
             if ($response->assertTrue($userId !== false, 500, self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED')) &&
                 $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))){
@@ -98,8 +93,6 @@ class UserAdminModel extends UserLoginModel
                 $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_CREATED'));                       
             }
         }
-
-        // return response
         return $response;            
     }
 
@@ -116,16 +109,15 @@ class UserAdminModel extends UserLoginModel
      *
      * @access public
      * @static
-     * @param  mixed            $userId             The user'id
-     * @param  string           $token              The token
-     * @param  string           $tokenKey           The token key
-     * @param  int              [$suspensionDays]   (optional) The suspension value in days. Default is 0.
+     * @param mixed     $userId             The user'id
+     * @param string    $token              The token
+     * @param string    $tokenKey           The token key
+     * @param int       $suspensionDays     The suspension value in days. Default is 0.
      *
      * @return TaskResponse    
      */
     public static function updateSuspensionStatus($userId, string $token, string $tokenKey, int $suspensionDays = 0)
     {
-        // the return response
         $response = TaskResponse::create();
         
         // perform all necessary checks (token, is admin, userId)
@@ -141,26 +133,21 @@ class UserAdminModel extends UserLoginModel
             $suspensionTime = $days > 0 ? time() + ($days * 60 * 60 * 24) : null;
         
             // write the above info to the database
-            if ($response->assertTrue(self::writeSuspensionStatus($userId, $suspensionTime), 500, 'TODO _')){
+            if ($response->assertTrue(UsersCollection::updateSuspensionStatus($userId, $suspensionTime), 500, 'TODO _')){
        
                 // if suspension or deletion should happen, then also kick user out of the application 
                 // 'instantly' by resetting the user's session 
                 if ($suspensionTime != null) {
 
                     // see method is UserLoginModel
-                    if ($response->assertTrue(self::resetSessionIdInDatabase($userId), 500, 'TODO _rsid')){
+                    if ($response->assertTrue(UsersCollection::resetSessionId($userId), 500, 'TODO _rsid')){
                         $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_KICKED'));
                     }
-                    // return response
                     return $response;      
                  }
-
-                // set success message
                 $response->setMessage(self::text('USER_ACCOUNT_SUSPENSION_DELETION_STATUS_CHANGED'));
             }
         }
-
-        // return response
         return $response;            
     }
     
@@ -177,15 +164,15 @@ class UserAdminModel extends UserLoginModel
      *
      * @access public
      * @static
-     * @param  mixed        $userId             The user'id
-     * @param  string       $token              The token
-     * @param  bool        [$deleteStatus]      True to mark user a deleted. Default is false. 
+     * @param mixed     $userId            The user'id
+     * @param string    $token             The token
+     * @param string    $token             The token key
+     * @param bool      $deleteStatus      True to mark user a deleted. Default is true. 
      *
      * @return TaskResponse    
      */
     public static function updateDeletionStatus($userId, string $token, string $tokenKey, bool $deleteStatus = true)
     {
-        // the return response
         $response = TaskResponse::create();
         
         // perform all necessary checks (token, is admin)
@@ -197,10 +184,10 @@ class UserAdminModel extends UserLoginModel
             self::validateUserIdIsNotSelf($response, $userId)) {
         
             // write the above info to the database
-            if ($response->assertTrue(self::writeDeletionStatus($userId, $deleteStatus), 500, 'TODO houston')){
+            if ($response->assertTrue(UsersCollection::updateDeletionStatus($userId, $deleteStatus), 500, 'TODO houston')){
        
                 // see method is UserLoginModel
-                if ($response->assertTrue(self::resetSessionIdInDatabase($userId), 500, 'TODO rsid')){
+                if ($response->assertTrue(UsersCollection::resetSessionId($userId), 500, 'TODO rsid')){
                     $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_KICKED'));
                     return $response;            
                 }
@@ -226,25 +213,18 @@ class UserAdminModel extends UserLoginModel
 	 */
     public static function deleteUserAndSettings($userId, $token, $tokenKey)
     {
-        // the return response
         $response = TaskResponse::create();
         
         // perform all necessary checks (token, is admin)
         // Prevent to suspend or delete own account.
         // If admin suspend or delete own account will not be able to do any action.
-		if (self::validateToken($response, $token, $tokenKey) && 
-            self::validateAdminPermissions($response) && 
-            self::validateUserId($response, $userId) &&
-            self::validateUserIdIsNotSelf($response, $userId)) {
-
-            //todo
-            $deleteSettings = self::database()->delete('user_setting')->whereEqual('userId', (int) $userId)->execute();
-            $deleteUser     = self::database()->delete('user')->whereEqual('userId', (int) $userId)->execute();
-
-            if ($response->assertTrue($deleteSettings && $deleteUser, 500 , self::text('USER_ACCOUNT_ERROR_DELETETION_FAILED'))){
-                $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_DELETED'));                
-            }
-        }
+        self::validateToken($response, $token, $tokenKey) 
+            && self::validateAdminPermissions($response) 
+            && self::validateUserId($response, $userId) 
+            && self::validateUserIdIsNotSelf($response, $userId)
+            && $response->assertTrue(UserSettingsCollection::deleteUserSettings((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
+            && $response->assertTrue(UsersCollection::deleteUser((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
+            && $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_DELETED'));                
 
         // return response
         return $response;            
@@ -269,101 +249,4 @@ class UserAdminModel extends UserLoginModel
         return $response->assertFalse($isCurrentuserId, 405, self::text('USER_ACCOUNT_ERROR_DELETE_SUSPEND_OWN'));
     }
 
-    /**
-     * Writes the suspension status for the given user into the database.
-     *
-     * @access protected
-     * @static
-     * @param  int              $userId                 The user'id
-     * @param  int              $suspensionTime         The suspension timestamp.
-     *
-     * @return bool
-     */
-    protected static function writeSuspensionStatus($userId, $suspensionTime)
-    {
-        $query = self::database()->update('user')
-                                 ->setValue('userSuspensionTimestamp', $suspensionTime)
-                                 ->whereEqual('userId', (int) $userId);
-        return $query->execute() && $query->rowCount() === 1;
-    }
-
-    /**
-     * Writes the deletion status for the given user into the database.
-     *
-     * @access protected
-     * @static
-     * @param  int          $userId             The user'id
-     * @param  bool         $deleted            Deleted or not.
-     *
-     * @return bool
-     */
-    protected static function writeDeletionStatus($userId, $deleted)
-    {
-        $query = self::database()->update('user')
-                                 ->setValue('userDeleted', $deleted ? 1 : 0)
-                                 ->setValue('userDeletionTimestamp', $deleted ? time() : null)
-                                 ->whereEqual('userId', (int) $userId);
-        
-        return $query->execute() && $query->rowCount() === 1;
-    }
-
-    /**
-	 * Writes a new account to database
-     *
-     * @access protected
-     * @static
-     * @param  string           $userName               The user's name.
-     * @param  string           $userEmail              The user's email address.
-	 * @param  string           $userPasswordHash       The hashed user's password.
-	 *
-	 * @return int|bool
-	 */
-	protected static function writeNewAccount($userName, $userEmail, $userPasswordHash)
-	{
-        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
-        $query = self::database()->insert('user')
-                               ->setValue('userName', $userName)
-                               ->setValue('userEmail', $userEmail)
-                               ->setValue('userProvider', 'DEFAULT')
-                               ->setValue('userPasswordHash', $userPasswordHash)
-                               ->setValue('userActivationHash', null)
-                               ->setValue('userDataDirectory', $userDirectory)
-                               ->setValue('userActivated', 1)
-                               ->setValue('userCreationTimestamp', time())
-                               ->setValue('userAccountType', 1);
-    
-        return $query->execute() ? $query->lastId() : false;
-    }
-    
-    /**
-	 * Writes admin user account to database. This is used during installing process and 
-     * required a Database instance as argument
-     *
-     * @access protected
-     * @static
-     * @param  string               $userName               The user's name.
-     * @param  string               $userEmail              The user's email address.
-	 * @param  string               $userPasswordHash       The hashed user's password.
-	 * @param  Patabase\Database    $database               The database instance.
-	 *
-	 * @return int|bool             The admin user's id if successfully created, otherwise false 
-	 */
-    public static function insertAdminUser(string $userEmail, string $userName, string $userPassword, Database $database)
-   {
-        // crypt the password with the PHP 5.5's password_hash() function, results in a 60 character hash string.
-        // @see php.net/manual/en/function.password-hash.php for more, especially for potential options
-        $passwordHash = password_hash($userPassword, PASSWORD_DEFAULT);
-        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
-       
-        $query = $database->insert('user')
-                       ->setValue('userName', $userName)
-                       ->setValue('userEmail', $userEmail)
-                       ->setValue('userPasswordHash', $passwordHash)
-                       ->setValue('userActivated', 1)
-                       ->setValue('userCreationTimestamp', time())
-                       ->setValue('userDataDirectory', $userDirectory)
-                       ->setValue('userAccountType', 7);
-
-        return $query->execute() ? $query->lastId() : false;
-   }
 }

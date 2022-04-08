@@ -6,16 +6,14 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Security;
 
 use Kristuff\Minikit\Http;
 use Kristuff\Minikit\Security;
-use Kristuff\Minikit\Mvc\Application;
 
 /** 
  * class Factory
@@ -64,6 +62,7 @@ class CaptchaFactory
     public function getCaptcha(Http\Session $session) //, int $width, int $height)
     {
         if (!$this->captcha) {
+            //TODO clean
             //$this->captcha = new Security\Captcha($session, $width, $height);
             $this->captcha = new Security\CaptchaMath($session);//, $width, $height);
         }

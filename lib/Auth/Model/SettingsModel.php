@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
@@ -20,10 +19,10 @@ use Kristuff\Minikit\Core\Path;
 use Kristuff\Patabase\Database;
 
 /**
- * Class AppSettingsModel 
- *
+ * Class SettingsModel 
+ * Handle application settings
  */
-class AppSettingsModel extends UserModel
+class SettingsModel extends UserModel
 {
     /**
      * Get app settings 
@@ -185,22 +184,4 @@ class AppSettingsModel extends UserModel
         return true;   
     }
 
-    /** 
-     * Create the table app_setting
-     *
-     * @access public
-     * @static
-     * @param Database      $database           The Database instance
-     *
-     * @return bool         True if the table has been created, otherwise False
-     */
-    public static function createTableSettings(Database $database)
-    {
-        return $database->table('app_setting')
-                        ->create()
-                        ->column('settingId',    'int',          'NOT NULL', 'PK',  'AI')               
-                        ->column('settingName',  'varchar(64)',  'NULL')
-                        ->column('settingValue', 'varchar(255)', 'NULL')
-                        ->execute();
-    }
 }

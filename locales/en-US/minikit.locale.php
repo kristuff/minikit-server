@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -19,6 +19,11 @@ return array(
     /* system */
     'LOCAL_NAME'                                => "English",
     'LOCAL_CODE'                                => "en-US",
+
+    /* formats */
+    'FIELD_ENDING'                              => ':',
+    'DATE_FORMAT'                               => 'Y-m-d',
+    'DATE_TIME_FORMAT'                          => 'Y-m-d H:i:s',
 
     /* time */
     'TIME_YEAR'                                 => "year",
@@ -35,8 +40,6 @@ return array(
     'REL_TIME_MINUTE'                           => "%d minute%s ago",
     'REL_TIME_SECOND'                           => "%d second%s ago",
 
-
-
     /* commons errors */
     'ERROR_INVALID_REQUEST'                     => "Invalid request",
     'ERROR_PARAM_NULL_OR_EMPTY'                 => "The parameter '%s' was empty.",
@@ -46,6 +49,10 @@ return array(
     'ERROR_INVALID_CAPTCHA'                     => "The entered captcha security characters were wrong.",
     'ERROR_UNKNOWN'                             => "Unknown error occurred!",
   
+    /* auth */
+    'AUTH_EMAIL_POLITE_PHRASE'                  => 'Regards,', 
+    'AUTH_EMAIL_SIGNATURE'                      => 'The %s team', 
+
     /* login error */
     "LOGIN_ERROR_ACCOUNT_DELETED"               => "Your account has been deleted.",
 	"LOGIN_ERROR_ACCOUNT_SUSPENDED"             => "Account suspended for %s hours left",
@@ -54,10 +61,6 @@ return array(
 	"LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY"        => "Username or password field was empty.",
 	"LOGIN_ERROR_NAME_OR_PASSWORD_WRONG"        => "The username or password is incorrect. Please try again.",
    
-    /* auth */
-    'AUTH_EMAIL_POLITE_PHRASE'                  => 'Regards,', 
-    'AUTH_EMAIL_SIGNATURE'                      => 'The %s team', 
-
     /* login cookie */
     "LOGIN_COOKIE_ERROR_INVALID"                => "Your remember-me-cookie is invalid.",
 	"LOGIN_COOKIE_SUCCESSFUL"                   => "You were successfully logged in via the remember-me-cookie.",
@@ -136,7 +139,7 @@ return array(
     'USER_ACCOUNT_SUSPENSION_DELETION_STATUS_CHANGED'   => "The user's suspension / deletion status has been edited.",
     'USER_ACCOUNT_SUCCESSFULLY_KICKED'                  => "The selected user has been successfully kicked out of the system.",
     'USER_ACCOUNT_SUCCESSFULLY_DELETED'                 => "The user's account has been successfully deleted.",
-    'USER_ACCOUNT_ERROR_DELETETION_FAILED'              => "The user's account deletion failed!",
+    'USER_ACCOUNT_ERROR_DELETION_FAILED'                => "The user's account deletion failed!",
     'USER_ACCOUNT_SUCCESSFULLY_CREATED'                 => "The user's account has been successfully created.",
     'USER_ACCOUNT_SUSPENSION_ERROR_DAYS'                => "The suspension days was invalid.",
 	

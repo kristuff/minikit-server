@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
@@ -19,6 +18,8 @@ use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
 use Kristuff\Minikit\Mail\Mailer;
 use Kristuff\Minikit\Security\CaptchaModel;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
+use Kristuff\Patabase;
 
 /**
  * Class UserRecoveryModel
@@ -40,7 +41,7 @@ class UserRecoveryModel extends UserModel
      *
      * @return bool         True if the the recovery process is enabled, otherwise false.
      */
-    public static function isRecoveryEnabled()
+    public static function isRecoveryEnabled(): bool
     {
         return self::config('AUTH_PASSWORD_RESET_ENABLED') === true; 
     }
@@ -51,7 +52,7 @@ class UserRecoveryModel extends UserModel
      * @access public
      * @static
      *
-     * @return mixed 
+     * @return void 
      */
     public static function outputCaptcha()
     {
@@ -63,38 +64,35 @@ class UserRecoveryModel extends UserModel
      *
      * @access public
      * @static
+     * @param string         $userNameOrEmail
+     * @param string         $captach
      *
-     * @return 
+     * @return TaskResponse
      */
-    public static function verifyPasswordRecoveryRequest($userNameOrEmail, $captcha)
+    public static function verifyPasswordRecoveryRequest(?string $userNameOrEmail = '', ? string $captcha = ''): TaskResponse
     {
-        // the return response (default is valid)
-        $response = TaskResponse::create();
+        $response = TaskResponse::create();  // default response is valid
   
-        // check captcha
-        if ($response->assertTrue(\Kristuff\Minikit\Security\CaptchaModel::captcha()->validate($captcha, 'recovery_captcha'), 400, self::text('ERROR_INVALID_CAPTCHA'))){
-        
-            // user name or email empty?
-            if ($response->assertFalse(empty($userNameOrEmail), 400, self::text('LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'))){
+        // check captcha and empty user name or email 
+        if ($response->assertTrue(\Kristuff\Minikit\Security\CaptchaModel::captcha()->validate($captcha, 'recovery_captcha'), 400, self::text('ERROR_INVALID_CAPTCHA')) &&
+            $response->assertFalse(empty($userNameOrEmail), 400, self::text('LOGIN_RECOVERY_ERROR_NAME_EMAIL_EMPTY'))){
 
-                // get the userand check if that username exists
-                // we need to check is the user exists, but we do not tell end user if so 
-                // it could be an attacker who is testing for existing email/name 
-                $user = self::getUserByUserNameOrEmail($userNameOrEmail);
-                if ($user !== false) {
+            // get the userand check if that username exists
+            // we need to check is the user exists, but we do not tell end user if so 
+            // it could be an attacker who is testing for existing email/name 
+            $user = UsersCollection::getUserByUserNameOrEmail($userNameOrEmail);
+            if ($user !== false) {
 
-                    // generate integer-timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
-                    // generate random hash for email password reset verification (40 char bytes)
-                    // expire in one hour (3600 secs)
-                    $tempTimestamp = time() + 3600 ;
-                    $userPasswordResetHash = bin2hex(random_bytes(40)); //TODO
+                // generate integer-timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
+                // generate random hash for email password reset verification (40 char bytes)
+                // expire in one hour (3600 secs)
+                $tempTimestamp = time() + 3600 ;
+                $userPasswordResetHash = bin2hex(random_bytes(40)); //TODO
 
-                    // set token (= a random hash string and a timestamp) into database ...
-                    // and send a mail to the user, containing a link with username and token hash string
-                    if ($response->assertTrue(self::savePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL'))){
-                        $response->assertTrue(self::sendPasswordResetMail($user->userName, $userPasswordResetHash, $user->userEmail), 500, self::text('LOGIN_RECOVERY_MAIL_SENDING_ERROR'));
-                    }
-                }
+                // set token (= a random hash string and a timestamp) into database ...
+                // and send a mail to the user, containing a link with username and token hash string
+                $response->assertTrue(UsersCollection::savePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL')) &&
+                $response->assertTrue(self::sendPasswordResetMail($user->userName, $userPasswordResetHash, $user->userEmail), 500, self::text('LOGIN_RECOVERY_MAIL_SENDING_ERROR'));
             }
         }
 
@@ -103,8 +101,7 @@ class UserRecoveryModel extends UserModel
         if (count($response->errors()) === 0){
             $response->setMessage(self::text('LOGIN_RECOVERY_SUCCESSFUL_HANDLING'));
         }
-        
-        // return response
+
         return $response;
     }
        
@@ -121,29 +118,26 @@ class UserRecoveryModel extends UserModel
      * @param  string       $newPassword
      * @param  string       $repeatNewPassword
      *
-     * @return 
+     * @return TaskResponse
      */
-    public static function handlePasswordReset($userName, $passwordResetHash, $newPassword, $repeatNewPassword)
+    public static function handlePasswordReset($userName, $passwordResetHash, $newPassword, $repeatNewPassword): TaskResponse
     {
-        // the return response
         $response = TaskResponse::create();
   
         // validate the password
         if (self::validatePasswordReset($response, $userName, $passwordResetHash, $newPassword, $repeatNewPassword)){
 
-            // crypt the password (with the PHP 5.5+'s password_hash() function, result is a 60 character hash string)
+            // crypt the password (with the PHP 5.5+'s password_hash() function, result is 
+            // a 60 character hash string)
             $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
             // write the passwordhash to database, reset userPasswordResetHash
-            $saved = self::saveNewPasswordByNameAndResetToken($userName, $passwordHash, $passwordResetHash);
+            $saved = UsersCollection::updateNewPasswordByNameAndResetToken($userName, $passwordHash, $passwordResetHash);
         
             // set response message
-            if ($response->assertTrue($saved, 500, self::text('USER_PASSWORD_CHANGE_FAILED'))){
-                $response->setMessage(self::text('USER_PASSWORD_CHANGE_SUCCESSFUL'));
-            }
+            $response->assertTrue($saved, 500, self::text('USER_PASSWORD_CHANGE_FAILED')) &&
+            $response->setMessage(self::text('USER_PASSWORD_CHANGE_SUCCESSFUL'));
         }
-
-        // return response
         return $response;
     }
 
@@ -158,7 +152,6 @@ class UserRecoveryModel extends UserModel
      */
     public static function verifyPasswordResetLink($userName, $verificationCode)
     {
-        // the return response
         $response = TaskResponse::create();
 
         // validate input
@@ -173,7 +166,7 @@ class UserRecoveryModel extends UserModel
                                  ->whereEqual('userName', $userName)
                                  ->whereEqual('userPasswordResetHash', $verificationCode)
                                  ->whereEqual('userProvider','DEFAULT')
-                                 ->getAll('obj'); 
+                                 ->getAll(Patabase\Output::OBJ); 
 
             // if this user with exactly this verification hash code does NOT exist
             if ($response->assertFalse(count($users) == 0, 400, self::text('LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'))){
@@ -190,31 +183,7 @@ class UserRecoveryModel extends UserModel
                 }
             }
         }
-
-        // return response
         return $response;
-    }
-
-    /**
-     * Set password reset token in database (for DEFAULT user accounts)
-     *
-     * @access protected
-     * @static
-     * @param int       $userId                 The user id
-     * @param string    $passwordResetHash  The password reset hash
-     * @param int       $tempTimestamp          Temporary timestamp
-     *
-     * @return bool success status
-     */
-    protected static function savePasswordResetToken($userId, $passwordResetHash, $tempTimestamp)
-    {
-       $query = self::database()->update('user')
-                                ->setValue('userPasswordResetHash', $passwordResetHash)
-                                ->setValue('userPasswordResetTimestamp', $tempTimestamp)
-                                ->whereEqual('userId', $userId);
-
-        // check if exactly one row was successfully changed
-        return $query->execute() && $query->rowCount() == 1;
     }
 
     /**
@@ -312,28 +281,4 @@ class UserRecoveryModel extends UserModel
 
         return false;
     }
-    
-    /**
-     * Writes the new password to the database
-     *
-     * @access protected
-     * @static
-     * @param string    $userName           username
-     * @param string    $passwordHash
-     * @param string    $passwordResetHash
-     *
-     * @return bool     True if the password was succesfully saved, otherwise false.
-     */
-    protected static function saveNewPasswordByNameAndResetToken($userName, $passwordHash, $passwordResetHash)
-    {
-       $query = self::database()->update('user')
-                                ->setValue('userPasswordHash', $passwordHash)
-                                ->setValue('userPasswordResetHash', null)
-                                ->setValue('userPasswordResetTimestamp', null)
-                                ->whereEqual('userName', $userName)
-                                ->whereEqual('userPasswordResetHash', $passwordResetHash);
-
-        // check if exactly one row was successfully changed
-        return $query->execute() && $query->rowCount() == 1;
-    }     
 }

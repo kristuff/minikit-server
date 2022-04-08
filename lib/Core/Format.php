@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Core;
 
@@ -22,6 +21,44 @@ use Kristuff\Minikit\Auth\TextHelper;
  */
 class Format
 {
+    /**
+     * Get a formatted date from given timestamp
+     * (get format from locale)
+     *
+     * @access public
+     * @static
+     * @param int           $timestamp       
+     * @param string        $timezone       Default is 'UTC'      
+     *
+     * @return string
+     */
+    public static function getFormattedDate(int $timestamp, ?string $timezone = 'UTC')
+    {
+        $date = new \DateTime(); 
+        $date->setTimezone(new \DateTimeZone($timezone ?? 'UTC'));
+        $date->setTimestamp($timestamp);
+        return $date->format(TextHelper::text('DATE_FORMAT'));
+    }
+
+    /**
+     * Get a formatted date and time from given timestamp
+     * (get format from locale)
+     *
+     * @access public
+     * @static
+     * @param int           $timestamp       
+     * @param string        $timezone       Default is 'UTC'      
+     *
+     * @return string
+     */
+    public static function getFormattedDateTime(int $timestamp, ?string $timezone = 'UTC')
+    {
+        $date = new \DateTime(); 
+        $date->setTimezone(new \DateTimeZone($timezone ?? 'UTC'));
+        $date->setTimestamp($timestamp);
+        return $date->format(TextHelper::text('DATE_TIME_FORMAT'));
+    }
+
     /**
      * Split a number of seconds and returns an array with time splited in years, days, hours and minutes. 
      *
@@ -211,5 +248,40 @@ class Format
     public static function getNumeric(string $value): string
     {
         return preg_replace("/[^0-9,.]/", "", $value);
+    }
+
+    /** 
+     * Gets whether the given user email is valid or not
+     *
+     * @access public
+     * @static
+     * @param  string       $email  The email's address
+     *
+     * @return bool         
+     */
+    public static function isValidEmail($email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+    
+
+    /**
+     * TODO
+     */
+    public static function summary($value, $min_length = 5, $max_length = 120, $end = '[...]')
+    {
+        $length = strlen($value);
+
+        if ($length > $max_length) {
+            $max = strpos($value, ' ', $max_length);
+            if ($max === false) {
+                $max = $max_length;
+            }
+            return substr($value, 0, $max).' '.$end;
+        } elseif ($length < $min_length) {
+            return '';
+        }
+
+        return $value;
     }
 }

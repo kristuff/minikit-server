@@ -2,21 +2,6 @@
 
 > Mini PHP web Framework.
 
-Requirements
-------------
-
-- PHP >= 7.3
-- Websever with mod_rewrite 
-
-Dependencies
-----------
-
-- Mailer extension is using [phpmailer/phpmailer](https://github.com/PHPMailer/PHPMailer)
-- Database extension is using [kristuff/patabase](https://github.com/kristuff/patabase)
-
-License
--------
-
 The MIT License (MIT)
 
 Copyright (c) 2017-2022 Kristuff

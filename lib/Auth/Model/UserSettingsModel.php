@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
@@ -18,6 +17,7 @@ use Kristuff\Minikit\Auth\Model\UserLoginModel;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Core\Json;
 use Kristuff\Minikit\Core\Path;
+use Kristuff\Minikit\Data\Auth\UserSettingsCollection;
 use Kristuff\Patabase\Database;
 
 /**
@@ -66,7 +66,7 @@ class UserSettingsModel extends UserModel
         if (self::validateUserId($response, $userId)){
             
             // get users settings data
-            foreach(self::getSettings($userId) as $item) {
+            foreach(UserSettingsCollection::getSettings($userId) as $item) {
                 $data[$item['settingName']] = \Kristuff\Minikit\Core\Filter::XssFilter($item['settingValue']);
             }
         }
@@ -97,7 +97,6 @@ class UserSettingsModel extends UserModel
      */
     public static function resetUserSettings($userId, string $tokenValue, string $tokenKey)
     {
-        // the return response
         $response = TaskResponse::create();
 
         // validate token and  userid
@@ -105,18 +104,16 @@ class UserSettingsModel extends UserModel
             self::validateUserId($response, $userId)){
 
             // try to delete and reload
-            $result = self::deleteUserSettings($userId) && 
+            $result = UserSettingsCollection::deleteUserSettings($userId) && 
                       self::loadDefaultSettings(self::database(), $userId);
             
-            // if true reload settings in session
             if ($response->assertTrue($result, 500, 'TODO')){
 
+                // if true, reload settings in session
                 // get and reset user settings data into session
                 $settingsData = UserSettingsModel::getUserSettings(self::getCurrentUserId(), true);
                 self::session()->set('userSettings', $settingsData);
-
-                // feedback //TODO text
-                $response->setMessage('User settings reseted sucessfully TODO');             
+                $response->setMessage('User settings reseted sucessfully TODO'); //TODO text locale             
             }
         }
         // return response 
@@ -151,7 +148,7 @@ class UserSettingsModel extends UserModel
             self::validateSettingNameAndValue($response, $paramName, $value)){
 
             // try to update
-            $query = self::updateUserSettingsByName((int) $userId, $paramName, $value);
+            $query = UserSettingsCollection::updateUserSettingsByName((int) $userId, $paramName, $value);
             if ($response->assertTrue($query, 500, 'todo' . $query)){
 
                 // get and reset user settings data into session
@@ -209,76 +206,6 @@ class UserSettingsModel extends UserModel
                                     403, self::text('ERROR_INVALID_PERMISSIONS'));
     }
 
-    /**
-     * Delete all settings for given user  
-     * 
-     * @static
-     * @param mixed             $userId             The user's id
-     * 
-     * @return bool             True if the settings have been sucessfully deleted, otherwise false
-     */
-    private static function deleteUserSettings($userId)
-    {
-        $query = self::database()->delete('user_setting')
-                                ->whereEqual('userId', $userId);
-
-        return $query->execute();          
-    }
-
-    /**
-     * Update a value in user's settings 
-     * 
-     * @param int               $userId             The user's id
-     * @param string            $paramName          The setting parameter name
-     * @param mixed             $value              The setting parameter value
-     * 
-     * @return bool             True if the setting parameter has been edited, otherwise false
-     */
-    private static function updateUserSettingsByName(int $userId, string $paramName, $value)
-    {
-        $query = self::database()->update('user_setting')
-                                 ->setValue('settingValue', $value)
-                                 ->whereEqual('settingName', $paramName)
-                                 ->whereEqual('userId', (int) $userId);
- 
-        return $query->execute() && $query->rowCount() === 1;          
-    }
-
-    /** 
-     * Get an associtive array of settings for given userId
-     * 
-     * @access public
-     * @static 
-     * todo doc
-     * 
-     * @return array         
-     */
-    private static function getSettings($userId, string $settingName = null, int $limit = 0, int $offset = 0, string $orderBy = 'settingName')
-    {
-        // prepare query
-        $query = self::database()->select('settingName', 'settingValue')
-                                 ->from('user_setting')
-                                 ->whereEqual('userId', (int) $userId);
-
-        if ($limit > 0){
-            $query->limit($limit);
-            $query->offset($offset);
-        }   
-
-        // optional filter
-        if (!empty($settingName)){
-            $query->whereEqual('settingName', $settingName);
-            $query->limit(1);
-        }        
-
-        // order
-        if (in_array($orderBy, ['settingName'])){
-            $query->orderAsc($orderBy);
-        }        
-
-        return $query->getAll('assoc');
-    }
-
     /** 
      * Load the default setting 
      * Will check for a json file named 'user.settings.default.json' in app config default path
@@ -313,26 +240,5 @@ class UserSettingsModel extends UserModel
             }            
         }
         return true;   
-    }
-
-    /** 
-     * Create the table user_settings
-     *
-     * @access public
-     * @static
-     * @param Database      $database           The Database instance
-     *
-     * @return bool         True if the table has been created, otherwise False
-     */
-    public static function createTableSettings(Database $database)
-    {
-        return $database->table('user_setting')
-                        ->create()
-                        ->column('settingId',   ' int', 'NOT NULL', 'PK',  'AI')               
-                        ->column('userId',       'int', 'NOT NULL')
-                        ->column('settingName',  'varchar(64)', 'NULL')
-                        ->column('settingValue', 'varchar(255)', 'NULL')
-                        ->fk('fk_setting_user',  'userId', 'user', 'userId')
-                        ->execute();
     }
 }

@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
@@ -19,6 +18,7 @@ use Kristuff\Minikit\Mail\EmailBuilder;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
 use Kristuff\Minikit\Security\CaptchaModel;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 
 /** 
  * Class RegistrationModel
@@ -103,7 +103,7 @@ class UserRegistrationModel extends UserModel
                                        self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'))){
 
                 // get user_id of the user that has been created, to keep things clean we DON'T use lastInsertId() here
-                $userId = UserModel::getUserIdByUsername($userName);
+                $userId = UsersCollection::getUserIdByUsername($userName);
                 if ($response->assertTrue($userId !== false, 500, self::text('UNKNOWN_ERROR'))){
 
                     // send verification email
@@ -142,24 +142,10 @@ class UserRegistrationModel extends UserModel
      */
     public static function verifyRegisteredUser($userId, $userActivationHash)
     {
-        $query = self::database()->update('user')
-                                 ->setValue('userActivated', 1)
-                                 ->setValue('userActivationHash', null)
-                                 ->whereEqual('userId', $userId)
-                                 ->where()->notNull('userPasswordHash')
-                                 ->whereEqual('userActivationHash', $userActivationHash);
-        
-        // check if query was successfull
-        $success = ($query->execute() && $query->rowCount() == 1);
-        
-        // create response        
         $response = TaskResponse::create();
-        if ($response->assertTrue($success, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))){
+        $response->assertTrue(UsersCollection::validateRegistrationHash($userId, $userActivationHash), 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))
+            && $response->setMessage(self::text('USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'));
 
-            $response->setMessage(self::text('USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'));
-        }
-
-        // return response
         return $response;
     }
     
@@ -201,7 +187,7 @@ class UserRegistrationModel extends UserModel
                         ->setValue('userEmail', $userEmail)
                         ->setValue('userPasswordHash', $userPasswordHash)
                         ->setValue('userActivationHash', $activationHash)
-                        ->setValue('userDataDirectory', $userDirectory)
+                        ->setValue('userIdentifier', $userDirectory)
                         ->setValue('userCreationTimestamp', time())
                         ->setValue('userActivated', 0)
                         ->setValue('userProvider', 'DEFAULT')

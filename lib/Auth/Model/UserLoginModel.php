@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
@@ -18,6 +17,8 @@ use Kristuff\Minikit\Security\Encryption;
 use Kristuff\Minikit\Auth\Model\UserModel;
 use Kristuff\Minikit\Auth\Model\UserSettingsModel;
 use Kristuff\Minikit\Auth\Model\UserAvatarModel;
+use Kristuff\Minikit\Core\Syslog;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 use Kristuff\Minikit\Http\Request;
 use Kristuff\Minikit\Mvc\TaskResponse;
 
@@ -84,7 +85,7 @@ class UserLoginModel extends UserModel
     {
         $userId = self::getCurrentUserId();
         self::deleteCookie($userId);
-        self::resetSessionIdInDatabase($userId);
+        UsersCollection::resetSessionId($userId);
         self::session()->destroy();
     }
 
@@ -125,7 +126,7 @@ class UserLoginModel extends UserModel
 
             'userEmail'             => self::session()->get('userEmail'),
             'userAccountType'       => self::session()->get('userAccountType'),
-            'userDataDirectory'     => self::session()->get('userDataDirectory'),
+            'userIdentifier'        => self::session()->get('userIdentifier'),
             'userProvider'          => 'DEFAULT', // TODO
             'userCreationTimestamp' => $createdTimeStamp,
             'userIsAdmin'           => self::isUserLoggedInAndAdmin(),
@@ -232,7 +233,7 @@ class UserLoginModel extends UserModel
                 if (!empty($token) && !empty($userId) && $hash === hash('sha256', $userId . ':' . $token) ) {
 
                     // get data of user that has this id and this token
-                    $result = self::getUserByUserIdAndToken(intval($userId), $token);
+                    $result = UsersCollection::getUserByUserIdAndToken(intval($userId), $token);
 
                     // if user with that id and exactly that cookie token exists in database
                     if ( $result !== false ) {
@@ -278,7 +279,7 @@ class UserLoginModel extends UserModel
             if ($response->assertFalse($failureOne, 400, self::text('LOGIN_ERROR_FAILED_3_TIMES'))){
 		
 		        // get all data of that user (to later check if password and password_hash fit)
-		        $user = self::getUserByUserNameOrEmail($userNameOrEmail);
+		        $user = UsersCollection::getUserByUserNameOrEmail($userNameOrEmail);
 
                 // check if that user exists. We don't give back a cause in the feedback to avoid giving an attacker details.
                 // brute force attack mitigation: reset failed login counter because of found user
@@ -286,7 +287,7 @@ class UserLoginModel extends UserModel
 
                     // increment the user not found count, helps mitigate user enumeration
                     self::incrementUserNotFoundCounter();
-                    self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
+                    Syslog::warning('Invalid authentification from host [' . Request::remoteIp() . ']');
  
                     // user does not exist, but we won't to give a potential attacker this details
                     return false;
@@ -301,8 +302,8 @@ class UserLoginModel extends UserModel
 		            if (!$response->assertTrue(password_verify($userPassword, $user->userPasswordHash), 400, self::text('LOGIN_ERROR_NAME_OR_PASSWORD_WRONG'))){
 		    
                         //  +1 failed-login counter
-                        self::incrementFailedLoginCounter($user->userName);
-                        self::log(LOG_WARNING, 'Invalid authentification from host [' . Request::remoteIp() . ']');
+                        UsersCollection::incrementFailedLoginCounter($user->userName);
+                        Syslog::warning('Invalid authentification from host [' . Request::remoteIp() . ']');
                         return false;   
 		            }
 
@@ -353,33 +354,7 @@ class UserLoginModel extends UserModel
         self::session()->set('userLastFailedLogin', time());
     }
 
-    /** 
-     * Gets the user's data by user's id and a token (used by login-via-cookie process)
-     *
-     * @access private
-     * @static
-     * @param  int      $userId     
-     * @param  string   $token
-     *
-     * @return mixed    Returns false if user does not exist, returns object with user's data when user exists
-     */
-    private static function getUserByUserIdAndToken(int $userId, string $token)
-    {
-
-        $users = self::database()->select('userId','userName', 'userEmail', 'userPasswordHash', 'userAccountType', 
-                                            'userCreationTimestamp', 'userDataDirectory', 'userHasAvatar', 'userDeleted', 'userActivated',
-                                            'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
-                               ->from('user')
-                               ->whereEqual('userId', $userId)
-                               ->where()->notNull('userRememberMeToken')
-                               ->whereEqual('userRememberMeToken', $token)
-                               ->whereEqual('userProvider', 'DEFAULT')
-                               ->getOne('obj');
-
-        return count($users) > 0 ? $users[0] : false;
-
-   }
-    
+   
     /**
      * The real login process: The user's data is written into the session.
      * Cheesy name, maybe rename. Also maybe refactoring this, using an array.
@@ -406,7 +381,7 @@ class UserLoginModel extends UserModel
         self::session()->set('userName', $user->userName);
         self::session()->set('userEmail', $user->userEmail);
         self::session()->set('userAccountType', $user->userAccountType);
-        self::session()->set('userDataDirectory', $user->userDataDirectory);
+        self::session()->set('userIdentifier', $user->userIdentifier);
         self::session()->set('userProvider', 'DEFAULT'); // TODO
         self::session()->set('userCreationTimestamp', $user->userCreationTimestamp);
         
@@ -458,45 +433,6 @@ class UserLoginModel extends UserModel
         }
 
         return $query->execute();
-    }
-
-    /** 
-     * Update session id in database
-     *
-     * @access protected
-     * @static
-     * @param mixed         $userId
-     *
-     * @return bool
-     */
-    protected static function resetSessionIdInDatabase($userId)
-    {
-        return self::database()->update('user')
-                               ->setValue('userSessionId', null)
-                               ->whereEqual('userId', (int) $userId)
-                               ->execute();
-    }
-    
-    /**
-     * Increments the failed-login counter of a user
-     *
-     * @access private
-     * @static
-     * @param string        $userNameOrEmail
-     *
-     * @return bool
-     */
-    private static function incrementFailedLoginCounter($userNameOrEmail)
-    {
-        return self::database()->update('user')
-                               ->setValue('userLastFailedLoginTimestamp', time())
-                               ->increment('userFailedLoginCount', 1)
-                               ->where()
-                                    ->beginOr()
-                                        ->equal('userName', $userNameOrEmail)
-                                        ->equal('userEmail', $userNameOrEmail)
-                                    ->closeOr()
-                               ->execute();
     }
 
     /**
@@ -558,10 +494,7 @@ class UserLoginModel extends UserModel
     {
         // clear rememberMeToken in database
         if(isset($userId)){
-           self::database()->update('user')
-                           ->setValue('userRememberMeToken', null)
-                           ->whereEqual('userId', $userId)
-                           ->execute();
+            UsersCollection::deleteCookie($userId);
         }
 
         // delete remember_me cookie in browser

@@ -6,104 +6,256 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-
 namespace Kristuff\Minikit\Auth\Model;
 
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
-use Kristuff\Patabase\Database;
 
 /** 
  * UserModel
  */
-class UserModel extends UserBaseModel
+class UserModel extends BaseModel
 {
-   
+      /** 
+     * Get the account type as human readable string value .
+     * @see isUserLoggedInAndAdmin()
+
+     * @access public
+     * @static 
+     * @param int           $userAccountType        The user account type id
+     * 
+     * @return string          .
+     */
+    public static function getReadableAccountType(int $userAccountType)
+    {
+        switch ((int) $userAccountType){
+            case 1: return 'guest';
+            case 2: return 'normal';
+            case 7: return 'admin';
+            default: return '';
+        }
+    }
+
     /** 
-     * Checks if a username is already taken
+     * Gets whether the auth process use HTML email
+     * 
+     * @access public
+     * @static
+     *
+     * @return bool         True if the auth process use HTML email, otherwise false.
+     */
+    public static function isHtmlEmailEnabled()
+    {
+        return self::config('AUTH_EMAIL_HTML') === true; 
+    }
+
+    /** 
+     * Returns the current user id.
      *
      * @access public
      * @static
-     * @param string        $userName           The user's name
      *
-     * @return bool         True if username alreay exists in database, otherwise False.
+     * @return int          True current user id.
      */
-    public static function isUserNameExists(string $userName)
+    public static function getCurrentUserId()
     {
-         return self::database()->select()
-                                ->count('num')
-                                ->from('user')
-                                ->whereEqual('userName', $userName)
-                                ->getColumn() > 0;
+        return intval(self::session()->get('userId'));
     }
 
     /** 
-     * Checks if a email is already used
+     * Returns the current user uid.
      *
      * @access public
-     * @static   
-     * @param  string       $userEmail          The user's email address.
+     * @static
      *
-     * @return bool         True if given email already exists in database, otherwise false
+     * @return string          True current user string uid.
      */
-    public static function isUserEmailExists(string $userEmail)
+    public static function getCurrentUserIdentifier()
     {
-        return self::database()->select()
-                               ->count('num')
-                               ->from('user')
-                               ->whereEqual('userEmail', $userEmail)
-                               ->limit(1)
-                               ->getColumn() > 0;
+        return intval(self::session()->get('userIdentifer'));
     }
 
     /** 
-     * Gets a user's profile data, according to the given user's name or user's email
+     * Returns the current user account type.
+     * 
+     * @access public
+     * @static
+     *
+     * @return int          The current user account type.
+     */
+    public static function getCurrentUserAccountType(): int
+    {
+        return intval(self::session()->get('userAccountType'));
+    }
+
+    /** 
+     * Checks if the user is logged in or not
+     *
+     * @access public
+     * @static
+     *
+     * @return bool         True if the current user is logged in, otherwise false.
+     */
+    public static function isUserLoggedIn()
+    {
+        return self::session()->get('userIsLoggedIn') ? true : false;
+    }
+
+    /** 
+     * Checks if a given id corresponds to current user id
+     *
+     * @access public
+     * @static
+     *
+     * @return bool         True if the id corresponds to current user id, otherwise false.
+     */
+    public static function isCurrentUserId(int $userId)
+    {
+        return $userId === self::getCurrentUserId();
+    }
+
+    /** 
+     * Checks if the user is logged and has admin permissions.
+     * @see getReadableAccountType() 
+     * 
+     * @access public
+     * @static
+     *
+     * @return bool         True if the current user is logged in and has admin permissions, otherwise false.
+     */
+    public static function isUserLoggedInAndAdmin()
+    {
+        return self::isUserLoggedIn() && self::getCurrentUserAccountType() === 7;
+    }
+
+    /**
+     * Validates self is admin
+     * 
+     * Checks if current user is logged in and is admin, if not, sets the response code to 403 with common error message.
+     *
+     * @access public
+     * @static
+	 * @param TaskResponse  $response               The reponse instance.
+     *
+	 * @return bool         True if the given username is valid, otherwise false.   
+     */
+    public static function validateAdminPermissions(TaskResponse $response)
+    {
+        return $response->assertTrue(self::isUserLoggedInAndAdmin(), 403, 
+                                     self::text('ERROR_INVALID_PERMISSIONS')); 
+    }
+
+    /** 
+     * Checks whether the user the given user name is valid
+     *
+     * @access public
+     * @static
+     * @param  string       $userName               The user's name
+     *
+     * @return bool         True if username matchs expected pattern, otherwise false.
+     */
+    public static function isUserNamePatternValid($userName)
+    {
+        // username cannot be empty and must be azAZ09 and 2-64 characters
+         return preg_match("/^[a-zA-Z0-9]{2,64}$/", $userName) === 1;
+    }
+
+    /**
+	 * Validate a password 
+	 *
+     * @access public
+     * @static
+     * @param TaskResponse  $response               The response instance.
+     * @param string        $newPassword            The new password.
+     * @param string        $repeatNewPassword      The repeated password.
+     *
+     * @return bool             True if the given password is valid, otherwise false.   
+     */
+	public static function validateUserPassword(TaskResponse $response, string $newPassword, string $repeatNewPassword)
+	{
+        // TODO force strong password?
+        return $response->assertFalse(empty($newPassword), 400, self::text('USER_PASSWORD_ERROR_EMPTY')) &&
+               $response->assertEquals($newPassword, $repeatNewPassword, 400, self::text('USER_PASSWORD_ERROR_REPEAT_WRONG')) &&
+               $response->assertFalse(strlen($newPassword) < 8, 400, self::text('USER_PASSWORD_ERROR_TOO_SHORT'));
+    }
+    
+    /**
+     * Validates the username pattern
+     *
+     * @access public
+     * @static
+     * @param  TaskResponse     $response               The TaskResponse instance.
+     * @param  string           $userName               The user's name.
+     *
+     * @return bool             True if the given username is valid, otherwise false.   
+     */
+    public static function validateUserNamePattern(TaskResponse $response, string $userName)
+    {
+        // username cannot be empty and must be azAZ09 and 2-64 characters
+        return $response->assertTrue(self::isUserNamePatternValid($userName), 400, self::text('USER_NAME_ERROR_BAD_PATTERN'));
+    }
+
+    /**
+     * Validates the email pattern
+     *
+     * @access public
+     * @static
+     * @param TaskResponse      $response               The reponse instance.
+     * @param string            $userEmail              The user's email address.
+     * @param string            $userEmailRepeat        The repeated user's email address.
+     *
+	 * @return bool             True if the given username is valid, otherwise false. 
+     */
+    public static function validateUserEmailPattern(TaskResponse $response, $userEmail, $userEmailRepeat)
+    {
+        // validate the email with PHP's internal filter
+        // side-fact: Max length seems to be 254 chars
+        // @see http://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+        return $response->assertFalse(empty($userEmail), 400, self::text('USER_EMAIL_ERROR_EMPTY')) &&
+               $response->assertEquals($userEmail, $userEmailRepeat, 400, self::text('USER_EMAIL_ERROR_REPEAT_WRONG')) &&
+               $response->assertTrue((filter_var($userEmail, FILTER_VALIDATE_EMAIL) !== false), 400, self::text('USER_EMAIL_ERROR_BAD_PATTERN'));
+    }
+
+    /**
+     * Validates a userId
+     * Checks if the user id is set and is int
      *
      * @access protected
      * @static
-     * @param string            $userNameOrEmail        The user's name or email address.
+     * @param TaskResponse      $response               The reponse instance.
+     * @param mixed             $userId                 The user's id.
      *
-     * @return mixed|bool       Returns the user as object if found, otherwise returns false.
+     * @return bool             True if the given username is valid, otherwise false.   
      */
-    protected static function getUserByUserNameOrEmail(string $userNameOrEmail)
+    protected static function validateUserId(TaskResponse $response, $userId)
     {
-        $users = self::database()->select('userId','userName', 'userEmail', 'userPasswordHash', 'userAccountType', 
-                                            'userDataDirectory', 'userHasAvatar', 'userDeleted', 'userActivated',
-                                            'userCreationTimestamp',
-                                            'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
-                                ->from('user')
-                                ->where()
-                                    ->beginOr()
-                                        ->equal('userName', $userNameOrEmail)
-                                        ->equal('userEmail', $userNameOrEmail)
-                                    ->closeOr()
-                               ->where()->equal('userProvider','DEFAULT')
-                               ->getOne('obj');
-
-        return count($users) > 0 ? $users[0] : false;
-    }   
-
-    /** 
-     * Get the user id user for given userName
-     *
-     * @access public
-     * @static   
-     * @param string            $userName               The user's name.
-     *
-     * @return mixed|bool       Returns the user'id if found, otherwise returns false.
-     */
-    public static function getUserIdByUsername(string $userName)
-    {
-        $userId = self::database()->select('userId')
-                               ->from('user')
-                               ->whereEqual('userName', $userName)
-                               ->getColumn();
-        return !empty($userId) ?  $userId : false;
+        return $response->assertTrue(!empty($userId), 405, self::text('USER_ID_ERROR_EMPTY')) &&
+               $response->assertTrue(is_numeric($userId) || ctype_digit($userId), 405, self::text('USER_ID_ERROR_BAD_FORMAT'));
     }
+
+    /**
+     * Validates token
+     * 
+     * Checks if a token is valid according to its key. 
+     *
+     * @access protected
+     * @static
+     * @param TaskResponse      $response               The reponse instance.
+     * @param string            $token                  The token.
+     * @param string            $tokenKey               The token key.
+     *
+	 * @return bool             True if the given username is valid, otherwise false.   
+     */
+    protected static function validateToken(TaskResponse $response, ?string $token, string $tokenKey)
+    {
+        return $response->assertTrue(self::token()->isTokenValid($token, $tokenKey), 405, self::text('ERROR_INVALID_TOKEN'));
+    }
+
     /**
      * Validates that the username is not already taken
      * 
@@ -117,7 +269,7 @@ class UserModel extends UserBaseModel
     public static function validateUserNameNoConflict(TaskResponse $response, string $userName)
     {
         //check if new username already exists (conflict)
-        return $response->assertFalse(self::isUserNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
+        return $response->assertFalse(UsersCollection::isUserNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
     }
     
     /**
@@ -133,23 +285,7 @@ class UserModel extends UserBaseModel
     public static function validateUserEmailNoConflict(TaskResponse $response, string $userEmail)
     {
         // check if new email already exists (conflict)
-        return $response->assertFalse(self::isUserEmailExists($userEmail), 409, self::text('USER_EMAIL_ERROR_ALREADY_TAKEN'));
-    }
-
-    /** 
-     * Gets the number of users in database
-     * 
-     * @access public
-     * @static
-     * 
-     * @return int    
-     */
-    public static function countProfiles()
-    {
-        return (int) self::database()->select()
-                                     ->count('total')
-                                     ->from('user')
-                                     ->getColumn();
+        return $response->assertFalse(UsersCollection::isUserEmailExists($userEmail), 409, self::text('USER_EMAIL_ERROR_ALREADY_TAKEN'));
     }
 
     /** 
@@ -172,7 +308,7 @@ class UserModel extends UserBaseModel
             
             //prepare query
             $query = self::database()->select('userId','userName', 'userEmail', 'userAccountType', 
-                                                'userDataDirectory', 'userHasAvatar', 'userDeleted', 'userActivated', 
+                                                'userIdentifier', 'userHasAvatar', 'userDeleted', 'userActivated', 
                                                 'userLastLoginTimestamp', 'userCreationTimestamp', 'userDeletionTimestamp',
                                                 'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
                                      ->from('user');
@@ -208,7 +344,7 @@ class UserModel extends UserBaseModel
             }
 
             // set data to return
-            $response->setdata(['total'  => self::countProfiles(),
+            $response->setdata(['total'  => UsersCollection::countProfiles(),
                                 'offset' => $offset,
                                 'limit'  => $limit,
                                 'items'  => $users]);
@@ -217,44 +353,4 @@ class UserModel extends UserBaseModel
         // return response
         return $response;
     }    
-
-    /** 
-     * Create the table user
-     * 
-     * @access public
-     * @static
-     * @param Database      $database           The Database instance
-     *
-     * @return  bool        True if the table has been created, otherwise False
-     */
-    public static function createTable(Database $database)
-    {
-        $timeColumn = $database->getDriverName() === 'sqlite' ? 'int' : 'timestamp';
-
-        return $database->table('user')
-                        ->create()
-                        ->column('userId',                       'int',             'NOT NULL',   'PK',  'AI')               
-                        ->column('userEmail',                    'varchar(255)',    'NOT NULL',   'UNIQUE')
-                        ->column('userName',                     'varchar(64)',     'NOT NULL',   'UNIQUE')
-                        ->column('userPasswordHash',             'varchar(255)',    'NULL',       'DEFAULT', 'NULL')
-                        ->column('userActivationHash',           'varchar(255)',    'NULL',       'DEFAULT', 'NULL')
-                        ->column('userPasswordResetHash',        'varchar(255)',    'NULL',       'DEFAULT', 'NULL')
-                        ->column('userApiTokenHash',             'varchar(255)',    'NULL',       'DEFAULT', 'NULL')
-                        ->column('userSessionId',                'varchar(48)',     'NULL',       'DEFAULT', 'NULL')                
-                        ->column('userActivated',                'smallint',        'NOT NULL',   'DEFAULT', 0)
-                        ->column('userDeleted',                  'smallint',        'NOT NULL',   'DEFAULT', 0)
-                        ->column('userAccountType',              'smallint',        'NOT NULL',   'DEFAULT', 1)
-                        ->column('userHasAvatar',                'smallint',        'NOT NULL',   'DEFAULT', 0)
-                        ->column('userProvider',                 'varchar(48)',     'NOT NULL',   'DEFAULT', 'DEFAULT')
-                        ->column('userRememberMeToken',          'varchar(64)',     'NULL')
-                        ->column('userFailedLoginCount',         'smallint',        'NOT NULL',   'DEFAULT', 0)
-                        ->column('userDataDirectory',            'varchar(64)',     'NULL')
-                        ->column('userCreationTimestamp',        $timeColumn,       'NULL')
-                        ->column('userSuspensionTimestamp',      $timeColumn,       'NULL')
-                        ->column('userDeletionTimestamp',        $timeColumn,       'NULL')
-                        ->column('userLastLoginTimestamp',       $timeColumn,       'NULL')
-                        ->column('userLastFailedLoginTimestamp', $timeColumn,       'NULL')
-                        ->column('userPasswordResetTimestamp',   $timeColumn,       'NULL')
-                        ->execute();
-    }
 }

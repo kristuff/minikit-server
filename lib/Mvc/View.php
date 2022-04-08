@@ -6,10 +6,9 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Mvc;
 
@@ -23,7 +22,6 @@ use Kristuff\Minikit\Http\Response;
  */
 class View
 {
-
     public $title = ''; 
     public $description = ''; 
     public $keywords = ''; 
@@ -198,6 +196,34 @@ class View
     }         
    
     /**
+     * echo a value from locale (->text) 
+     *
+     * @access public
+     * @param string    $key        The key
+     * @param string    $locale     The locale to use (the default is used if null). (optional)
+     *
+     * @return void
+     */
+    public function echo(string $key, ?string $locale = null): void
+    {
+        echo $this->text($key, $locale);
+    }
+
+    /**
+     * echo a value from locale (->text) with trailish field ending 
+     *
+     * @access public
+     * @param string    $key        The key
+     * @param string    $locale     The locale to use (the default is used if null). (optional)
+     *
+     * @return void
+     */
+    public function echoField(string $key, ?string $locale = null): void
+    {
+        echo $this->text($key, $locale). $this->text('FIELD_ENDING', $locale);
+    }   
+
+    /**
      * Include file(s) to be rendered
      *
      * @access public
@@ -216,9 +242,10 @@ class View
             $this->addData($data);
         }
         
-        // optional header
+        // optional header/hero
         $this->includeFile($template.'/header.template.php');
-        
+        $this->includeFile($template.'/hero.template.php');
+
         // content file|files[]
         if (is_string($files)) {
             $return = $this->includeFile($files);
@@ -233,7 +260,8 @@ class View
             }
         }
 
-        // optional footer
+        // optional footer/dialog template
+        $this->includeFile($template.'/dialog.template.php');
         $this->includeFile($template.'/footer.template.php');
         return $return;
     }
@@ -314,9 +342,44 @@ class View
     public function renderAudio(string $filePath): void
     {
         header("Content-Type:audio/mpeg"); 
-        header("Content-LEngth:". filesize($filePath)); 
+        header("Content-Length:". filesize($filePath)); 
         readfile($filePath); 
     }
+
+    /**
+     * Render an image based on extention
+     * Support for .png .jpeg .jpg
+     * todo cache, gif
+     * 
+     * @access protected
+     * @param string    $path   The image file full path
+     * 
+     * @return void
+     */
+    protected function renderImage(string $path)
+    {
+        $ext =  pathinfo($path, PATHINFO_EXTENSION);
+        switch($ext){
+            case 'jpeg': 
+            case 'jpg': 
+                ob_end_clean();
+                header('Content-type: image/jpeg');
+                header('Content-Length: ' . filesize($path));
+                readfile($path);
+                break;
+            case 'png':
+                ob_end_clean();
+                header('Content-type: image/png');
+                header('Content-Length: ' . filesize($path));
+                readfile($path);
+                break;
+            default:
+                return false;
+
+        }    
+    }
+
+    
 
     /** 
      * Render rss/xml content
@@ -359,6 +422,8 @@ class View
         header("Content-type: text/css; charset=utf-8", true); 
         echo $content; 
     }
+
+  
 
     
 }

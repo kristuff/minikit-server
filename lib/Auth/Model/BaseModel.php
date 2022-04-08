@@ -6,22 +6,20 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
-
 
 namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Auth\TextHelper;
 use Kristuff\Minikit\Data\Model\DatabaseModel;
-use Kristuff\Minikit\Http\Server;
 
 /**
  * Class BaseModel 
+ * 
  * Base class for all models of this library
  * Extends the DatabaseModel class with custom text function
- * and utils for Auth process
  */
 abstract class BaseModel extends DatabaseModel
 {
@@ -41,32 +39,4 @@ abstract class BaseModel extends DatabaseModel
     {
         return TextHelper::text($key, $locale);
     }         
-
-    /** 
-     * Gets whether the auth process use HTML email
-     * 
-     * @access public
-     * @static
-     *
-     * @return bool         True if the auth process use HTML email, otherwise false.
-     */
-    public static function isHtmlEmailEnabled()
-    {
-        return self::config('AUTH_EMAIL_HTML') === true; 
-    }
-
-    /**
-     * Log a message using the LOG_USER facility
-     * 
-     * @param int       $facility
-     * @param string    $message
-     *
-     * @return void
-     */
-    protected static function log(int $facility, string $message): void
-    {
-        openlog(Server::serverName(), LOG_PERROR | LOG_CONS | LOG_PID, LOG_USER);
-        syslog($facility, $message);
-        closelog();
-    }
 }

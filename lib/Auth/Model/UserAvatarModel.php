@@ -6,16 +6,17 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.17 
+ * This file is part of Kristuff/Minikit v0.9.18 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
-
 namespace Kristuff\Minikit\Auth\Model;
 
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 use Kristuff\Minikit\Auth\Model\UserEditModel;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Security\Token;
 
 /** 
  * Class UserAvatarModel
@@ -40,29 +41,33 @@ class UserAvatarModel extends UserEditModel
      *
      * @access public
      * @static
-     * @param  int      $userHasAvatar  Marker from database
-     * @param  int      $userId         The User's id
+     * @param int       $userHasAvatar  Marker from database
+     * @param int       $UID        The avatar's string identifier
      *
      * @return string   Avatar file path
      */
-    public static function getAvatarFilePath($userHasAvatar, $userId)
+    public static function getAvatarFilePath($userHasAvatar, $UID)
     {
         //TODO id...
-        return $userHasAvatar ? self::getPath() . $userId. '.jpg' : 
-                                self::getPath() . self::config('USER_AVATAR_DEFAULT_IMAGE');
+        return $userHasAvatar ? self::getPath().$UID.'.jpg' : 
+                                self::getPath().self::config('USER_AVATAR_DEFAULT_IMAGE');
     }
 
     /**
      * Gets the user's avatar URL
-     * @param int       $user_has_avatar Marker from database
-     * @param int       $user_id User's id
+     * 
+     * @access public
+     * @static
+     * @param bool      $userHasAvatar
+     * @param string    $UID
+     * @param string    $baseUrl
      * 
      * @return string   Avatar url
      */
-    public static function getAvatarUrl($userHasAvatar, $userId, $baseUrl)
+    public static function getAvatarUrl($userHasAvatar, $UID, $baseUrl)
     {
-        return $userHasAvatar ? $baseUrl . self::config('USER_AVATAR_URL') . $userId . '.jpg' :
-                                $baseUrl . self::config('USER_AVATAR_URL') . self::config('USER_AVATAR_DEFAULT_IMAGE');
+        return $userHasAvatar ? $baseUrl.self::config('USER_AVATAR_URL').$UID.'.jpg' :
+                                $baseUrl.self::config('USER_AVATAR_URL').self::config('USER_AVATAR_DEFAULT_IMAGE');
     }
 
     /**
@@ -70,15 +75,15 @@ class UserAvatarModel extends UserEditModel
      *
      * @access public
      * @static
-     * @param  int      $userId
-     * @param  bool     $hasAvatar
+     * @param string   $UID
+     * @param bool     $hasAvatar
      *
      * @return void
      */
-    public static function setAvatarInSession($userId, $hasAvatar = false)
+    public static function setAvatarInSession($UID, $hasAvatar = false)
     {
         self::session()->set('userHasAvatar', $hasAvatar);
-        self::session()->set('userAvatarUrl', self::getAvatarUrl($hasAvatar, $userId, Application::getUrl()));
+        self::session()->set('userAvatarUrl', self::getAvatarUrl($hasAvatar, $UID, Application::getUrl()));
     }
 
     /**
@@ -92,7 +97,7 @@ class UserAvatarModel extends UserEditModel
         $response = TaskResponse::create();
         $response->setData([
             'userHasAvatar' => self::session()->get('userHasAvatar'),
-            'userAvatarUrl' =>  self::session()->get('userAvatarUrl'),
+            'userAvatarUrl' => self::session()->get('userAvatarUrl'),
         ]);
 
         // validate token
@@ -101,25 +106,26 @@ class UserAvatarModel extends UserEditModel
             self::validateImageFile($response)){
                 
             // get current userId
-            $currentUserId = self::getCurrentUserId();
+            $currentUserId  = self::getCurrentUserId();
+            $uid            = Token::getNewToken(16); // => 32 
 
             // create a jpg file in the avatar folder
-            $targetFilePath = self::getAvatarFilePath(true, $currentUserId);
-            $size = self::config('USER_AVATAR_SIZE');
-            $imgaeResized = self::resizeAvatarImage($_FILES['USER_AVATAR_file']['tmp_name'], $targetFilePath, $size, $size);
+            $targetFilePath = self::getAvatarFilePath(true, $uid);
+            $size           = self::config('USER_AVATAR_SIZE');
+            $imageResized   = self::resizeAvatarImage($_FILES['USER_AVATAR_file']['tmp_name'], $targetFilePath, $size, $size);
 
-            if ($response->assertTrue($imgaeResized, 400, self::text('USER_AVATAR_UPLOAD_FAILED'))){
+            if ($response->assertTrue($imageResized, 400, self::text('USER_AVATAR_UPLOAD_FAILED'))){
                     
                 // write marker to database
-                self::updateAvatarInDatabase($currentUserId, true);
+                UsersCollection::updateAvatarStatus($currentUserId, $uid, true);
 
                 // set avatar in session      
-                self::setAvatarInSession($currentUserId, true);
+                self::setAvatarInSession($uid, true);
                 
                 // set new data and message in response   
                 $response->setData([
                     'userHasAvatar' => true,
-                    'userAvatarUrl' =>  self::session()->get('userAvatarUrl'),
+                    'userAvatarUrl' => self::session()->get('userAvatarUrl'),
                 ]);
                 
                 $response->setMessage(self::text('USER_AVATAR_UPLOAD_SUCCESSFUL'));
@@ -140,15 +146,16 @@ class UserAvatarModel extends UserEditModel
      */
     public static function deleteCurrentUserAvatar(string $token, string $tokenKey)
     {
-        $response = TaskResponse::create();
-        $currentUserId = self::getCurrentUserId();
-        
+        $response       = TaskResponse::create();
+        $currentUserId  = self::getCurrentUserId();
+        $currentUserUID = self::getCurrentUserIdentifier();
+         
         // validate token and try to delete
         if (self::validateToken($response, $token, $tokenKey) && 
-            self::deleteAvatar($response, $currentUserId)){
+            self::deleteAvatar($response, $currentUserId, $currentUserUID)){
                
             // update session
-            self::setAvatarInSession($currentUserId, false);
+            self::setAvatarInSession($currentUserUID, false);
             $response->setMessage(self::text('USER_AVATAR_DELETE_SUCCESSFUL'));
             $response->setData([
                 'userAvatarUrl' =>  self::session()->get('userAvatarUrl')
@@ -177,8 +184,8 @@ class UserAvatarModel extends UserEditModel
      *
      * Gravatar is the #1 (free) provider for email address based global avatar hosting.
      * The URL (or image) returns always a .jpg file ! For deeper info on the different parameter possibilities:
-     * @see http://gravatar.com/site/implement/images/
-     * @source http://gravatar.com/site/implement/images/php/
+     * @see https://gravatar.com/site/implement/images/
+     * @source https://gravatar.com/site/implement/images/php/
      *
      * This method will return something like http://www.gravatar.com/avatar/79e2e5b48aec07710c08d50?s=80&d=mm&r=g
      * Note: the url does NOT have something like ".jpg" ! It works without.
@@ -193,7 +200,7 @@ class UserAvatarModel extends UserEditModel
      */
     protected static function getGravatarLink($userEmail)
     {
-        return 'http://www.gravatar.com/avatar/' .
+        return 'https://www.gravatar.com/avatar/' .
                 md5(strtolower(trim($userEmail))) .
                '?s=' . self::config('USER_AVATAR_SIZE') . 
                '&d=' . self::config('GRAVATAR_DEFAULT_IMAGESET') . 
@@ -206,7 +213,7 @@ class UserAvatarModel extends UserEditModel
      * Only accepts gif, jpg, png types. Image must respect a min physical size in pixels size and a 
      * max size in bytes defined in application settings.
      *
-     * @see http://php.net/manual/en/function.image-type-to-mime-type.php
+     * @see https://php.net/manual/en/function.image-type-to-mime-type.php
      *
      * @return bool|array       True if the posted file is valid, otherwise an response array with error details.
      */
@@ -237,25 +244,6 @@ class UserAvatarModel extends UserEditModel
         return false;
     }
 
-    /**
-     * Update avatar in dabase
-     *
-     * Writes marker to database, saying user has an avatar or not.
-     *
-     * @access private
-     * @static
-     * @param  int      $userId         The user's id
-     * @param  bool     $hasAvatar      True if given user has an avatar. Default is false.
-     *
-     * @return bool     True if user exists and database has been successfully updated, otherwise false.
-     */
-    private static function updateAvatarInDatabase($userId, $hasAvatar = true)
-    {
-        $query = self::database()->update('user')
-                                 ->setValue('userHasAvatar', $hasAvatar ? 1 : 0)
-                                 ->whereEqual('userId', (int) $userId);
-        return $query->execute() && $query->rowCount() === 1;          
-    }
 
     /**
      * Resize avatar image (while keeping aspect ratio and cropping it off in a clean way).
@@ -316,11 +304,11 @@ class UserAvatarModel extends UserEditModel
      * @param int $userId
      * @return bool success
      */
-    protected static function deleteAvatar(TaskResponse $response, int $userId): bool
+    protected static function deleteAvatar(TaskResponse $response, int $userId, string $userIdentifer ): bool
     {
         // try to delete image, but still go on regardless of file deletion result
         $deleteFile           = self::deleteAvatarImageFile($response, $userId);
-        $deleteDatabaseMarker = self::updateAvatarInDatabase($userId, false);
+        $deleteDatabaseMarker = UsersCollection::updateAvatarStatus($userId, false);
             
         return $deleteFile && $deleteDatabaseMarker;
     }
@@ -330,14 +318,13 @@ class UserAvatarModel extends UserEditModel
      *
      * @access private
      * @static
-     * @param  int      $userId
+     * @param string    $userUId
      *
      * @return bool     True if the avatar file has been deleted, otherwise False.
      */
-    private static function deleteAvatarImageFile(TaskResponse $response, int $userId)
+    private static function deleteAvatarImageFile(TaskResponse $response, int $userIdentifier)
     {
-        // avatar file path
-        $path = self::getAvatarFilePath(true, $userId);
+        $path = self::getAvatarFilePath(true, $userIdentifier);
 
         // Check if file exists
         return $response->assertTrue(file_exists($path), 500, self::text('USER_AVATAR_DELETE_ERROR_NO_FILE'))
