@@ -14,10 +14,10 @@ namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Auth\Model\UserModel;
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
+use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Core\Json;
 use Kristuff\Minikit\Core\Path;
-use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
 use Kristuff\Patabase\Database;
 
 /**
