@@ -13,7 +13,7 @@
 namespace Kristuff\Minikit\Auth\Model; 
 
 use Kristuff\Minikit\Auth;
-use Kristuff\Minikit\Data\Auth\SettingsCollection;
+use Kristuff\Minikit\Auth\Data\SettingsCollection;
 use Kristuff\Minikit\Auth\Data\UsersCollection;
 use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
