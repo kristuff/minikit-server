@@ -21,22 +21,27 @@ use Kristuff\Minikit\Mvc\Application;
  */
 class UserModel extends BaseModel
 {
-      /** 
+
+    const USER_ROLE_GUEST = 1;
+    const USER_ROLE_STANDARD = 2;
+    const USER_ROLE_ADMIN = 7;
+
+    /** 
      * Get the account type as human readable string value .
      * @see isUserLoggedInAndAdmin()
-
+     * 
      * @access public
      * @static 
      * @param int           $userAccountType        The user account type id
      * 
-     * @return string          .
+     * @return string
      */
     public static function getReadableAccountType(int $userAccountType)
     {
         switch ((int) $userAccountType){
-            case 1: return 'guest';
-            case 2: return 'normal';
-            case 7: return 'admin';
+            case self::USER_ROLE_GUEST: return 'guest';
+            case self::USER_ROLE_STANDARD: return 'standard';
+            case self::USER_ROLE_ADMIN: return 'admin';
             default: return '';
         }
     }
@@ -130,24 +135,7 @@ class UserModel extends BaseModel
      */
     public static function isUserLoggedInAndAdmin()
     {
-        return self::isUserLoggedIn() && self::getCurrentUserAccountType() === 7;
-    }
-
-    /**
-     * Validates self is admin
-     * 
-     * Checks if current user is logged in and is admin, if not, sets the response code to 403 with common error message.
-     *
-     * @access public
-     * @static
-	 * @param TaskResponse  $response               The reponse instance.
-     *
-	 * @return bool         True if the given username is valid, otherwise false.   
-     */
-    public static function validateAdminPermissions(TaskResponse $response)
-    {
-        return $response->assertTrue(self::isUserLoggedInAndAdmin(), 403, 
-                                     self::text('ERROR_INVALID_PERMISSIONS')); 
+        return self::isUserLoggedIn() && self::getCurrentUserAccountType() === self::USER_ROLE_ADMIN;
     }
 
     /** 
@@ -163,6 +151,23 @@ class UserModel extends BaseModel
     {
         // username cannot be empty and must be azAZ09 and 2-64 characters
          return preg_match("/^[a-zA-Z0-9]{2,64}$/", $userName) === 1;
+    }
+   
+    /**
+     * Validates self is admin
+     * 
+     * Checks if current user is logged in and is admin, if not, sets the response code to 403 with common error message.
+     *
+     * @access public
+     * @static
+	 * @param TaskResponse  $response               The reponse instance.
+     *
+	 * @return bool         True if the given username is valid, otherwise false.   
+     */
+    public static function validateAdminPermissions(TaskResponse $response)
+    {
+        return $response->assertTrue(self::isUserLoggedInAndAdmin(), 403, 
+                                     self::text('ERROR_INVALID_PERMISSIONS')); 
     }
 
     /**
