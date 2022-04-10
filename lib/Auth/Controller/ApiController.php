@@ -197,7 +197,9 @@ class ApiController extends BaseController
             
             case Request::METHOD_PUT.'/users/{userId}/suspend':
                 $suspensionDays = $this->request()->arg('suspension_days') ? (int) $this->request()->arg('suspension_days') : null;
-                $this->response = UserAdminModel::updateSuspensionStatus($userId, $this->token, $this->tokenKey, $suspensionDays, false);
+                if (!empty($suspensionDays)) {
+                    $this->response = UserAdminModel::updateSuspensionStatus($userId, $this->token, $this->tokenKey, $suspensionDays, false);
+                } 
                 break;
             
             case Request::METHOD_PUT.'/users/{userId}/undelete':
@@ -218,7 +220,6 @@ class ApiController extends BaseController
 
         $this->json();
     }
-
 
     /** 
      * Profile api end points
