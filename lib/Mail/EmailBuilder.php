@@ -33,6 +33,10 @@ class EmailBuilder
     {
         $builder = new HtmlEmailBuilder();
         $builder->setEmailBodyWidth(560); 
+        $builder->setBacksideDarkTheme();
+        $builder->body()->setB;
+         
+        
         
         // -----------
         // header part
@@ -47,7 +51,7 @@ class EmailBuilder
         $builder->footer()->setPadding(20); 
         $builder->footer()->setFontSize('13px'); 
         $divFooter = new HtmlElements\Div();
-        $divFooter->add(new HtmlElements\Span('Minikit | Copyright © 2017-2022 '));
+        $divFooter->add(new HtmlElements\Span('Powered by Minikit | Copyright © 2017-2022 '));
         $divFooter->add(new HtmlElements\Link('Kristuff', 'https://kristuff.fr/', 'Kristuff'));
         $builder->footer()->add($divFooter);
 
@@ -85,7 +89,7 @@ class EmailBuilder
     {
         // colored header
         $emailHeader = new HtmlElements\Row();
-        $emailHeader->setBackground(HtmlEmailBuilder::COLOR_GRAY_800); 
+        $emailHeader->setBackground(HtmlEmailBuilder::COLOR_DARKGRAY); 
         $emailHeader->add(new HtmlElements\Heading1($title, ['color' => "#FFFFFF"]));
         $emailHeader->add(new HtmlElements\Heading5($subtitle, ['color' => "#FFFFFF"]));
         $builder->body()->add($emailHeader);
@@ -119,7 +123,7 @@ class EmailBuilder
     {
         $rowButton = new HtmlElements\RowButton($text, $url);
         $rowButton->removePaddingTop(); // no need extra padding before previous element
-        $rowButton->setButtonBackground(HtmlEmailBuilder::COLOR_BLUE); 
+        $rowButton->setButtonBackground(HtmlEmailBuilder::COLOR_BLACK); 
         $rowButton->setButtonColor(HtmlEmailBuilder::COLOR_WHITE); 
         $builder->body()->add($rowButton);
     }
