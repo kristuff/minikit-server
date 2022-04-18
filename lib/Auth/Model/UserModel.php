@@ -12,19 +12,23 @@
 
 namespace Kristuff\Minikit\Auth\Model;
 
-use Kristuff\Minikit\Auth\Data\UsersCollection;
+use Kristuff\Minikit\Core\Filter;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Mvc\Application;
+use Kristuff\Minikit\Auth\Data\UsersCollection;
 
 /** 
  * UserModel
  */
 class UserModel extends BaseModel
 {
+    const USER_STATUS_WAITING    = 0;
+    const USER_STATUS_ACTIVATED  = 1;
+    const USER_STATUS_DELETED    = 9;
 
-    const USER_ROLE_GUEST = 1;
-    const USER_ROLE_STANDARD = 2;
-    const USER_ROLE_ADMIN = 7;
+    const USER_ROLE_GUEST       = 1;
+    const USER_ROLE_STANDARD    = 2;
+    const USER_ROLE_ADMIN       = 7;
 
     /** 
      * Get the account type as human readable string value .
@@ -303,49 +307,28 @@ class UserModel extends BaseModel
      * 
      * @return TaskResponse    
      */
-    public static function getProfiles(int $userId = null, int $limit = 0,int $offset = 0, string $orderBy = 'name')
+    public static function getProfiles(int $limit = 0,int $offset = 0, string $orderBy = 'userName')
     {
-        // the return response
         $response = TaskResponse::create();
         
         // need admin auth
         if (self::validateAdminPermissions($response)){
             
-            //prepare query
-            $query = self::database()->select('userId','userName', 'userEmail', 'userAccountType', 
-                                                'userIdentifier', 'userHasAvatar', 'userAvatarId', 'userDeleted', 'userActivated', 
-                                                'userLastLoginTimestamp', 'userCreationTimestamp', 'userDeletionTimestamp',
-                                                'userSuspensionTimestamp', 'userFailedLoginCount', 'userLastFailedLoginTimestamp')
-                                     ->from('user');
-            // userId?
-            if (!empty($userId)){ $query->whereEqual('UserId', $userId); }    
-
-            // order?
-            switch($orderBy) {
-                case 'name': $query->orderAsc('name');  break;
-                case 'id':   $query->orderAsc('id');    break;
-            }
-        
-            // paging?
-            if ( $offset > 0 ) { $query->offset($limit); }
-            if ( $limit  > 0 ) { $query->limit($limit);  }
-        
-            // get user(s)
-            $users = $query->getAll('assoc');
-        
-            // all elements of array passed to Filter::XSSFilter for XSS sanitation.
-            // Removes (possibly bad) JavaScript etc from the user's values
-            \Kristuff\Minikit\Core\Filter::XssFilter($users);
+           $users = UsersCollection::getProfiles($limit, $offset, $orderBy);
        
             // set/fix additional infos avatar url and ...
-            foreach($users as $key => &$val) {
+            foreach($users as $user) {
             
-                $users[$key]['userAvatarUrl'] =  UserAvatarModel::getAvatarUrl(
-                    $users[$key]['userHasAvatar'], 
-                    $users[$key]['userAvatarId'],
+            // all elements of array passed to Filter::XSSFilter for XSS sanitation.
+            // Removes (possibly bad) JavaScript etc from the user's values
+            Filter::XssFilter($users);
+
+                $user->userAvatarUrl =  UserAvatarModel::getAvatarUrl(
+                    $user->userHasAvatar, 
+                    $user->userAvatarId,
                     Application::getUrl()
                 );
-                $users[$key]['userAccountTypeRendered'] = self::getReadableAccountType( $users[$key]['userAccountType']);
+                $user->userType = self::getReadableAccountType($user->userAccountType);
             }
 
             // set data to return

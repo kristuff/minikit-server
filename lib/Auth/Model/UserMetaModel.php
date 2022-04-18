@@ -14,19 +14,20 @@ namespace Kristuff\Minikit\Auth\Model;
 
 use Kristuff\Minikit\Auth\Model\UserModel;
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
-use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
+use Kristuff\Minikit\Auth\Data\UserMetaCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Core\Json;
 use Kristuff\Minikit\Core\Path;
+use Kristuff\Minikit\Core\Filter;
 use Kristuff\Patabase\Database;
 
 /**
- * Class UserSettingsModel 
+ * Class UserMetaModel 
  *
- * The UserSettingsModel class contains method to get and edit user's settings
- * Actually just key/value data stored in the table user_setting. 
+ * The UserMetaModel class contains method to get and edit user's settings
+ * Actually just key/value data stored in the table minikit_usermeta. 
  */
-class UserSettingsModel extends UserModel
+class UserMetaModel extends UserModel
 {
     /**
      * Return an array with data for edit settings.
@@ -56,28 +57,28 @@ class UserSettingsModel extends UserModel
      *
      * @return mixed|array        
      */
-    public static function getUserSettings(int $userId, bool $returnArray = false)
+    public static function getUserMeta(int $userId, bool $returnArray = false)
     {
         // the return response
         $response = TaskResponse::create();
-        $data = [];
 
         // validate userId (self or admin permissions)
         if (self::validateUserId($response, $userId)){
             
             // get users settings data
-            foreach(UserSettingsCollection::getSettings($userId) as $item) {
-                $data[$item['settingName']] = \Kristuff\Minikit\Core\Filter::XssFilter($item['settingValue']);
+            $meta = (UserMetaCollection::getMeta($userId));
+            foreach ($meta as &$item) {
+               $item->userMetaValue = Filter::XssFilter($item->userMetaValue);
             }
         }
 
         // return array
         if ($returnArray) {
-            return $data;
+            return $meta;
         }
 
         // return response with array
-        $response->setData($data);
+        $response->setData($meta);
         return $response;
     }
 
@@ -85,7 +86,7 @@ class UserSettingsModel extends UserModel
      * Reset user settings
      *
      * Deletes and recreates all default settings for a given user. This action expects the 
-     * token given by UserSettingsModel::getSettingsDatas() to be passed as argument.
+     * token given by UserMetaModel::getSettingsDatas() to be passed as argument.
      *
      * @access public
      * @static
@@ -104,14 +105,14 @@ class UserSettingsModel extends UserModel
             self::validateUserId($response, $userId)){
 
             // try to delete and reload
-            $result = UserSettingsCollection::deleteUserSettings($userId) && 
+            $result = UserMetaCollection::deleteUserMeta($userId) && 
                       self::loadDefaultSettings(self::database(), $userId);
             
             if ($response->assertTrue($result, 500, 'TODO')){
 
                 // if true, reload settings in session
                 // get and reset user settings data into session
-                $settingsData = UserSettingsModel::getUserSettings(self::getCurrentUserId(), true);
+                $settingsData = UserMetaModel::getUserMeta(self::getCurrentUserId(), true);
                 self::session()->set('userSettings', $settingsData);
                 $response->setMessage('User settings reseted sucessfully TODO'); //TODO text locale             
             }
@@ -145,14 +146,14 @@ class UserSettingsModel extends UserModel
         if (self::validateToken($response, $tokenValue, $tokenKey) &&
             self::validateUserId($response, $userId) && 
             self::validatePermissions($response, $userId) && 
-            self::validateSettingNameAndValue($response, $paramName, $value)){
+            self::validateuserMetaKeyAndValue($response, $paramName, $value)){
 
             // try to update
-            $query = UserSettingsCollection::updateUserSettingsByName((int) $userId, $paramName, $value);
+            $query = UserMetaCollection::updateUserMetaByKey((int) $userId, $paramName, $value);
             if ($response->assertTrue($query, 500, 'todo' . $query)){
 
                 // get and reset user settings data into session
-                $settingsData = UserSettingsModel::getUserSettings(self::getCurrentUserId(), true);
+                $settingsData = UserMetaModel::getUserMeta(self::getCurrentUserId(), true);
                 self::session()->set('userSettings', $settingsData);
             }
         }
@@ -175,7 +176,7 @@ class UserSettingsModel extends UserModel
 	 *
 	 * @return bool                
 	 */
-    protected static function validateSettingNameAndValue(TaskResponse $response, $paramName, $value)
+    protected static function validateuserMetaKeyAndValue(TaskResponse $response, $paramName, $value)
     {
         // param name and value must be set
         if ($response->assertFalse(empty($paramName), 405, self::text('USER_SETTING_NAME_ERROR_EMPTY')) &&
@@ -218,20 +219,20 @@ class UserSettingsModel extends UserModel
      */
     public static function loadDefaultSettings(Database $database, int $userId = null)
     {
-        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'user.settings.default.json';
+        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'usermeta.default.json';
          
         if (!Path::fileExists($confileJsonFile)) {
             return false;
         }
         
-        $query = $database->insert('user_setting')
-                          ->prepare('settingName', 'settingValue', 'userId');
+        $query = $database->insert('minikit_usermeta')
+                          ->prepare('userMetaKey', 'userMetaValue', 'userId');
 
         foreach (Json::fromFile($confileJsonFile) as $item){
 
             $query->values([
-                'settingName'   => $item['name'], 
-                'settingValue'  => $item['value'], 
+                'userMetaKey'   => $item['name'], 
+                'userMetaValue' => $item['value'], 
                 'userId'        => $userId
             ]);
 

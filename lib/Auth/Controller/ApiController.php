@@ -23,6 +23,7 @@ use Kristuff\Minikit\Auth\Model\UserEditModel;
 use Kristuff\Minikit\Auth\Model\UserAvatarModel;
 use Kristuff\Minikit\Auth\Model\UserSettingsModel;
 use Kristuff\Minikit\Auth\Model\UserInvitationModel;
+use Kristuff\Minikit\Auth\Model\UserMetaModel;
 
 /** 
  * Class Api Controller
@@ -155,14 +156,14 @@ class ApiController extends BaseController
                 $offset         = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
                 $limit          = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
                 $order          = $this->request()->arg('order')  ?? 'name';  
-                $this->response = UserModel::getProfiles($userId, $limit, $offset, $order);
+                $this->response = UserModel::getProfiles($limit, $offset, $order);
                 break;
 
             case HTTP::METHOD_GET.'/users/{userId}/settings':
                 $offset         = $this->request()->arg('offset') ? (int) $this->request()->arg('offset')  : 0;  
                 $limit          = $this->request()->arg('limit')  ? (int) $this->request()->arg('limit')   : 20; 
                 $order          = $this->request()->arg('order')  ?? 'name';  
-                $this->response = UserSettingsModel::getUserSettings($userId);
+                $this->response = UserMetaModel::getUserMeta($userId);
                 break;
          
             case Request::METHOD_POST.'/users':
@@ -188,7 +189,7 @@ class ApiController extends BaseController
                 break;
             
             case Request::METHOD_DELETE.'/users/{userId}/settings':
-                $this->response =   UserSettingsModel::resetUserSettings($userId, $this->token, $this->tokenKey);
+                $this->response =   UserMetaModel::resetUserSettings($userId, $this->token, $this->tokenKey);
                 break;
 
             case Request::METHOD_DELETE.'/users/{userId}':
@@ -214,7 +215,7 @@ class ApiController extends BaseController
             case Request::METHOD_PUT.'/users/{userId}/settings':
                 $param = $this->request()->arg('parameter')  ?? null;  
                 $value = $this->request()->arg('value')      ?? null;
-                $this->response = UserSettingsModel::editUserSettings($userId, $param, $value, $this->token, $this->tokenKey); 
+                $this->response = UserMetaModel::editUserSettings($userId, $param, $value, $this->token, $this->tokenKey); 
                 break;                   
         }
 

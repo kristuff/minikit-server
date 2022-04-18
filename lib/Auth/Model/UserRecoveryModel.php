@@ -91,7 +91,7 @@ class UserRecoveryModel extends UserModel
 
                 // set token (= a random hash string and a timestamp) into database ...
                 // and send a mail to the user, containing a link with username and token hash string
-                $response->assertTrue(UsersCollection::savePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL')) &&
+                $response->assertTrue(UsersCollection::updatePasswordResetToken($user->userId, $userPasswordResetHash, $tempTimestamp), 400, self::text('LOGIN_RECOVERY_ERROR_WRITE_TOKEN_FAIL')) &&
                 $response->assertTrue(self::sendPasswordResetMail($user->userName, $userPasswordResetHash, $user->userEmail), 500, self::text('LOGIN_RECOVERY_MAIL_SENDING_ERROR'));
             }
         }
@@ -159,22 +159,15 @@ class UserRecoveryModel extends UserModel
         if ($response->assertTrue($validateInput, 400, self::text('LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'))){
 
             //get users by name and reset pass token
-            $users = self::database()->select()
-                                 ->from('user')
-                                 ->column('userPasswordResetHash')
-                                 ->column('userPasswordResetTimestamp')
-                                 ->whereEqual('userName', $userName)
-                                 ->whereEqual('userPasswordResetHash', $verificationCode)
-                                 ->whereEqual('userProvider','DEFAULT')
-                                 ->getAll(Patabase\Output::OBJ); 
+            $user = UsersCollection::getUserByNameAndResetPasswordHash($userName, $verificationCode);
 
             // if this user with exactly this verification hash code does NOT exist
-            if ($response->assertFalse(count($users) == 0, 400, self::text('LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'))){
+            if ($response->assertTrue($user !== false, 400, self::text('LOGIN_RECOVERY_NAME_HASH_NOT_FOUND'))){
             
                 // Check for timeout (password reset link is valid for one hour)
                 $currentDate = new \DateTime('NOW');
                 $expireDate = new \DateTime();
-                $expireDate->setTimestamp((int) $users[0]->userPasswordResetTimestamp);
+                $expireDate->setTimestamp((int) $user->userPasswordResetTimestamp);
                 $expired = $currentDate > $expireDate;
 
                 // set response message

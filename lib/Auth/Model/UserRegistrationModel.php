@@ -61,12 +61,12 @@ class UserRegistrationModel extends UserModel
      *
      * @access public
      * @static
-     * @param  string           $userName               The user's name.
-     * @param  string           $userEmail              The user's email address.
-     * @param  string           $userEmailRepeat        The repeated user's email address.
-     * @param  string           $userPassword           The user's password.
-     * @param  string           $userPasswordRepeat     The repeated user's password.
-     * @param  string           $captcha                The captacha value.
+     * @param string    $userName               The user's name.
+     * @param string    $userEmail              The user's email address.
+     * @param string    $userEmailRepeat        The repeated user's email address.
+     * @param string    $userPassword           The user's password.
+     * @param string    $userPasswordRepeat     The repeated user's password.
+     * @param string    $captcha                The captacha value.
      *
      * @return TaskResponse
      */
@@ -99,7 +99,7 @@ class UserRegistrationModel extends UserModel
             $userActivationHash = bin2hex(random_bytes(40));
 
             // write user data to database
-            if ($response->assertTrue(self::writeNewUser($userEmail, $userName, $userPasswordHash, $userActivationHash), 500, 
+            if ($response->assertTrue(UsersCollection::insertUnregisteredUser($userEmail, $userName, $userPasswordHash, $userActivationHash), 500, 
                                        self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'))){
 
                 // get user_id of the user that has been created, to keep things clean we DON'T use lastInsertId() here
@@ -111,12 +111,12 @@ class UserRegistrationModel extends UserModel
                     if (!$response->assertTrue($mailSent, 500, self::text('USER_NEW_ACCOUNT_MAIL_SENDING_ERROR'))){
 
                         // if verification email sending failed: instantly delete the user
-                        self::rollbackRegistrationByUserId($userId);
+                        UsersCollection::deleteUserById($userId);
                         return $response;
                     }
                     
                     // load settings
-                    $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'));
+                    $response->assertTrue(UserMetaModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'));
 
                     // set success message and return response
                     $response->setMessage(self::text('USER_NEW_ACCOUNT_SUCCESSFULLY_CREATED'));
@@ -165,52 +165,6 @@ class UserRegistrationModel extends UserModel
     {
         $isvalid = \Kristuff\Minikit\Security\CaptchaModel::captcha()->validate($captcha, 'AUTH_SIGNUP_captcha');
         return $response->assertTrue($isvalid, 400, self::text('ERROR_INVALID_CAPTCHA'));
-    }
-
-    /**
-     * Writes the new user's data to the database
-     *
-     * @access protected
-     * @static
-     * @param  string           $userEmail              The user's email address.
-     * @param  string           $userName               The user's name.
-     * @param  string           $userPasswordHash       The hashed user's password.
-     * @param  string           $activationHash         The user's mail verification hash string
-     *
-     * @return bool
-     */
-    protected static function writeNewUser($userEmail, $userName, $userPasswordHash, $activationHash)
-    {
-        $userDirectory = \Kristuff\Minikit\Security\Token::getNewToken(16);
-        $query = self::database()->insert('user')
-                        ->setValue('userName', $userName)
-                        ->setValue('userEmail', $userEmail)
-                        ->setValue('userPasswordHash', $userPasswordHash)
-                        ->setValue('userActivationHash', $activationHash)
-                        ->setValue('userIdentifier', $userDirectory)
-                        ->setValue('userCreationTimestamp', time())
-                        ->setValue('userActivated', 0)
-                        ->setValue('userProvider', 'DEFAULT')
-                        ->setValue('userAccountType', 1);
-
-        return $query->execute() && $query->rowCount() === 1;
-    }
-
-    /**
-     * Deletes the user from user table. Currently used to rollback a registration when verification mail sending
-     * was not successful.
-     *
-     * @access protected
-     * @static
-     * @param  int              $useId                  The user's id
-     *
-     * @return bool
-     */
-    protected static function rollbackRegistrationByUserId($userId)
-    {
-        return self::database()->delete('user')
-                               ->whereEqual('userId', $userId)
-                               ->execute();
     }
 
     /**

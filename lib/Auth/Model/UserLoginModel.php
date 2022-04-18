@@ -15,7 +15,7 @@ namespace Kristuff\Minikit\Auth\Model;
 use Kristuff\Minikit\Core\Format;
 use Kristuff\Minikit\Security\Encryption;
 use Kristuff\Minikit\Auth\Model\UserModel;
-use Kristuff\Minikit\Auth\Model\UserSettingsModel;
+use Kristuff\Minikit\Auth\Data\UserMetaCollection;
 use Kristuff\Minikit\Auth\Model\UserAvatarModel;
 use Kristuff\Minikit\Core\Syslog;
 use Kristuff\Minikit\Auth\Data\UsersCollection;
@@ -55,10 +55,7 @@ class UserLoginModel extends UserModel
         $currentUserId    = self::getCurrentUserId();
 
         if (isset($currentUserId) && isset($currentSessionId)) {
-            $storedSessionId = self::database()->select('userSessionId')
-                                               ->from('user')
-                                               ->whereEqual('userId', $currentUserId)
-                                               ->getColumn();
+            $storedSessionId = UsersCollection::getCurrentSessionid($currentUserId);
 
             // if user has been suspended or deleted                                               
             if (empty($storedSessionId)) {
@@ -196,7 +193,11 @@ class UserLoginModel extends UserModel
 
                         // persist login in database (login timestamp, reset failded login counter if needed, save coookie 
                         // token if defined
-                        self::saveSuccessfulLoginInDatabase($user->userId, session_id(), $rememberMeToken);
+                        UsersCollection::updateSuccessfulLogin(
+                            (int) $user->userId, 
+                            session_id(), 
+                            $rememberMeToken
+                        );
                     }
                 }
             }
@@ -246,7 +247,7 @@ class UserLoginModel extends UserModel
                         // be invalid after a certain amount of time, so the user has to login with username/password
                         // again from time to time. This is good and safe ! ;)
                         // This is done by setting the $remerberMeToken to False in saveSuccessfulLoginInDatabase(). 
-                        self::saveSuccessfulLoginInDatabase($result->userId, session_id(), false);
+                        UsersCollection::updateSuccessfulLogin((int) $result->userId, session_id(), false);
                         $response->setCode(200);
                         $response->setMessage(self::text('LOGIN_COOKIE_SUCCESSFUL'));
                     }
@@ -389,7 +390,7 @@ class UserLoginModel extends UserModel
         UserAvatarModel::setAvatarInSession($user->userAvatarId, ($user->userHasAvatar == 1));
                 
         // get and set user settings data into session
-        $settingsData = UserSettingsModel::getUserSettings(intval($user->userId), true);
+        $settingsData = UserMetaModel::getUserMeta(intval($user->userId), true);
         self::session()->set('userSettings', $settingsData);
 
         // set session cookie setting manually,
@@ -399,40 +400,6 @@ class UserLoginModel extends UserModel
 
         // finally, set user as logged-in
         self::session()->set('userIsLoggedIn', true);
-    }
-
-    /** 
-     * Update successful login in database.
-     *
-     * Save the session_id, reset failed logins counter and set the last login timestamp.
-     * The remember me token should not be updated when auto login with cookie (
-     *
-     * @access private
-     * @static
-     * @param mixed         $userId
-     * @param string        $sessionId
-     * @param string        $rememberMeToken     
-     *
-     * @return bool
-     */
-    private static function saveSuccessfulLoginInDatabase($userId, $sessionId, $rememberMeToken = null)
-    {
-        // update session id, 
-        // resets the failed-login counter, set last login timestamp
-        // update cookie token if defined
-        $query= self::database()->update('user')
-                                ->whereEqual('userId', $userId)
-                                ->setValue('userFailedLoginCount', 0)
-                                ->setValue('userLastLoginTimestamp', time())
-                                ->setValue('userLastFailedLoginTimestamp', null)
-                                ->setValue('userSessionId', $sessionId);
-        
-        // in case of login with cookie, we don't touch the remember me token                         
-        if ($rememberMeToken !== false){
-            $query->setValue('userRememberMeToken', $rememberMeToken);
-        }
-
-        return $query->execute();
     }
 
     /**
@@ -500,6 +467,4 @@ class UserLoginModel extends UserModel
         // delete remember_me cookie in browser
         self::cookie()->delete('remember_me');
     }
-
-  
 }

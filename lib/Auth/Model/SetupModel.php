@@ -15,7 +15,8 @@ namespace Kristuff\Minikit\Auth\Model;
 use Kristuff\Minikit\Auth;
 use Kristuff\Minikit\Auth\Data\SettingsCollection;
 use Kristuff\Minikit\Auth\Data\UsersCollection;
-use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
+use Kristuff\Minikit\Auth\Data\UserMetaCollection;
+use Kristuff\Minikit\Auth\Data\UserHostsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
 use Kristuff\Patabase\Database;
@@ -37,7 +38,8 @@ class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
     protected static function createTables(&$database)
     {
         return UsersCollection::createTable($database) &&
-               UserSettingsCollection::createTableSettings($database) &&
+               UserMetaCollection::createTable($database) &&
+               UserHostsCollection::createTable($database) &&
                SettingsCollection::createTableSettings($database);
     }
 
@@ -116,7 +118,7 @@ class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
                 
 // TODO SQLITE
                     // load admin user settings and create config file
-                    if ($response->assertTrue(Auth\Model\UserSettingsModel::loadDefaultSettings($database, (int) $adminId), 500, 'Internal error : unable to insert settings data') &&
+                    if ($response->assertTrue(Auth\Model\UserMetaModel::loadDefaultSettings($database, (int) $adminId), 500, 'Internal error : unable to insert settings data') &&
                         $response->assertTrue(self::createDatabaseConfigFile('sqlite', 'localhost', $databaseFilePath, '', ''), 500, 'Internal error : unable to create config file')) {
                         
                         self::logSuccessMessage('Defaults settings successfully initialized.');

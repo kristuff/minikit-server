@@ -14,12 +14,13 @@ namespace Kristuff\Minikit\Auth\Data;
 
 use Kristuff\Minikit\Data\Model\DatabaseModel;
 use Kristuff\Patabase\Database;
+use Kristuff\Patabase\Output;
 
 /**
- * Class UserSettingsCollection 
+ * Class UserMetaCollection 
  *
  */
-class UserSettingsCollection extends DatabaseModel
+class UserMetaCollection extends DatabaseModel
 {
     /** 
      * Get an array of settings for given userId
@@ -30,11 +31,11 @@ class UserSettingsCollection extends DatabaseModel
      * 
      * @return array         
      */
-    public static function getSettings($userId, string $settingName = null, int $limit = 0, int $offset = 0, string $orderBy = 'settingName')
+    public static function getMeta($userId, string $settingName = null, int $limit = 0, int $offset = 0, string $orderBy = 'settingName')
     {
         // prepare query
-        $query = self::database()->select('settingName', 'settingValue')
-                                 ->from('user_setting')
+        $query = self::database()->select('userMetaKey', 'userMetaValue')
+                                 ->from('minikit_usermeta')
                                  ->whereEqual('userId', (int) $userId);
 
         if ($limit > 0){
@@ -44,16 +45,16 @@ class UserSettingsCollection extends DatabaseModel
 
         // optional filter
         if (!empty($settingName)){
-            $query->whereEqual('settingName', $settingName);
+            $query->whereEqual('userMetaKey', $settingName);
             $query->limit(1);
         }        
 
         // order
-        if (in_array($orderBy, ['settingName'])){
+        if (in_array($orderBy, ['userMetaKey'])){
             $query->orderAsc($orderBy);
         }        
 
-        return $query->getAll('assoc');
+        return $query->getAll(Output::ASSOC);
     }
 
     /**
@@ -67,11 +68,11 @@ class UserSettingsCollection extends DatabaseModel
      * 
      * @return bool             True if the setting parameter has been edited, otherwise false
      */
-    public static function updateUserSettingsByName(int $userId, string $paramName, $value): bool
+    public static function updateUserMetaByKey(int $userId, string $paramName, $value): bool
     {
-        $query = self::database()->update('user_setting')
-                                 ->setValue('settingValue', $value)
-                                 ->whereEqual('settingName', $paramName)
+        $query = self::database()->update('minikit_usermeta')
+                                 ->setValue('userMetaKey', $value)
+                                 ->whereEqual('userMetaValue', $paramName)
                                  ->whereEqual('userId', (int) $userId);
  
         return $query->execute() && $query->rowCount() === 1;          
@@ -86,16 +87,16 @@ class UserSettingsCollection extends DatabaseModel
      * 
      * @return bool             True if the settings have been sucessfully deleted, otherwise false
      */
-    public static function deleteUserSettings($userId): bool
+    public static function deleteUserMeta($userId): bool
     {
-        $query = self::database()->delete('user_setting')
+        $query = self::database()->delete('minikit_usermeta')
                                 ->whereEqual('userId', $userId);
 
         return $query->execute();          
     }
 
-   /** 
-     * Create the table user_settings
+    /** 
+     * Create the table minikit_usermeta
      *
      * @access public
      * @static
@@ -103,15 +104,17 @@ class UserSettingsCollection extends DatabaseModel
      *
      * @return bool         True if the table has been created, otherwise False
      */
-    public static function createTableSettings(Database $database)
+    public static function createTable(Database $database)
     {
-        return $database->table('user_setting')
+        $textColumn = self::getTextColumnType($database);
+
+        return $database->table('minikit_usermeta')
                         ->create()
-                        ->column('settingId',   ' int', 'NOT NULL', 'PK',  'AI')               
-                        ->column('userId',       'int', 'NOT NULL')
-                        ->column('settingName',  'varchar(64)', 'NULL')
-                        ->column('settingValue', 'varchar(255)', 'NULL')
-                        ->fk('fk_setting_user',  'userId', 'user', 'userId')
+                        ->column('userMetaId',             'BIGINT',   'NOT NULL',   'PK',  'AI')               
+                        ->column('userId',                 'BIGINT',   'NOT NULL')
+                        ->column('userMetaKey',            'VARCHAR(255)',   'NULL')
+                        ->column('userMetaValue',          $textColumn,     'NULL')
+                        ->fk('fk_users_meta',  'userId',   'minikit_users', 'userId')    
                         ->execute();
     }
 }

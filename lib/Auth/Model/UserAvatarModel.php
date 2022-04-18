@@ -23,6 +23,9 @@ use Kristuff\Minikit\Security\Token;
  */
 class UserAvatarModel extends UserEditModel
 {
+    /* the name of the input */
+    const INPUT_AVATAR_FILE_NAME = 'user_avatar_file';
+
     /** 
      * Get the path of avatars collection 
      *
@@ -112,7 +115,7 @@ class UserAvatarModel extends UserEditModel
             // create a jpg file in the avatar folder
             $targetFilePath = self::getAvatarFilePath(true, $uid);
             $size           = self::config('USER_AVATAR_SIZE');
-            $imageResized   = self::resizeAvatarImage($_FILES['USER_AVATAR_file']['tmp_name'], $targetFilePath, $size, $size);
+            $imageResized   = self::resizeAvatarImage($_FILES[self::INPUT_AVATAR_FILE_NAME]['tmp_name'], $targetFilePath, $size, $size);
 
             if ($response->assertTrue($imageResized, 400, self::text('USER_AVATAR_UPLOAD_FAILED'))){
                     
@@ -220,13 +223,13 @@ class UserAvatarModel extends UserEditModel
     protected static function validateImageFile(TaskResponse $response)
     {
         // file sets?
-        if ($response->assertTrue(isset($_FILES['USER_AVATAR_file']), 400, self::text('USER_AVATAR_UPLOAD_NO_FILE'))){
+        if ($response->assertTrue(isset($_FILES[self::INPUT_AVATAR_FILE_NAME]), 400, self::text('USER_AVATAR_UPLOAD_NO_FILE'))){
             
             // input file not too big (>1MB)?
-            if ($response->assertTrue($_FILES['USER_AVATAR_file']['size'] <= self::config('USER_AVATAR_UPLOAD_MAX_SIZE'), 400, self::text('USER_AVATAR_UPLOAD_ERROR_TOO_BIG'))){
+            if ($response->assertTrue($_FILES[self::INPUT_AVATAR_FILE_NAME]['size'] <= self::config('USER_AVATAR_UPLOAD_MAX_SIZE'), 400, self::text('USER_AVATAR_UPLOAD_ERROR_TOO_BIG'))){
                                             
                 // get the image width, height and mime type
-                $imageSize = getimagesize($_FILES['USER_AVATAR_file']['tmp_name']);
+                $imageSize = getimagesize($_FILES[self::INPUT_AVATAR_FILE_NAME]['tmp_name']);
 
                 // check if input file is too small, [0] is the width, [1] is the height
                 $isTooSmall = $imageSize[0] < self::config('USER_AVATAR_SIZE') || 
@@ -326,7 +329,7 @@ class UserAvatarModel extends UserEditModel
     {
         $path = self::getAvatarFilePath(true, $userIdentifier);
 
-        // Check if file exists
+        // Check file exists first
         return $response->assertTrue(file_exists($path), 500, self::text('USER_AVATAR_DELETE_ERROR_NO_FILE'))
             
             // and has been now deleted 

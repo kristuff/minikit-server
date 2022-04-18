@@ -96,14 +96,15 @@ class UserInvitationModel extends UserRegistrationModel
                 self::validateUserEmailPattern($response, $userEmail, $userEmail) &&
                 self::validateUserEmailNoConflict($response, $userEmail)){
 
-                // generate random hash for email verification (40 char bytes)
-		        $userActivationHash = bin2hex(random_bytes(40));
-
+                // generate random hash for email verification (40 char bytes) and
 		        // write user data to database WITHOUT PASSWORD
-		        if ($response->assertTrue(self::writeNewUser($userEmail, $userName, null, $userActivationHash), 500, 
-                                          self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'))){
+		        $userActivationHash = bin2hex(random_bytes(40));
+                $writeUser = UsersCollection::insertUnregisteredUser($userEmail, $userName, null, $userActivationHash);
 
-		            // get user_id of the user that has been created, to keep things clean we DON'T use lastInsertId() here
+		        if ($response->assertTrue($writeUser, 500, self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED'))){
+
+		            // get user_id of the user that has been created, to keep things 
+                    // clean we DON'T use lastInsertId() here
 		            $userId = UsersCollection::getUserIdByUsername($userName);
                     if ($response->assertTrue($userId !== false, 500, self::text('UNKNOWN_ERROR'))){
 
@@ -130,28 +131,20 @@ class UserInvitationModel extends UserRegistrationModel
 	 *
      * @access public
      * @static
-	 * @param  int              $userId                     The user's id
-	 * @param  string           $userActivationHash         The user's mail verification hash string
+	 * @param mixed            $userId                     The user's id
+	 * @param string           $userActivationHash         The user's mail verification hash string
 	 *
 	 * @return TaskResponse
 	 */
 	public static function verifyInvitedUser($userId, $userActivationHash)
 	{
-        $count = (int) self::database()->select()
-                                 ->count('userId')
-                                 ->from('user')
-                                 ->whereEqual('userId', (int) $userId)
-                                 ->whereEqual('userActivationHash', $userActivationHash)
-                                 ->getColumn();
-       
-        // create response        
         $response = TaskResponse::create();
+        $check = UsersCollection::checkIdAndActivationHash((int) $userId, $userActivationHash);
 
-        if ($response->assertTrue($count === 1, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED')) ){
+        if ($response->assertTrue($check, 500, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED')) ){
             $response->setMessage(self::text('USER_INVITATION_VALIDATION_SUCCESSFUL'));
         }
 
-        // return response
         return $response;
 	}
 
@@ -162,11 +155,11 @@ class UserInvitationModel extends UserRegistrationModel
 	 *
      * @access public
      * @static
-	 * @param  int              $userId                 The user's id.
-     * @param  string           $userName               The user's name.
-	 * @param  string           $userPassword           The user's password.
-	 * @param  string           $userPasswordRepeat     The repeated user's password.
-	 * @param  string           $userActivationHash     The user's mail verification hash string
+	 * @param int              $userId                 The user's id.
+     * @param string           $userName               The user's name.
+	 * @param string           $userPassword           The user's password.
+	 * @param string           $userPasswordRepeat     The repeated user's password.
+	 * @param string           $userActivationHash     The user's mail verification hash string
 	 *
      * @return TaskResponse
 	 */
@@ -189,45 +182,18 @@ class UserInvitationModel extends UserRegistrationModel
 		    $userPasswordHash = password_hash($userPassword, PASSWORD_DEFAULT);
             
             // try to update            
-            $updated = self::updateAndActivateInvitedUser($userId, $userName, $userPasswordHash, $userActivationHash);
+            $updated = UsersCollection::updateAndActivateInvitedUser($userId, $userName, $userPasswordHash, $userActivationHash);
 
 
             // set feedback message
             if ($response->assertTrue($updated, 405, self::text('USER_NEW_ACCOUNT_ACTIVATION_FAILED'))
-                && $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))) {
+                && $response->assertTrue(UserMetaModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))) {
                 $response->setMessage(self::text('USER_NEW_ACCOUNT_ACTIVATION_SUCCESSFUL'));
             }
         }
 
         // return response
         return $response;
-	}
-
-    /**
-	 * Complete registration by setting the password and user name in database
-     *
-     * @access protected
-     * @static
-	 * @param  int              $userId                 The user's id.
-     * @param  string           $userName               The user's name.
-	 * @param  string           $userPasswordHash       The hashed user's password.
-	 * @param  string           $userActivationHash     The user's mail verification hash string
-	 *
-	 * @return bool             True if the user profile has been successfully updated, otherwise False.
-	 */
-	protected static function updateAndActivateInvitedUser($userId, $userName, $userPasswordHash,  $userActivationHash)
-	{
-        $useUid = \Kristuff\Minikit\Security\Token::getNewToken(16);
-        $query = self::database()->update('user')
-                                 ->setValue('userName', $userName)
-                                 ->setValue('userPasswordHash', $userPasswordHash)
-                                 ->setValue('userActivationHash', null)
-                                 ->setValue('userIdentifier', $useUid)
-                                 ->setValue('userActivated', 1)
-                                 ->whereEqual('userId', (int) $userId)
-                                 ->whereEqual('userActivationHash', $userActivationHash);
-
-        return $query->execute() && $query->rowCount() === 1;
 	}
 
     /**

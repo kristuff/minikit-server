@@ -12,10 +12,10 @@
 
 namespace Kristuff\Minikit\Auth\Model;
 
+use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Auth\Model\UserLoginModel;
 use Kristuff\Minikit\Auth\Data\UsersCollection;
-use Kristuff\Minikit\Auth\Data\UserSettingsCollection;
-use Kristuff\Minikit\Mvc\TaskResponse;
+use Kristuff\Minikit\Auth\Data\UserMetaCollection;
 
 /** 
  * Class UserAdminModel
@@ -85,10 +85,10 @@ class UserAdminModel extends UserLoginModel
 		    $userPasswordHash = password_hash($userPassword, PASSWORD_DEFAULT);
 		
             // write user data to database
-            $userId = UsersCollection::insertNewAccount($userName, $userEmail, $userPasswordHash);
+            $userId = UsersCollection::insertUser($userName, $userEmail, $userPasswordHash);
 
             if ($response->assertTrue($userId !== false, 500, self::text('USER_NEW_ACCOUNT_ERROR_CREATION_FAILED')) &&
-                $response->assertTrue(UserSettingsModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))){
+                $response->assertTrue(UserMetaModel::loadDefaultSettings(self::database(), (int) $userId), 500, self::text('USER_NEW_ACCOUNT_ERROR_DEFAULT_SETTINGS'))){
 
                 $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_CREATED'));                       
             }
@@ -222,8 +222,8 @@ class UserAdminModel extends UserLoginModel
             && self::validateAdminPermissions($response) 
             && self::validateUserId($response, $userId) 
             && self::validateUserIdIsNotSelf($response, $userId)
-            && $response->assertTrue(UserSettingsCollection::deleteUserSettings((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
-            && $response->assertTrue(UsersCollection::deleteUser((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
+            && $response->assertTrue(UserMetaCollection::deleteUserMeta((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
+            && $response->assertTrue(UsersCollection::deleteUserById((int) $userId), 500 , self::text('USER_ACCOUNT_ERROR_DELETION_FAILED'))
             && $response->setMessage(self::text('USER_ACCOUNT_SUCCESSFULLY_DELETED'));                
 
         // return response

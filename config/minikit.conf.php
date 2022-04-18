@@ -25,7 +25,7 @@ return array(
     /* TODO  */
     'APP_NAMESPACE'             => '',  
     'CONFIG_PATH'               => __DIR__ . '/',
-    'CONFIG_DEFAULT_PATH'       => __DIR__ . '/default/',
+    'CONFIG_DEFAULT_PATH'       => __DIR__ . '/',
 
     /**
      * -----------------------------

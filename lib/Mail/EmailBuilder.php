@@ -13,6 +13,8 @@
     
 namespace Kristuff\Minikit\Mail;
 
+use Kristuff\Phtemail\Core\HtmlBuilder;
+use Kristuff\Phtemail\Core\HtmlBuilderContainer;
 use Kristuff\Phtemail\HtmlEmailBuilder;
 use Kristuff\Phtemail\HtmlElements;
 
@@ -33,10 +35,8 @@ class EmailBuilder
     {
         $builder = new HtmlEmailBuilder();
         $builder->setEmailBodyWidth(560); 
-        $builder->setBacksideDarkTheme();
-        $builder->body()->setB;
-         
-        
+        $builder->setBacksideBackgroundColor(HtmlEmailBuilder::COLOR_GRAY_200);
+        $builder->body()->setBackground(HtmlEmailBuilder::COLOR_WHITE);
         
         // -----------
         // header part

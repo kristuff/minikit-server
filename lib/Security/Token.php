@@ -88,8 +88,7 @@ class Token
     public static function getNewToken(int $lenght): string
     {
         // random_bytes() PHP >=7
-        return function_exists('random_bytes()') ? bin2hex(random_bytes($lenght)) : 
-                                                   bin2hex(openssl_random_pseudo_bytes($lenght));
+        return bin2hex(random_bytes($lenght));
     }       
 
     /**

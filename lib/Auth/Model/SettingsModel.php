@@ -12,11 +12,12 @@
 
 namespace Kristuff\Minikit\Auth\Model;
 
-use Kristuff\Minikit\Auth\Model\UserModel;
+use Kristuff\Minikit\Auth\Data\SettingsCollection;
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Minikit\Core\Json;
 use Kristuff\Minikit\Core\Path;
 use Kristuff\Patabase\Database;
+use Kristuff\Minikit\Core\Filter;
 
 /**
  * Class SettingsModel 
@@ -38,10 +39,9 @@ class SettingsModel extends UserModel
     public static function getAppSettings(): array
     {
         $data = [];
-        foreach(self::getList() as $item) {
-            $data[$item['settingName']] = \Kristuff\Minikit\Core\Filter::XssFilter($item['settingValue']);
+        foreach(SettingsCollection::getList() as &$item) {
+            $item->settingValue = Filter::XssFilter($item->settingValue);
         }
-
         return $data;
     }
 
@@ -67,10 +67,10 @@ class SettingsModel extends UserModel
         // token valid / is admin / name ok?
         if (self::validateAdminPermissions($response) &&
             self::validateToken($response, $tokenValue, $tokenKey) &&
-            self::validateSettingName($response, $paramName)){
+            self::validatesettingKey($response, $paramName)){
             
             // try to update    
-            $query = self::updateAppSettingsByName($paramName, $value);
+            $query = SettingsCollection::updateAppSettingsByName($paramName, $value);
             if ($response->assertTrue($query, 500, self::text('UNKNOWN_ERROR'))){
                 $response->setData([
                     'parameter' => $paramName,
@@ -95,60 +95,11 @@ class SettingsModel extends UserModel
      * 
 	 * @return bool                
 	 */
-    protected static function validateSettingName(TaskResponse $response, ?string $paramName = null)
+    protected static function validatesettingKey(TaskResponse $response, ?string $paramName = null)
     {
         return $response->assertFalse(empty($paramName), 405, sprintf(self::text('ERROR_PARAM_NULL_OR_EMPTY'), 'name'));
     }
-
-    /**
-     * 
-     * @access private
-     * @static 
-	 * @param string        $settingName
-     * @param mixed         $value
-     * 
-     * @return bool
-     */
-    private static function updateAppSettingsByName(string $settingName, $value): bool
-    {
-        $query = self::database()->update('app_setting')
-                                 ->setValue('settingValue', $value)
-                                 ->whereEqual('settingName', $settingName);
-        
-        if ($query->execute() && $query->rowCount() === 1){
-            return true;
-        } else {
-            // try to insert missing parameter
-            $query = self::database()->insert('app_setting')
-                ->setValue('settingValue', $value)
-                ->setValue('settingName', $settingName);
-
-            return $query->execute() && $query->rowCount() === 1;
-        }          
-    }
-
-    /** 
-     * Get the settings for whole application stored in database. Returns an indexed array
-     *
-     * @access private
-     * @static
-     * @param string    $orderBy
-     *
-     * @return array        
-     */
-    private static function getList(?string $orderBy = 'settingName')
-    {
-        $query = self::database()->select('settingName', 'settingValue')
-                                 ->from('app_setting');
-       
-        // order
-        if (in_array($orderBy, ['settingName', ])){
-            $query->orderAsc($orderBy);
-        }        
-
-        return $query->getAll('assoc');
-    }
-
+  
     /** 
      * Load the default setting 
      * Will check for a json file named 'app.settings.default.json' in app config default path
@@ -161,19 +112,19 @@ class SettingsModel extends UserModel
      */
     public static function loadDefaultAppSettings(Database $database)
     {
-        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'app.settings.default.json';
+        $confileJsonFile = self::config('CONFIG_DEFAULT_PATH') . 'settings.default.json';
 
         if (!Path::fileExists($confileJsonFile)){
             return false;
         }
         
         // prepare query
-        $query = $database->insert('app_setting')
-                          ->prepare('settingName', 'settingValue');
+        $query = $database->insert('minikit_settings')
+                          ->prepare('settingKey', 'settingValue');
 
         foreach (Json::fromFile($confileJsonFile) as $item){
             $query->values([
-                'settingName'   => $item['name'], 
+                'settingKey'   => $item['name'], 
                 'settingValue'  => $item['value'] 
             ]);
 
