@@ -54,7 +54,7 @@ class UserMetaCollection extends DatabaseModel
             $query->orderAsc($orderBy);
         }        
 
-        return $query->getAll(Output::ASSOC);
+        return $query->getAll(Output::OBJ);
     }
 
     /**

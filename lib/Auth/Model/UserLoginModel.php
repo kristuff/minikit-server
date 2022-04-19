@@ -273,17 +273,19 @@ class UserLoginModel extends UserModel
         // null password are invalids
         if ($response->assertTrue((!empty($userPassword) && trim($userPassword) != ''), 400, self::text('LOGIN_ERROR_NAME_OR_PASSWORD_EMPTY'))){
 
-            // brute force attack mitigation: use session failed login count and last failed login for not found users.
-		    // block login attempt if somebody has already failed 3 times and the last login attempt is less than 30sec ago
-		    // (limits user searches in database)
-            $failureOne = (self::session()->get('userFailedLoginCount') >= 3) && (self::session()->get('userLastFailedLogin') > (time() - 30));
+            // brute force attack mitigation: use session failed login count and last failed login for not 
+            // found users. Block login attempt if somebody has already failed 3 times and the last login 
+            // attempt is less than 30sec ago (limits user searches in database)
+            $failureOne = (self::session()->get('userFailedLoginCount') >= 3) && 
+                          (self::session()->get('userLastFailedLogin') > (time() - 30));
+
             if ($response->assertFalse($failureOne, 400, self::text('LOGIN_ERROR_FAILED_3_TIMES'))){
 		
 		        // get all data of that user (to later check if password and password_hash fit)
 		        $user = UsersCollection::getUserByUserNameOrEmail($userNameOrEmail);
 
-                // check if that user exists. We don't give back a cause in the feedback to avoid giving an attacker details.
-                // brute force attack mitigation: reset failed login counter because of found user
+                // check if that user exists. We don't give back a cause in the feedback to avoid giving an 
+                // attacker details. Brute force attack mitigation: reset failed login counter because of found user
                 if (!$response->assertTrue($user !== false, 400, self::text('LOGIN_ERROR_NAME_OR_PASSWORD_WRONG'))){
 
                     // increment the user not found count, helps mitigate user enumeration
@@ -294,8 +296,10 @@ class UserLoginModel extends UserModel
                     return false;
                 };
       
-		        // block login attempt if somebody has already failed 3 times and the last login attempt is less than 30sec ago
-                $failureTwo = ($user->userFailedLoginCount >= 3) && ($user->userLastFailedLoginTimestamp > (time() - 30));
+		        // block login attempt if somebody has already failed 3 times and the last login attempt is 
+                // less than 30sec ago
+                $failureTwo = ($user->userFailedLoginCount >= 3) && 
+                              ($user->userLastFailedLoginTimestamp > (time() - 30));
         
                 if ($response->assertFalse($failureTwo, 400, self::text('LOGIN_ERROR_FAILED_3_TIMES'))){
 		
@@ -309,7 +313,7 @@ class UserLoginModel extends UserModel
 		            }
 
 		            // if user is active (= has verified account by verification mail)
-		            if ($response->assertTrue($user->userActivated == 1, 400, self::text('LOGIN_ERROR_ACCOUNT_NOT_ACTIVATED'))){
+		            if ($response->assertTrue($user->userStatus == UserModel::USER_STATUS_ACTIVATED, 400, self::text('LOGIN_ERROR_ACCOUNT_NOT_ACTIVATED'))){
 
                         // reset the user not found counter
                         self::resetUserNotFoundCounter();

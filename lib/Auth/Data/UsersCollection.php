@@ -48,7 +48,7 @@ class UsersCollection extends DatabaseModel
      *
      * @return mixed 
      */
-    public static function getCurrentSessionid(int $userId): mixed
+    public static function getCurrentSessionid(int $userId)
     {
         return self::database()->select('userSessionId')
                                 ->from('minikit_users')
@@ -546,17 +546,18 @@ class UsersCollection extends DatabaseModel
     public static function getUserByUserNameOrEmail(string $userNameOrEmail)
     {
         $query = self::database()->select()
-                                 ->from('minikit_users')
-                                 ->whereEqual('userProvider','DEFAULT'); //TODO
+                                 ->from('minikit_users');
 
         self::setSelectUserColumns($query);
 
         $query->where()
               ->beginOr()
-                ->equal('userName', $userNameOrEmail)
-                ->equal('userEmail', $userNameOrEmail)
+                ->equal('minikit_users.userName', $userNameOrEmail)
+                ->equal('minikit_users.userEmail', $userNameOrEmail)
               ->closeOr();
-  
+
+        $query->whereEqual('minikit_users.userProvider','DEFAULT');
+
         $users = $query->getOne(Output::OBJ);
 
         return count($users) > 0 ? $users[0] : false;

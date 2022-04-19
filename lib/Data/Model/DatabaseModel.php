@@ -108,8 +108,8 @@ abstract class DatabaseModel extends Model
      * 
      * @access public
      * @static
-     * @param int      $timestamp           The timestamp to convert. Default is null (current timestamp)
-     * //todo
+     * @param int           $timestamp      The timestamp to convert. Default is null (current timestamp)
+     * @param Database      $database       The Database instance. Default us null (default database) 
      * 
      * @return mixed
      */
