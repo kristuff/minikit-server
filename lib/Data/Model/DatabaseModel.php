@@ -104,6 +104,24 @@ abstract class DatabaseModel extends Model
     }
 
     /**
+     * TODO pgsql
+     * 
+     * @access public
+     * @static
+     * @param int      $timestamp           The timestamp to convert. Default is null (current timestamp)
+     * //todo
+     * 
+     * @return mixed
+     */
+    public static function getFormattedTimestamp(?int $timestamp = null, ?Database $database = null)
+    {
+        $time = empty($timestamp) ? time() : $timestamp;
+        $db = empty($database) ? self::database() : $database;
+
+        return ($db->getDriverName() === 'mysql') ? date('Y-m-d H:i:s', $time) : $timestamp;
+    }
+    
+    /**
      * Helper function to return the text column type according
      * to current driver. Useful when creating table.
      *

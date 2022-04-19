@@ -249,7 +249,7 @@ class UsersCollection extends DatabaseModel
     {
         $query = self::database()->update('minikit_users')
                                  ->setValue('userDeleted', $deleted ? 1 : 0)
-                                 ->setValue('userDeletionTimestamp', $deleted ? time() : null)
+                                 ->setValue('userDeletionTimestamp', $deleted ? self::getFormattedTimestamp() : null)
                                  ->whereEqual('userId', (int) $userId);
         
         return $query->execute() && $query->rowCount() === 1;
@@ -327,7 +327,7 @@ class UsersCollection extends DatabaseModel
         $query= self::database()->update('minikit_users')
                                 ->whereEqual('userId', $userId)
                                 ->setValue('userFailedLoginCount', 0)
-                                ->setValue('userLastLoginTimestamp', time())
+                                ->setValue('userLastLoginTimestamp', self::getFormattedTimestamp())
                                 ->setValue('userLastFailedLoginTimestamp', null)
                                 ->setValue('userSessionId', $sessionId);
         
@@ -351,7 +351,7 @@ class UsersCollection extends DatabaseModel
     public static function incrementFailedLoginCounter($userNameOrEmail): bool
     {
         return self::database()->update('minikit_users')
-                               ->setValue('userLastFailedLoginTimestamp', time())
+                               ->setValue('userLastFailedLoginTimestamp', self::getFormattedTimestamp())
                                ->increment('userFailedLoginCount', 1)
                                ->where()
                                     ->beginOr()
@@ -384,7 +384,7 @@ class UsersCollection extends DatabaseModel
                                  ->setValue('userActivationHash', null)
                                  ->setValue('userIdentifier', $uid)
                                  ->setValue('userStatus', UserModel::USER_STATUS_ACTIVATED)
-                                 ->setValue('userCreationTimestamp', time())
+                                 ->setValue('userCreationTimestamp', self::getFormattedTimestamp())
                                  ->setValue('userAccountType', UserModel::USER_ROLE_GUEST);
     
         return $query->execute() ? $query->lastId() : false;
@@ -417,7 +417,7 @@ class UsersCollection extends DatabaseModel
                        ->setValue('userPasswordHash', $passwordHash)
                        ->setValue('userProvider', 'DEFAULT')
                        ->setValue('userStatus', UserModel::USER_STATUS_ACTIVATED)
-                       ->setValue('userCreationTimestamp', time())
+                       ->setValue('userCreationTimestamp', self::getFormattedTimestamp(null, $database))
                        ->setValue('userIdentifier', $uid)
                        ->setValue('userAccountType', UserModel::USER_ROLE_ADMIN);
 
@@ -446,7 +446,7 @@ class UsersCollection extends DatabaseModel
                         ->setValue('userPasswordHash', $userPasswordHash)
                         ->setValue('userActivationHash', $activationHash)
                         ->setValue('userIdentifier', $uid)
-                        ->setValue('userCreationTimestamp', time())
+                        ->setValue('userCreationTimestamp', self::getFormattedTimestamp())
                         ->setValue('userStatus', UserModel::USER_STATUS_WAITING)
                         ->setValue('userProvider', 'DEFAULT')
                         ->setValue('userAccountType', UserModel::USER_ROLE_GUEST);
