@@ -14,40 +14,23 @@ namespace Kristuff\Minikit\Data\Model;
 
 use Kristuff\Minikit\Mvc\TaskResponse;
 use Kristuff\Patabase\Driver\Sqlite\SqliteDatabase;
-use Kristuff\Mishell\Console;
 
 /** 
  * SetupModel
  */
 class SetupModel extends \Kristuff\Minikit\Mvc\Model
 {
-    /** 
-     * Gets whether program is run as Command Line Interface 
+    /**
+     * Get the db config path
      * 
-     * @access protected
+     * @access public
      * @static
      * 
      * @return bool
      */
-    protected static function isCommandLineInterface(): bool
+    public static function getConfigFilePath(): string
     {
-        return (php_sapi_name() === 'cli');
-    }
-
-    /** 
-     * Log a message if run as cli 
-     * 
-     * @access protected
-     * @static
-     * @param string    $dbname     The database full path 
-     * 
-     * @return void
-     */
-    protected static function logSuccessMessage(string $message): void
-    {
-        if (self::isCommandLineInterface()){
-            Console::log('  '.Console::text('[✓] ', 'green') . Console::text($message, 'white'));
-        }
+        return self::config('DATA_CONFIG_PATH') . 'db.config.php';
     }
 
     /**
@@ -60,8 +43,21 @@ class SetupModel extends \Kristuff\Minikit\Mvc\Model
      */
     public static function isInstalled(): bool
     {
-        $fileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
-        return file_exists($fileName);
+        return file_exists(self::getConfigFilePath());
+    }
+
+    /**
+     * Gets the db config 
+     * 
+     * @access public
+     * @static
+     * 
+     * @return array
+     */
+    public static function getConfig(): array
+    {
+       $config = require self::getConfigFilePath();
+       return $config;
     }
 
     /** 
@@ -105,21 +101,6 @@ class SetupModel extends \Kristuff\Minikit\Mvc\Model
        }
     }
 
-    /**
-     * Gets the db config 
-     * 
-     * @access public
-     * @static
-     * 
-     * @return array
-     */
-    public static function getConfig(): array
-    {
-       $fileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
-       $config = require $fileName;
-       return $config;
-    }
-
     /** 
      * Perform some checks 
      * 
@@ -130,21 +111,19 @@ class SetupModel extends \Kristuff\Minikit\Mvc\Model
      */
     public static function checkForInstall()
     {
-        // the return response
         $response = TaskResponse::create();
 
-        // perform checks
         $response->assertTrue(file_exists(self::config('DATA_PATH')), 500, self::text('DATA_PATH_ERROR_MISSING')) && 
-            $response->assertTrue(is_writable(self::config('DATA_PATH')), 500, self::text('DATA_PATH_ERROR_PERMISSIONS')) ;
+        $response->assertTrue(is_writable(self::config('DATA_PATH')), 500, self::text('DATA_PATH_ERROR_PERMISSIONS')) ;
 
         $response->assertTrue(file_exists(self::config('DATA_CONFIG_PATH')), 500, self::text('DATA_CONFIG_PATH_ERROR_MISSING')) &&
-            $response->assertTrue(is_writable(self::config('DATA_CONFIG_PATH')), 500, self::text('DATA_CONFIG_PATH_ERROR_PERMISSIONS'));
+        $response->assertTrue(is_writable(self::config('DATA_CONFIG_PATH')), 500, self::text('DATA_CONFIG_PATH_ERROR_PERMISSIONS'));
             
         $response->assertTrue(file_exists(self::config('DATA_DB_PATH')), 500, self::text('ERROR_DATA_DB_PATH_MISSING')) &&
-            $response->assertTrue(is_writable(self::config('DATA_DB_PATH')), 500, self::text('ERROR_DATA_DB_PATH_PERMISSIONS'));
+        $response->assertTrue(is_writable(self::config('DATA_DB_PATH')), 500, self::text('ERROR_DATA_DB_PATH_PERMISSIONS'));
         
         $response->assertTrue(file_exists(self::config('DATA_LOG_PATH')), 500, self::text('ERROR_DATA_LOG_PATH_MISSING')) &&
-            $response->assertTrue(is_writable(self::config('DATA_LOG_PATH')), 500, self::text('ERROR_DATA_LOG_PATH_PERMISSIONS'));
+        $response->assertTrue(is_writable(self::config('DATA_LOG_PATH')), 500, self::text('ERROR_DATA_LOG_PATH_PERMISSIONS'));
         
         return $response;
     } 
@@ -166,7 +145,7 @@ class SetupModel extends \Kristuff\Minikit\Mvc\Model
     protected static function createDatabaseConfigFile(string $dbDriver, string $dbHost, string $dbName, string $dbUser, string $dbPassword, string $dbPort = "3306", string $dbCharset = 'utf8')
     {
         try {
-            $fileName = self::config('DATA_CONFIG_PATH') . 'db.config.php';
+            $fileName = self::getConfigFilePath();
             $date = (new \DateTime())->format('Y-m-d H:i:s');
             $content = '<?php
 /** 

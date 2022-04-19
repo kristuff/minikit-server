@@ -68,68 +68,6 @@ class SetupModel extends \Kristuff\Minikit\Data\Model\SetupModel
         return $response;
     } 
     
-    /**
-     * Perform install
-     *  
-     * @access public
-     * @static
-     * @param string    $adminName 
-     * @param string    $adminPassword
-     * @param string    $adminEmail
-     * @param string    $databaseName    
-     * 
-     * @return TaskResponse
-     */
-    public static function install(string $adminName, string $adminPassword, string $adminEmail, string $databaseName)
-    {
-        // the return response
-        $response = TaskResponse::create();
- 
-// TODO SQLITE
-        $databaseFilePath = realpath(self::config('DATA_DB_PATH')). '/'. $databaseName .'.db';
-    
-        // validate input
-        if (Auth\Model\UserModel::validateUserNamePattern($response, $adminName) && 
-            Auth\Model\UserModel::validateUserEmailPattern($response, $adminEmail, $adminEmail) &&
-            Auth\Model\UserModel::validateUserPassword($response, $adminPassword, $adminPassword)){
-                   
-                // create datatabase, 
-                // create tables
-                // insert admin user
-                // load default settings
-                // save config file
-
-// TODO SQLITE
-
-                $database   = self::createSqliteDatabase($databaseFilePath);
-            
-              
-            if ($response->assertTrue($database !== false, 500, 'Internal error : unable to create database') &&
-                $response->assertTrue(self::createTables($database), 500, 'Internal error : unable to create tables'))  {
-                
-                self::logSuccessMessage('Database successfully created.');
-    
-                // create admin user and get its id
-                $adminId = UsersCollection::insertAdminUser($adminEmail, $adminName, $adminPassword, $database);
-                                
-                if ($response->assertFalse($adminId === false, 500, 'Internal error : unable to insert admin user')) {
-
-                    self::logSuccessMessage('Admin user successfully created.');
-                
-// TODO SQLITE
-                    // load admin user settings and create config file
-                    if ($response->assertTrue(Auth\Model\UserMetaModel::loadDefaultSettings($database, (int) $adminId), 500, 'Internal error : unable to insert settings data') &&
-                        $response->assertTrue(self::createDatabaseConfigFile('sqlite', 'localhost', $databaseFilePath, '', ''), 500, 'Internal error : unable to create config file')) {
-                        
-                        self::logSuccessMessage('Defaults settings successfully initialized.');
-
-                        $response->setMessage('Congratulation! <br>Install was successful. You can now login.');
-                    }
-                }
-            }
-        }
-
-        return $response;
-    }
+   
 
 }

@@ -415,6 +415,7 @@ class UsersCollection extends DatabaseModel
                        ->setValue('userNiceName', $userName)
                        ->setValue('userEmail', $userEmail)
                        ->setValue('userPasswordHash', $passwordHash)
+                       ->setValue('userProvider', 'DEFAULT')
                        ->setValue('userStatus', UserModel::USER_STATUS_ACTIVATED)
                        ->setValue('userCreationTimestamp', time())
                        ->setValue('userIdentifier', $uid)
