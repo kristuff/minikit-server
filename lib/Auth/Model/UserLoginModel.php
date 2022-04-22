@@ -120,6 +120,7 @@ class UserLoginModel extends UserModel
         return [
             'userId'                => self::getCurrentUserId(),
             'userName'              => self::session()->get('userName'),
+            'userNiceName'          => self::session()->get('userNiceName'),
 
             'userEmail'             => self::session()->get('userEmail'),
             'userAccountType'       => self::session()->get('userAccountType'),
@@ -384,6 +385,7 @@ class UserLoginModel extends UserModel
         
         self::session()->set('userId', $user->userId);
         self::session()->set('userName', $user->userName);
+        self::session()->set('userNiceName', $user->userNiceName);
         self::session()->set('userEmail', $user->userEmail);
         self::session()->set('userAccountType', $user->userAccountType);
         self::session()->set('userIdentifier', $user->userIdentifier);
