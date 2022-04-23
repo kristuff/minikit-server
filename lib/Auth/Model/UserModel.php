@@ -306,12 +306,13 @@ class UserModel extends BaseModel
      * @static
 	 * @param TaskResponse      $response               The TaskResponse instance.
      * @param string            $userName               The user's name.
+     * @param int               $userId                 The user's id, if already created.
      *
 	 * @return bool             True if the given username is valid, otherwise false.   
      */
-    public static function validateUserNameNoConflict(TaskResponse $response, string $userName)
+    public static function validateUserNameNoConflict(TaskResponse $response, string $userName, ?int $userId = null): bool
     {
-        return $response->assertFalse(UsersCollection::isUserNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
+        return $response->assertFalse(UsersCollection::isUserNameExists($userName, $userId), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
     }
 
     /**
@@ -321,12 +322,13 @@ class UserModel extends BaseModel
      * @static
 	 * @param TaskResponse      $response               The TaskResponse instance.
      * @param string            $userName               The user's nice name.
+     * @param int               $userId                 The user's id, if already created.
      *
 	 * @return bool             True if the given username is valid, otherwise false.   
      */
-    public static function validateUserNiceNameNoConflict(TaskResponse $response, string $userName)
+    public static function validateUserNiceNameNoConflict(TaskResponse $response, string $userName, ?int $userId = null): bool
     {
-        return $response->assertFalse(UsersCollection::isUserNiceNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
+        return $response->assertFalse(UsersCollection::isUserNiceNameExists($userName, $userId), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
     }
 
     /**
@@ -336,13 +338,13 @@ class UserModel extends BaseModel
      * @static
      * @param TaskResponse      $response               The TaskResponse instance.
      * @param string            $userEmail              The user's email address.
+     * @param int               $userId                 The user's id, if already created.
      * 
      * @return bool             True if the given username is valid, otherwise false. 
      */
-    public static function validateUserEmailNoConflict(TaskResponse $response, string $userEmail)
+    public static function validateUserEmailNoConflict(TaskResponse $response, string $userEmail, ?int $userId = null)
     {
-        // check if new email already exists (conflict)
-        return $response->assertFalse(UsersCollection::isUserEmailExists($userEmail), 409, self::text('USER_EMAIL_ERROR_ALREADY_TAKEN'));
+        return $response->assertFalse(UsersCollection::isUserEmailExists($userEmail, $userId), 409, self::text('USER_EMAIL_ERROR_ALREADY_TAKEN'));
     }
 
     /** 
