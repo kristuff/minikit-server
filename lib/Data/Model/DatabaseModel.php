@@ -104,6 +104,58 @@ abstract class DatabaseModel extends Model
     }
 
     /**
+     * Get formatted datetime according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function getFormattedDateTime($timeValue): string
+    {
+        if (empty($timeValue)) {
+            return '';
+        }
+
+        switch (self::database()->getDriverName()){
+            case 'mysql':
+            case 'pgsql':
+                return  date(self::text('DATE_FORMAT'), strtotime($timeValue));
+            case 'sqlite':
+                return  date(self::text('DATE_FORMAT'), (int) $timeValue);
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Get a timestamp according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     *
+     * @return int|false
+     */
+    public static function getTimestamp($timeValue)
+    {
+        if (empty($timeValue)) {
+            return time();
+        }
+
+        switch (self::database()->getDriverName()){
+            case 'mysql':
+            case 'pgsql':
+                return  strtotime($timeValue);
+            case 'sqlite':
+                return (int) $timeValue;
+            default:
+                return time();
+        }
+    }
+
+    /**
      * TODO pgsql
      * 
      * @access public

@@ -115,8 +115,8 @@ class UserLoginModel extends UserModel
     public static function getPostLoginData()
     {
         $createdTimeStamp = self::session()->get('userCreationTimestamp');
-        $createdSince =  Format::getHumanTime(time() - $createdTimeStamp, 'day'); 
-
+        $createdSince =  Format::getHumanTime(time() - self::getTimestamp($createdTimeStamp), 'day');
+        
         return [
             'userId'                => self::getCurrentUserId(),
             'userName'              => self::session()->get('userName'),
@@ -126,14 +126,15 @@ class UserLoginModel extends UserModel
             'userAccountType'       => self::session()->get('userAccountType'),
             'userIdentifier'        => self::session()->get('userIdentifier'),
             'userProvider'          => 'DEFAULT', // TODO
-            'userCreationTimestamp' => $createdTimeStamp,
             'userIsAdmin'           => self::isUserLoggedInAndAdmin(),
 
             'avatarMaxSize'         => self::config('USER_AVATAR_UPLOAD_MAX_SIZE'),
             'userAvatarUrl'         => self::session()->get('userAvatarUrl'),
             'userHasAvatar'         => self::session()->get('userHasAvatar'),
 
+            'userCreationTimestamp' => $createdTimeStamp,
             'userMemberSince'       => $createdSince,
+
             'userType'              => self::getReadableAccountType((int) self::session()->get('userAccountType')),
 
             'apiToken'              => self::token()->value('api'),
