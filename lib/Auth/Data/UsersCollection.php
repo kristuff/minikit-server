@@ -65,13 +65,43 @@ class UsersCollection extends DatabaseModel
      *
      * @return bool         True if username alreay exists in database, otherwise False.
      */
-    public static function isUserNameExists(string $userName): bool
+    public static function isUserNameExists(string $userName, ?int $userId = null): bool
     {
-         return self::database()->select()
+         $query = self::database()->select()
                                 ->count('num')
                                 ->from('minikit_users')
-                                ->whereEqual('userName', $userName)
-                                ->getColumn() > 0;
+                                ->whereEqual('userName', $userName);
+        
+        // exclude self
+        if (!empty($userId)){
+            $query->where()->notEqual('userId', $userId);
+        }
+
+        return $query->getColumn() > 0;
+    }
+
+    /** 
+     * Checks if a user nice name is already taken
+     *
+     * @access public
+     * @static
+     * @param string        $userName           The user's name
+     *
+     * @return bool         True if username alreay exists in database, otherwise False.
+     */
+    public static function isUserNiceNameExists(string $userName, ?int $userId = null): bool
+    {
+        $query = self::database()->select()
+                                ->count('num')
+                                ->from('minikit_users')
+                                ->whereEqual('userNiceName', $userName);
+
+        // exclude self
+        if (!empty($userId)){
+            $query->where()->notEqual('userId', $userId);
+        }
+
+        return $query->getColumn() > 0;
     }
 
     /** 
@@ -83,14 +113,19 @@ class UsersCollection extends DatabaseModel
      *
      * @return bool         True if given email already exists in database, otherwise false
      */
-    public static function isUserEmailExists(string $userEmail): bool
+    public static function isUserEmailExists(string $userEmail, ?int $userId = null): bool
     {
-        return self::database()->select()
+        $query = self::database()->select()
                                ->count('num')
                                ->from('minikit_users')
-                               ->whereEqual('userEmail', $userEmail)
-                               ->limit(1)
-                               ->getColumn() > 0;
+                               ->whereEqual('userEmail', $userEmail);
+
+        // exclude self
+        if (!empty($userId)){
+            $query->where()->notEqual('userId', $userId);
+        }
+
+        return $query->getColumn() > 0;
     }
 
     /**
@@ -174,6 +209,49 @@ class UsersCollection extends DatabaseModel
 
         return $query->execute() && $query->rowCount() === 1;          
     }
+
+    /** 
+     * Writes new username, nice name or email to database
+     *
+     * @access public
+     * @static
+     * @param int       $userId             The user's id.
+     * @param string    $name               The new user's name.
+     * @param string    $niceName           The new user's name.
+     * @param string    $email              The new user's name.
+     *
+     * @return bool     True if the username has been successfully changed, otherwise false.
+     */
+    public static function updateUserNameOrEmail(int $userId, string $name, string $niceName, string $email): bool
+    {
+        $query = self::database()->update('minikit_users')
+                                 ->setValue('userName', $name)
+                                 ->setValue('userNiceName', $niceName)
+                                 ->setValue('userEmail', $email)
+                                 ->whereEqual('userId', $userId);
+
+        return $query->execute() && $query->rowCount() === 1;          
+    }    
+
+   /** 
+     * Writes new username to database
+     *
+     * @access public
+     * @static
+     * @param int       $userId             The user's id.
+     * @param string    $newName            The new user's name.
+     *
+     * @return bool     True if the username has been successfully changed, otherwise false.
+     */
+    public static function updateUserNiceName($userId, $newName): bool
+    {
+        $query = self::database()->update('minikit_users')
+                                 ->setValue('userNiceName', $newName)
+                                 ->whereEqual('userId', $userId);
+
+        return $query->execute() && $query->rowCount() === 1;          
+    }
+
 
     /**
 	 * Writes the new password hash to the database

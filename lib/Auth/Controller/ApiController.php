@@ -229,6 +229,7 @@ class ApiController extends BaseController
      *  ----------------------------            ------      ------------------------------      ---------------------------------
      *  /api/profile                            POST        Edit user name or email             user_name, user_email, token 
      *  /api/profile/name                       POST        Edit user name                      user_name, token 
+     *  /api/profile/nicename                   POST        Edit user nice name                 user_nice_name, token 
      *  /api/profile/email                      POST        Edit user email                     ser_email, token 
      *  /api/profile/avatar                     POST        Edit user avatar                    token, USER_AVATAR_file
      *  /api/profile/avatar/delete              POST        Delete user avatar                  token
@@ -242,23 +243,24 @@ class ApiController extends BaseController
             switch ($process){
                 case '':
                 case 'all':
-                        if ($this->request()->post('user_email') !== $this->session()->get('userEmail')){
-                            $this->response = UserEditModel::editCurrentUserEmail(
-                                $this->request()->post('user_email'),
-                                $this->request()->post('token'),
-                                $this->tokenKey);
-                        }
-                        if ($this->request()->post('user_name') !== $this->session()->get('userName')){
-                            $this->response = UserEditModel::editCurrentUserName(
-                                $this->request()->post('user_name'),
-                                $this->request()->post('token'),
-                                $this->tokenKey);
-                        }
-                        break;                     
+                    $this->response = UserEditModel::editCurrentUserNameOrEmail(
+                        $this->request()->post('user_name', true),
+                        $this->request()->post('user_nice_name', true),
+                        $this->request()->post('user_email', true),
+                        $this->request()->post('token'),
+                        $this->tokenKey);
+                    break;                     
 
                 case 'email': 
                     $this->response = UserEditModel::editCurrentUserEmail(
                         $this->request()->post('user_email'),
+                        $this->request()->post('token'),
+                        $this->tokenKey);
+                    break;
+
+                case 'nicename': 
+                    $this->response = UserEditModel::editCurrentUserNiceName(
+                        $this->request()->post('user_nice_name'),
                         $this->request()->post('token'),
                         $this->tokenKey);
                     break;

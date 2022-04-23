@@ -143,7 +143,7 @@ class UserModel extends BaseModel
     }
 
     /** 
-     * Checks whether the user the given user name is valid
+     * Checks whether the user's name is valid
      *
      * @access public
      * @static
@@ -156,7 +156,25 @@ class UserModel extends BaseModel
         // username cannot be empty and must be azAZ09 and 2-64 characters
          return preg_match("/^[a-zA-Z0-9]{2,64}$/", $userName) === 1;
     }
-   
+
+    /** 
+     * Checks whether the user's nice name is valid
+     * 
+     * Username cannot be empty and must be azAZ09 and 2-64 characters
+     *
+     * @access public
+     * @static
+     * @param  string       $userName               The user's name
+     *
+     * @return bool         True if username matchs expected pattern, otherwise false.
+     */
+    public static function isUserNiceNamePatternValid($userName)
+    {
+         return preg_match("/^\w+( [\w\-_ ]+)$/", $userName) === 1 
+            && strlen($userName) <= 64  
+            && strlen($userName) >= 2;
+    }
+
     /**
      * Validates self is admin
      * 
@@ -204,6 +222,22 @@ class UserModel extends BaseModel
      * @return bool             True if the given username is valid, otherwise false.   
      */
     public static function validateUserNamePattern(TaskResponse $response, string $userName)
+    {
+        // username cannot be empty and must be azAZ09 and 2-64 characters
+        return $response->assertTrue(self::isUserNamePatternValid($userName), 400, self::text('USER_NAME_ERROR_BAD_PATTERN'));
+    }
+
+     /**
+     * Validates the username pattern
+     *
+     * @access public
+     * @static
+     * @param  TaskResponse     $response               The TaskResponse instance.
+     * @param  string           $userName               The user's name.
+     *
+     * @return bool             True if the given username is valid, otherwise false.   
+     */
+    public static function validateUserNiceNamePattern(TaskResponse $response, string $userName)
     {
         // username cannot be empty and must be azAZ09 and 2-64 characters
         return $response->assertTrue(self::isUserNamePatternValid($userName), 400, self::text('USER_NAME_ERROR_BAD_PATTERN'));
@@ -277,10 +311,24 @@ class UserModel extends BaseModel
      */
     public static function validateUserNameNoConflict(TaskResponse $response, string $userName)
     {
-        //check if new username already exists (conflict)
         return $response->assertFalse(UsersCollection::isUserNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
     }
-    
+
+    /**
+     * Validates that the user nice name is not already taken
+     * 
+     * @access public
+     * @static
+	 * @param TaskResponse      $response               The TaskResponse instance.
+     * @param string            $userName               The user's nice name.
+     *
+	 * @return bool             True if the given username is valid, otherwise false.   
+     */
+    public static function validateUserNiceNameNoConflict(TaskResponse $response, string $userName)
+    {
+        return $response->assertFalse(UsersCollection::isUserNiceNameExists($userName), 409, self::text('USER_NAME_ERROR_ALREADY_TAKEN'));
+    }
+
     /**
      * Validates that email is not already token
      *

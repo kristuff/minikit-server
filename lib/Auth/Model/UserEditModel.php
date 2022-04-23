@@ -25,6 +25,55 @@ use Kristuff\Minikit\Auth\Data\UsersCollection;
 class UserEditModel extends UserModel
 {
     /** 
+     * Edit the user's name, nice name or email
+     *  
+     * 
+     * @static
+     * @access public
+     * @param string    $newName        The new user's name
+     * @param string    $token          The token
+     *
+     * @return TaskResponse
+     */
+    public static function editCurrentUserNameOrEmail($newName, $newNiceName, $newEmail, $token, $tokenKey): TaskResponse
+    {
+        $response   = TaskResponse::create();
+        $userId     = self::getCurrentUserId();
+ 
+        // check token, patterns and conflicts
+        if (self::validateToken($response, $token, $tokenKey)
+            && self::validateUserNamePattern($response, $newName)
+            && self::validateUserNameNoConflict($response, $newName, $userId)
+            && self::validateUserNiceNamePattern($response, $newNiceName)
+            && self::validateUserNiceNameNoConflict($response, $newNiceName, $userId)
+            && self::validateUserEmailPattern($response, $newEmail, $newEmail)
+            && self::validateUserEmailNoConflict($response, $newEmail, $userId)
+        ){
+            // save in database
+            $saved = UsersCollection::updateUserNameOrEmail($userId, $newName, $newNiceName, $newEmail);
+
+            // saved?
+            if ($response->assertTrue($saved, 500, self::text('ERROR_UNKNOWN'))){
+
+                // save new data in session and set success message
+                self::session()->set('userName', $newName);
+                self::session()->set('userNiceName', $newNiceName);
+                self::session()->set('userEmail', $newEmail);
+
+                $response->setMessage(self::text('USER_NAME_CHANGE_SUCCESSFUL'));
+                $response->addData([ 
+                    'newName'   => self::session()->get('userName'),
+                    'newNiceName'   => self::session()->get('userNiceName'),
+                    'newEmail'  => self::session()->get('userEmail'),
+                ]);
+            }
+        }
+        return $response;
+    }
+
+
+
+    /** 
      * Edit the user's name
      * 
      * @static
@@ -61,6 +110,52 @@ class UserEditModel extends UserModel
                 $response->setMessage(self::text('USER_NAME_CHANGE_SUCCESSFUL'));
                 $response->addData([ 
                     'newName'   => self::session()->get('userName'),
+                    'newNiceName'   => self::session()->get('userNiceName'),
+                    'newEmail'  => self::session()->get('userEmail'),
+                ]);
+            }
+        }
+        return $response;
+    }
+
+    /** 
+     * Edit the user's name
+     * 
+     * @static
+     * @access public
+     * @param string    $newName        The new user's name
+     * @param string    $token          The token
+     *
+     * @return 
+     */
+    public static function editCurrentUserNiceName($newName, $token, $tokenKey)
+    {
+        $response = TaskResponse::create();
+ 
+        // validate token
+        if (self::validateToken($response, $token, $tokenKey)
+                   
+            // check that new username is not the same as old one
+            && $response->assertFalse($newName == self::session()->get('userNiceName'), 400, self::text('USER_NAME_ERROR_NEW_SAME_AS_OLD_ONE'))
+
+            // check pattern and conflicts
+            && self::validateUserNiceNamePattern($response, $newName)
+            && self::validateUserNiceNameNoConflict($response, $newName)){
+        
+            // save in database
+            $userId = self::getCurrentUserId();
+            $saved = UsersCollection::updateUserNiceName($userId, $newName);
+
+            // saved?
+            if ($response->assertTrue($saved, 500, self::text('ERROR_UNKNOWN'))){
+
+                // save new name in session and set success message
+                self::session()->set('userNiceName', $newName);
+
+                $response->setMessage(self::text('USER_NAME_CHANGE_SUCCESSFUL'));
+                $response->addData([ 
+                    'newName'   => self::session()->get('userName'),
+                    'newNiceName'   => self::session()->get('userNiceName'),
                     'newEmail'  => self::session()->get('userEmail'),
                 ]);
             }
@@ -132,8 +227,7 @@ class UserEditModel extends UserModel
 	 *
 	 * @return TaskResponse   
 	 */
-    public static function editCurrentUserPassword(string $currentPassword, string $newPassword, 
-                                    string $repeatNewPassword, string $token, string $tokenKey): TaskResponse
+    public static function editCurrentUserPassword(string $currentPassword, string $newPassword, string $repeatNewPassword, string $token, string $tokenKey): TaskResponse
 	{
         $response = TaskResponse::create();
        
