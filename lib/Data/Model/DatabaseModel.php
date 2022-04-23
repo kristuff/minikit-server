@@ -121,6 +121,32 @@ abstract class DatabaseModel extends Model
         switch (self::database()->getDriverName()){
             case 'mysql':
             case 'pgsql':
+                return  date(self::text('DATE_TIME_FORMAT'), strtotime($timeValue));
+            case 'sqlite':
+                return  date(self::text('DATE_TIME_FORMAT'), (int) $timeValue);
+            default:
+                return '';
+        }
+    }
+
+     /**
+     * Get formatted date according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     *
+     * @return string
+     */
+    public static function getFormattedDate($timeValue): string
+    {
+        if (empty($timeValue)) {
+            return '';
+        }
+
+        switch (self::database()->getDriverName()){
+            case 'mysql':
+            case 'pgsql':
                 return  date(self::text('DATE_FORMAT'), strtotime($timeValue));
             case 'sqlite':
                 return  date(self::text('DATE_FORMAT'), (int) $timeValue);
