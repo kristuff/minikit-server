@@ -94,7 +94,7 @@ class UserMetaCollection extends DatabaseModel
         $query = self::database()->insert('minikit_usermeta')
                                  ->setValue('userMetaKey', $paramName)
                                  ->setValue('userMetaValue', $value)
-                                 ->whereEqual('userId', (int) $userId);
+                                 ->setValue('userId', (int) $userId);
  
         return $query->execute() && $query->rowCount() === 1;          
     }
