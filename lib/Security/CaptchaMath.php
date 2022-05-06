@@ -47,7 +47,7 @@ class CaptchaMath
 		$addNum2 = rand(0, 9);
 
         // Create a canvas
-        $captchaImg = @imagecreatetruecolor(90, 19);
+        $captchaImg = @imagecreatetruecolor(90, 36);
         if ($captchaImg === false) {
             throw new \RuntimeException('Creation of true color image failed');
         }
@@ -57,10 +57,13 @@ class CaptchaMath
         $colorWhite = imagecolorallocate($captchaImg, 255, 255, 255);
 
         // Make the background of the image
-        imagefilledrectangle($captchaImg, 0, 0, 90, 19, $darkTheme ? $colorBlack : $colorWhite);
+        imagefilledrectangle($captchaImg, 0, 0, 90, 36, $darkTheme ? $colorBlack : $colorWhite);
+
+        // Make the background transparent
+        imagecolortransparent($captchaImg, $colorBlack);
 
         // Draw the math question on the image
-        imagestring($captchaImg, 5, 2, 2,  ' ' . $addNum1 . ' + ' . $addNum2 . ' =', $darkTheme ? $colorWhite : $colorBlack);
+        imagestring($captchaImg, 5, 2, 10,  ' ' . $addNum1 . ' + ' . $addNum2 . ' =', $darkTheme ? $colorWhite : $colorBlack);
 
         // write the captcha answer into session
         $this->session->set($identifier, $addNum1 + $addNum2);
