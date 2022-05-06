@@ -113,8 +113,8 @@ class UserMetaCollection extends DatabaseModel
     public static function updateUserMetaByKey(int $userId, string $paramName, $value): bool
     {
         $query = self::database()->update('minikit_usermeta')
-                                 ->setValue('userMetaKey', $paramName)
-                                 ->whereEqual('userMetaValue', $value)
+                                 ->setValue('userMetaValue', $value)
+                                 ->whereEqual('userMetaKey', $paramName)
                                  ->whereEqual('userId', (int) $userId);
  
         return $query->execute() && $query->rowCount() === 1;          
