@@ -130,14 +130,14 @@ class UserMetaModel extends UserModel
      * @access public
      * @static
      * @param mixed             $userId             The user's id
-     * @param string            $paramName          The setting parameter name
+     * @param string            $key                The setting parameter name
      * @param mixed             $value              The setting parameter value
      * @param string            $tokenValue         The token value
      * @param string            $tokenKey           The token key
      *
      * @return TaskResponse
      */
-    public static function editUserSettings($userId, string $paramName, $value, string $tokenValue, string $tokenKey)
+    public static function editUserSettings($userId, string $key, $value, string $tokenValue, string $tokenKey)
     {
         // the return response
         $response = TaskResponse::create();
@@ -146,10 +146,16 @@ class UserMetaModel extends UserModel
         if (self::validateToken($response, $tokenValue, $tokenKey) &&
             self::validateUserId($response, $userId) && 
             self::validatePermissions($response, $userId) && 
-            self::validateuserMetaKeyAndValue($response, $paramName, $value)){
+            self::validateuserMetaKeyAndValue($response, $key, $value)){
 
             // try to update
-            $query = UserMetaCollection::updateUserMetaByKey((int) $userId, $paramName, $value);
+            $query = UserMetaCollection::updateUserMetaByKey((int) $userId, $key, $value); 
+
+            // insert new key if doesn't exist
+            if ($query === false && UserMetaCollection::keyExists((int) $userId, $key) === false ) {
+                $query = UserMetaCollection::insertUserMeta((int) $userId, $key, $value); 
+            }           
+
             if ($response->assertTrue($query, 500, 'todo' . $query)){
 
                 // get and reset user settings data into session
@@ -171,15 +177,15 @@ class UserMetaModel extends UserModel
      * @access protected
      * @static
 	 * @param TaskResponse      $response
-	 * @param mixed             $paramName 
+	 * @param mixed             $key 
 	 * @param mixed             $value
 	 *
 	 * @return bool                
 	 */
-    protected static function validateuserMetaKeyAndValue(TaskResponse $response, $paramName, $value)
+    protected static function validateuserMetaKeyAndValue(TaskResponse $response, $key, $value)
     {
         // param name and value must be set
-        if ($response->assertFalse(empty($paramName), 405, self::text('USER_SETTING_NAME_ERROR_EMPTY')) &&
+        if ($response->assertFalse(empty($key), 405, self::text('USER_SETTING_NAME_ERROR_EMPTY')) &&
             $response->assertFalse(empty($value),     405, self::text('USER_SETTING_VALUE_ERROR_EMPTY'))){
             return true;
         }

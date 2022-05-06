@@ -57,6 +57,48 @@ class UserMetaCollection extends DatabaseModel
         return $query->getAll(Output::OBJ);
     }
 
+    /** 
+     * Get an array of settings for given userId
+     * 
+     * @access public
+     * @static 
+     * @param int               $userId             The user's id
+     * @param string            $paramName          The setting parameter name
+     * 
+     * @return array         
+     */
+    public static function keyExists($userId, string $key)
+    {
+        $query = self::database()->select('userMetaKey')
+                                 ->from('minikit_usermeta')
+                                 ->whereEqual('userMetaKey', $key)
+                                 ->whereEqual('userId', (int) $userId);
+
+
+        return count($query->getAll()) > 0;
+    }
+
+    /**
+     * Update a value in user's settings 
+     * 
+     * @access public
+     * @static
+     * @param int               $userId             The user's id
+     * @param string            $paramName          The setting parameter name
+     * @param mixed             $value              The setting parameter value
+     * 
+     * @return bool             True if the setting parameter has been edited, otherwise false
+     */
+    public static function insertUserMeta(int $userId, string $paramName, $value): bool
+    {
+        $query = self::database()->insert('minikit_usermeta')
+                                 ->setValue('userMetaKey', $paramName)
+                                 ->setValue('userMetaValue', $value)
+                                 ->whereEqual('userId', (int) $userId);
+ 
+        return $query->execute() && $query->rowCount() === 1;          
+    }
+
     /**
      * Update a value in user's settings 
      * 
