@@ -51,12 +51,13 @@ class UserRecoveryModel extends UserModel
      *
      * @access public
      * @static
+     * @param bool          $darkTheme
      *
      * @return void 
      */
-    public static function outputCaptcha()
+    public static function outputCaptcha(bool $darkTheme = false)
     {
-        CaptchaModel::captcha()->createAndOutput('recovery_captcha');
+        CaptchaModel::captcha()->createAndOutput('recovery_captcha', $darkTheme);
     }
     
     /**
@@ -65,7 +66,7 @@ class UserRecoveryModel extends UserModel
      * @access public
      * @static
      * @param string         $userNameOrEmail
-     * @param string         $captach
+     * @param string         $captcah
      *
      * @return TaskResponse
      */

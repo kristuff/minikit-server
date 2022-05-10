@@ -171,7 +171,8 @@ abstract class AuthController extends \Kristuff\Minikit\Auth\Controller\BaseCont
                 break;
             
             case 'captcha':
-                UserRecoveryModel::outputCaptcha();
+                $theme = $this->request()->get('theme') ?? 'light';
+                UserRecoveryModel::outputCaptcha($theme === 'dark');
                 break;
     
             default:

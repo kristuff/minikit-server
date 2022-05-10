@@ -56,11 +56,11 @@ class CaptchaMath
         $colorBlack = imagecolorallocate($captchaImg, 0, 0, 0);
         $colorWhite = imagecolorallocate($captchaImg, 255, 255, 255);
 
+        // Make the background transparent
+        imagecolortransparent($captchaImg, $darkTheme ? $colorBlack : $colorWhite);
+
         // Make the background of the image
         imagefilledrectangle($captchaImg, 0, 0, 90, 36, $darkTheme ? $colorBlack : $colorWhite);
-
-        // Make the background transparent
-        imagecolortransparent($captchaImg, $colorBlack);
 
         // Draw the math question on the image
         imagestring($captchaImg, 5, 2, 10,  ' ' . $addNum1 . ' + ' . $addNum2 . ' =', $darkTheme ? $colorWhite : $colorBlack);
