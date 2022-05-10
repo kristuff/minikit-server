@@ -96,7 +96,7 @@ class UserMetaCollection extends DatabaseModel
                                  ->setValue('userMetaValue', $value)
                                  ->setValue('userId', (int) $userId);
  
-        return $query->execute() && $query->rowCount() === 1;          
+        return $query->execute();          
     }
 
     /**
@@ -117,7 +117,7 @@ class UserMetaCollection extends DatabaseModel
                                  ->whereEqual('userMetaKey', $paramName)
                                  ->whereEqual('userId', (int) $userId);
  
-        return $query->execute() && $query->rowCount() === 1;          
+        return $query->execute() && $query->rowCount() === 1;         
     }
 
     /**
