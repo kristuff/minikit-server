@@ -21,9 +21,12 @@ return array(
     'LOCAL_CODE'                                => "en-US",
 
     /* formats */
-    'FIELD_ENDING'                              => ':',
-    'DATE_FORMAT'                               => 'Y-m-d',
-    'DATE_TIME_FORMAT'                          => 'Y-m-d H:i:s',
+    'FORMAT_DATE'                                       => "Y-m-d",
+    'FORMAT_DATE_LONG'                                  => "F j,Y",
+    'FORMAT_DATE_TIME'                                  => "Y-m-d H:i:s",
+    'FORMAT_DECIMAL_SEPARATOR '                         => '.',
+    'FORMAT_THOUSANDS_SEPARATOR '                       => ',',
+    'FIELD_ENDING'                                      => ':',
 
     /* time */
     'TIME_YEAR'                                 => "year",

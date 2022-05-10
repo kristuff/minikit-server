@@ -22,8 +22,11 @@ return array(
 
     /* formats */
     'FIELD_ENDING'                              => ' :',
-    'DATE_FORMAT'                               => 'd/m/Y',
-    'DATE_TIME_FORMAT'                          => 'd/m/Y H:i:s',
+    'FORMAT_DATE'                               => "d/m/Y",
+    'FORMAT_DATE_LONG'                          => "j F Y",
+    'FORMAT_DATE_TIME'                          => "d/m/Y H:i:s",
+    'FORMAT_DECIMAL_SEPARATOR '                 => ',',
+    'FORMAT_THOUSANDS_SEPARATOR '               => ' ',
 
     /* time */
     'TIME_YEAR'                                 => "année",

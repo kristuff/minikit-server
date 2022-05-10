@@ -12,6 +12,7 @@
 
 namespace Kristuff\Minikit\Data\Model;
 
+use Kristuff\Minikit\Auth\TextHelper;
 use Kristuff\Minikit\Mvc\Model;
 use Kristuff\Minikit\Data\Core\DatabaseFactory;
 use Kristuff\Patabase\Database;
@@ -50,6 +51,7 @@ abstract class DatabaseModel extends Model
      * 
      * @access public
      * @static
+     * @param mixed      $tableName
      * 
      * @return int    
      */
@@ -105,54 +107,115 @@ abstract class DatabaseModel extends Model
 
     /**
      * Get formatted datetime according to current database driver
-     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * Timestamp stored ias numeric in sqlite but string mysql and pgsql 
      * 
      * @access public
      * @static
-     *
+     * @param mixed     $timeValue
+     * @param int       $dateFormatter
+     * @param int       $dateFormatter
+     * 
      * @return string
      */
-    public static function getFormattedDateTime($timeValue): string
+    protected static function getFormattedDateTime($timeValue, int $dateFormatter, int $timeFormatter): string
     {
-        if (empty($timeValue)) {
+        $currentLocal = TextHelper::text('LOCAL_CODE');
+        if (empty($timeValue) || empty($currentLocal)) {
             return '';
         }
+
+        $fmt = datefmt_create(
+            $currentLocal,
+            $dateFormatter,
+            $timeFormatter,
+            null,
+            \IntlDateFormatter::GREGORIAN
+        );
 
         switch (self::database()->getDriverName()){
             case 'mysql':
             case 'pgsql':
-                return  date(self::text('DATE_TIME_FORMAT'), strtotime($timeValue));
+                return  datefmt_format($fmt, strtotime($timeValue));
             case 'sqlite':
-                return  date(self::text('DATE_TIME_FORMAT'), (int) $timeValue);
+                return  datefmt_format($fmt, (int) $timeValue);
             default:
                 return '';
         }
     }
 
-     /**
+    /**
+     * Get formatted datetime according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     * @param mixed     $timeValue
+     *
+     * @return string
+     */
+    public static function getFormattedDateTimeShort($timeValue): string
+    {
+       return self::getFormattedDateTime($timeValue, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT);
+    }
+
+    /**
      * Get formatted date according to current database driver
      * Timestamp stored in numeric in sqlite but string mysql and pgsql 
      * 
      * @access public
      * @static
+     * @param mixed     $timeValue
      *
      * @return string
      */
-    public static function getFormattedDate($timeValue): string
+    public static function getFormattedDateShort($timeValue): string
     {
-        if (empty($timeValue)) {
-            return '';
-        }
+        return self::getFormattedDateTime($timeValue, \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
+    }
 
-        switch (self::database()->getDriverName()){
-            case 'mysql':
-            case 'pgsql':
-                return  date(self::text('DATE_FORMAT'), strtotime($timeValue));
-            case 'sqlite':
-                return  date(self::text('DATE_FORMAT'), (int) $timeValue);
-            default:
-                return '';
-        }
+    /**
+     * Get formatted date according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     * @param mixed     $timeValue
+     *
+     * @return string
+     */
+    public static function getFormattedDateLong($timeValue): string
+    {
+        return self::getFormattedDateTime($timeValue, \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+    }
+
+    /**
+     * Get formatted date according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     * @param mixed     $timeValue
+     *
+     * @return string
+     */
+    public static function getFormattedDateMedium($timeValue): string
+    {
+        return self::getFormattedDateTime($timeValue, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
+    }
+    
+    /**
+     * Get formatted date according to current database driver
+     * Timestamp stored in numeric in sqlite but string mysql and pgsql 
+     * 
+     * @access public
+     * @static
+     * @param mixed     $timeValue
+     *
+     * @return string
+     */
+    public static function getFormattedDateTimeLong($timeValue): string
+    {
+        return self::getFormattedDateTime($timeValue, \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
     }
 
     /**
@@ -161,6 +224,7 @@ abstract class DatabaseModel extends Model
      * 
      * @access public
      * @static
+     * @param mixed     $timeValue
      *
      * @return int|false
      */
@@ -182,6 +246,39 @@ abstract class DatabaseModel extends Model
     }
 
     /**
+     * Get a formatted 'datetime' to insert into database from a DateTimeLocal HTML input. 
+     * Sqlite stores timestamp as numeric while mysql as string.
+     * DateTimeLocal HTML input use the following format yyyy-MM-ddThh:mm
+     * 
+     * TODO pgsql
+     * 
+     * @access public
+     * @static
+     * @param string        $dateInput      The date time to convert. 
+     * 
+     * @return mixed
+     */
+    public static function getSqlDateTimeFromDateInput(?string $dateInput)
+    {
+        if (!empty($dateInput)){
+            $time = \DateTime::createFromFormat("Y-m-d\TH:i", $dateInput);
+            
+            if ($time === false) return null;
+
+            switch(self::database()->getDriverName()){
+                case 'sqlite':
+                    return $time->getTimestamp();
+                case 'mysql':
+                    return $time->format('Y-m-d h:i:s');
+            }     
+        }
+        return null;
+    }
+
+    /**
+     * Get a 'formatted' timestamp to insert into database. 
+     * Sqlite stores timestamp as numeric while mysql as string.
+     * 
      * TODO pgsql
      * 
      * @access public
@@ -198,7 +295,33 @@ abstract class DatabaseModel extends Model
 
         return ($db->getDriverName() === 'mysql') ? date('Y-m-d H:i:s', $time) : $timestamp;
     }
-    
+
+    /**
+     * TODO move
+     * 
+     * @access public
+     * @static
+     * @param mixed     $timeValue
+     *
+     * @return string
+     */
+    public static function getDatabaseDateTimeInput($timeValue)
+    {
+        if (empty($timeValue)) {
+            return date(TextHelper::text('FORMAT_DATE_TIME'), time());
+        }
+
+        switch (self::database()->getDriverName()){
+            case 'mysql':
+            case 'pgsql':
+                return $timeValue;
+            case 'sqlite':
+                return date(TextHelper::text('FORMAT_DATE_TIME'), $timeValue);
+            default:
+                return date(TextHelper::text('FORMAT_DATE_TIME'), time());
+        }
+    }
+
     /**
      * Helper function to return the text column type according
      * to current driver. Useful when creating table.

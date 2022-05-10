@@ -22,6 +22,28 @@ use Kristuff\Minikit\Auth\TextHelper;
 class Format
 {
     /**
+     * Format a number according to local 
+     * 
+     * @access public
+     * @static
+     * @param int           $number       
+     *
+     * @return string
+     */
+    public static function getFormattedCounter(int $number)
+    {
+        if ($number > 999999) {
+            $val = round($number / 1000000, 1, PHP_ROUND_HALF_DOWN);
+            return number_format($val,1, TextHelper::text('FORMAT_DECIMAL_SEPARATOR'),TextHelper::text('FORMAT_THOUSANDS_SEPARATOR')).'m';
+        }
+        if ($number > 999) {
+            $val = round($number / 1000, 1, PHP_ROUND_HALF_DOWN);
+            return number_format($val,1, TextHelper::text('FORMAT_DECIMAL_SEPARATOR'),TextHelper::text('FORMAT_THOUSANDS_SEPARATOR')).'k';
+        }
+        return number_format($number, 0, TextHelper::text('FORMAT_DECIMAL_SEPARATOR'),TextHelper::text('FORMAT_THOUSANDS_SEPARATOR'));
+    }
+
+    /**
      * Get a formatted date from given timestamp
      * (get format from locale)
      *
@@ -37,7 +59,7 @@ class Format
         $date = new \DateTime(); 
         $date->setTimezone(new \DateTimeZone($timezone ?? 'UTC'));
         $date->setTimestamp($timestamp);
-        return $date->format(TextHelper::text('DATE_FORMAT'));
+        return $date->format(TextHelper::text('FORMAT_DATE'));
     }
 
     /**
@@ -56,7 +78,7 @@ class Format
         $date = new \DateTime(); 
         $date->setTimezone(new \DateTimeZone($timezone ?? 'UTC'));
         $date->setTimestamp($timestamp);
-        return $date->format(TextHelper::text('DATE_TIME_FORMAT'));
+        return $date->format(TextHelper::text('FORMAT_DATE_TIME'));
     }
 
     /**
