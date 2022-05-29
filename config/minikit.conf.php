@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.20 
+ * This file is part of Kristuff/Minikit v0.9.21 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -94,14 +94,18 @@ return array(
      *                          to set it to true if you have secured connection.
      * COOKIE_HTTP:             If set to true, Cookies that can't be accessed by JS - Highly recommended!
      * SESSION_RUNTIME:         How long should a session cookie be valid by seconds, 604800 = 1 week.
+     * SESSION_NAME             The PHP session cookie name. The default value must be overwritten to prevent conflicts when 
+     *                          there are more than one instance of this framework running on same server. 
      */
     'COOKIE_RUNTIME'            => 1209600,
     'COOKIE_PATH'               => '/',
     'COOKIE_DOMAIN'             => '',
     'COOKIE_SECURE'             => false,
     'COOKIE_HTTP'               => true,
-    'SESSION_RUNTIME'           => 604800,
     'COOKIE_SAMESITE'           => 'Strict',
+    'SESSION_RUNTIME'           => 604800,
+    'SESSION_NAME'              => 'PSID',
+
 
     /**
      * -----------------------------

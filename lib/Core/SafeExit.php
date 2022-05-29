@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.20 
+ * This file is part of Kristuff/Minikit v0.9.21 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 

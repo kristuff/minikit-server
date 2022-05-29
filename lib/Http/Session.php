@@ -6,7 +6,7 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.20 
+ * This file is part of Kristuff/Minikit v0.9.21 
  * Copyright (c) 2017-2022 Christophe Buliard  
  */
 
@@ -43,6 +43,12 @@ class Session
                 'samesite'  => Application::config('COOKIE_SAMESITE'),
                 'lifetime'  => Application::config('COOKIE_RUNTIME'),
             ]);
+
+            $sessionName = Application::config('SESSION_NAME');
+            if (!empty($sessionName)){
+                session_name($sessionName);
+            }
+
 
             session_start();
         }
