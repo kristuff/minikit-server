@@ -291,9 +291,9 @@ abstract class DatabaseModel extends Model
     public static function getFormattedTimestamp(?int $timestamp = null, ?Database $database = null)
     {
         $time = empty($timestamp) ? time() : $timestamp;
-        $db = empty($database) ? self::database() : $database;
+        $db   = empty($database) ? self::database() : $database;
 
-        return ($db->getDriverName() === 'mysql') ? date('Y-m-d H:i:s', $time) : $timestamp;
+        return ($db->getDriverName() === 'mysql') ? date('Y-m-d H:i:s', $time) : $time;
     }
 
     /**
