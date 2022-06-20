@@ -258,6 +258,56 @@ class Format
         return self::formatRelativeTime('REL_TIME_YEAR', $diff);
     }
 
+     /**
+     * Returns the relative time compared to the given timestamp.
+     *
+     * @access public
+     * @static
+     * @param int       $timestamp              
+     * @param string    $fallbackDateFormat     The fallback date format
+     *
+     * @return string            
+     */
+    public static function relativeTimeLong(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i')
+    {
+        $diff = time() - $timestamp;
+        if ($diff < 0) {
+            return date($fallbackDateFormat, $timestamp);
+        }
+
+        if ($diff < 60) {
+            return self::formatRelativeTime('REL_TIME_SECOND_LONG', $diff);
+        }
+
+        $diff = floor($diff / 60);
+         if ($diff < 60) {
+            return self::formatRelativeTime('REL_TIME_MINUTE_LONG', $diff);
+        }
+
+        $diff = floor($diff / 60);
+        if ($diff < 24) {
+            return self::formatRelativeTime('REL_TIME_HOUR_LONG', $diff);
+        }
+
+        $diff = floor($diff / 24);
+        if ($diff < 7) {
+            return self::formatRelativeTime('REL_TIME_DAY_LONG', $diff);
+        }
+
+        $diff = floor($diff / 7);
+        if ($diff < 4) {
+            return self::formatRelativeTime('REL_TIME_WEEK_LONG', $diff);
+        }
+
+        $diff = floor($diff / 4);
+        if ($diff < 12) {
+            return self::formatRelativeTime('REL_TIME_MONTH_LONG', $diff);
+        }
+
+        $diff = floor($diff / 12);
+        return self::formatRelativeTime('REL_TIME_YEAR_LONG', $diff);
+    }
+
     /**
      * Remove all non numeric chars from a string
      * 
