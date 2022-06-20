@@ -130,7 +130,7 @@ class Format
      * 
      * @return string   Formated time string
      */
-    public static function getHumanTime(int $seconds, string $minUnit = 'minute'): string
+    public static function getHumanTime(int $seconds, string $minUnit = 'minute'): ?string
     {
         $parts = [];
         $units = [
