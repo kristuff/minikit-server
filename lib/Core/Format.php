@@ -215,10 +215,11 @@ class Format
      * @static
      * @param int       $timestamp              
      * @param string    $fallbackDateFormat     The fallback date format
+     * @param string    $suffix                 The suffix for local keys (_SHORT|_LONG). Default is empty
      *
      * @return string            
      */
-    public static function relativeTime(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i')
+    public static function relativeTime(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i', string $suffix = '')
     {
         $diff = time() - $timestamp;
         if ($diff < 0) {
@@ -226,36 +227,36 @@ class Format
         }
 
         if ($diff < 60) {
-            return self::formatRelativeTime('REL_TIME_SECOND', $diff);
+            return self::formatRelativeTime('REL_TIME_SECOND'.$suffix, $diff);
         }
 
         $diff = floor($diff / 60);
          if ($diff < 60) {
-            return self::formatRelativeTime('REL_TIME_MINUTE', $diff);
+            return self::formatRelativeTime('REL_TIME_MINUTE'.$suffix, $diff);
         }
 
         $diff = floor($diff / 60);
         if ($diff < 24) {
-            return self::formatRelativeTime('REL_TIME_HOUR', $diff);
+            return self::formatRelativeTime('REL_TIME_HOUR'.$suffix, $diff);
         }
 
         $diff = floor($diff / 24);
         if ($diff < 7) {
-            return self::formatRelativeTime('REL_TIME_DAY', $diff);
+            return self::formatRelativeTime('REL_TIME_DAY'.$suffix, $diff);
         }
 
         $diff = floor($diff / 7);
         if ($diff < 4) {
-            return self::formatRelativeTime('REL_TIME_WEEK', $diff);
+            return self::formatRelativeTime('REL_TIME_WEEK'.$suffix, $diff);
         }
 
         $diff = floor($diff / 4);
         if ($diff < 12) {
-            return self::formatRelativeTime('REL_TIME_MONTH', $diff);
+            return self::formatRelativeTime('REL_TIME_MONTH'.$suffix, $diff);
         }
 
         $diff = floor($diff / 12);
-        return self::formatRelativeTime('REL_TIME_YEAR', $diff);
+        return self::formatRelativeTime('REL_TIME_YEAR'.$suffix, $diff);
     }
 
      /**
@@ -270,43 +271,24 @@ class Format
      */
     public static function relativeTimeLong(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i')
     {
-        $diff = time() - $timestamp;
-        if ($diff < 0) {
-            return date($fallbackDateFormat, $timestamp);
-        }
-
-        if ($diff < 60) {
-            return self::formatRelativeTime('REL_TIME_SECOND_LONG', $diff);
-        }
-
-        $diff = floor($diff / 60);
-         if ($diff < 60) {
-            return self::formatRelativeTime('REL_TIME_MINUTE_LONG', $diff);
-        }
-
-        $diff = floor($diff / 60);
-        if ($diff < 24) {
-            return self::formatRelativeTime('REL_TIME_HOUR_LONG', $diff);
-        }
-
-        $diff = floor($diff / 24);
-        if ($diff < 7) {
-            return self::formatRelativeTime('REL_TIME_DAY_LONG', $diff);
-        }
-
-        $diff = floor($diff / 7);
-        if ($diff < 4) {
-            return self::formatRelativeTime('REL_TIME_WEEK_LONG', $diff);
-        }
-
-        $diff = floor($diff / 4);
-        if ($diff < 12) {
-            return self::formatRelativeTime('REL_TIME_MONTH_LONG', $diff);
-        }
-
-        $diff = floor($diff / 12);
-        return self::formatRelativeTime('REL_TIME_YEAR_LONG', $diff);
+        return self::relativeTime($timestamp,$fallbackDateFormat, '_LONG');
     }
+
+    /**
+     * Returns the relative time compared to the given timestamp.
+     *
+     * @access public
+     * @static
+     * @param int       $timestamp              
+     * @param string    $fallbackDateFormat     The fallback date format
+     *
+     * @return string            
+     */
+    public static function relativeTimeShort(int $timestamp, string $fallbackDateFormat = 'd/m/Y - h:i')
+    {
+        return self::relativeTime($timestamp,$fallbackDateFormat, '_SHORT');
+    }
+
 
     /**
      * Remove all non numeric chars from a string

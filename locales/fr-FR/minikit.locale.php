@@ -35,6 +35,7 @@ return array(
     'TIME_HOUR'                                 => "heure",
     'TIME_MINUTE'                               => "minute",
     'TIME_SECOND'                               => "seconde",
+
     'REL_TIME_YEAR'                             => "%d an%s",
     'REL_TIME_MONTH'                            => "%d mois%s",
     'REL_TIME_DAY'                              => "%d jour%s",
@@ -42,7 +43,16 @@ return array(
     'REL_TIME_HOUR'                             => "%d heure%s",
     'REL_TIME_MINUTE'                           => "%d minute%s",
     'REL_TIME_SECOND'                           => "%d seconde%s",
-    'REL_TIME_YEAR'                             => "Il y a %d an%s",
+
+    'REL_TIME_YEAR_SHORT'                       => "%d ann.",
+    'REL_TIME_MONTH_SHORT'                      => "%d mois",
+    'REL_TIME_DAY_SHORT'                        => "%d j",
+    'REL_TIME_WEEK_SHORT'                       => "%d sem.",
+    'REL_TIME_HOUR_SHORT'                       => "%d h",
+    'REL_TIME_MINUTE_SHORT'                     => "%d m",
+    'REL_TIME_SECOND_SHORT'                     => "%d s",
+    
+    'REL_TIME_YEAR_LONG'                        => "Il y a %d an%s",
     'REL_TIME_MONTH_LONG'                       => "Il y a %d mois%s",
     'REL_TIME_DAY_LONG'                         => "Il y a %d jour%s",
     'REL_TIME_WEEK_LONG'                        => "Il y a %d semaine%s",
