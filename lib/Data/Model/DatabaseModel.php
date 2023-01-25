@@ -269,7 +269,7 @@ abstract class DatabaseModel extends Model
                 case 'sqlite':
                     return $time->getTimestamp();
                 case 'mysql':
-                    return $time->format('Y-m-d h:i:s');
+                    return $time->format('Y-m-d H:i:s');
             }     
         }
         return null;
