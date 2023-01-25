@@ -6,8 +6,8 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.22 
- * Copyright (c) 2017-2022 Christophe Buliard  
+ * This file is part of Kristuff/Minikit v0.9.23 
+ * Copyright (c) 2017-2023 Christophe Buliard  
  */
 
     
@@ -51,7 +51,7 @@ class EmailBuilder
         $builder->footer()->setPadding(20); 
         $builder->footer()->setFontSize('13px'); 
         $divFooter = new HtmlElements\Div();
-        $divFooter->add(new HtmlElements\Span('Powered by Minikit | Copyright © 2017-2022 '));
+        $divFooter->add(new HtmlElements\Span('Powered by Minikit | Copyright © 2017-2023 '));
         $divFooter->add(new HtmlElements\Link('Kristuff', 'https://kristuff.fr/', 'Kristuff'));
         $builder->footer()->add($divFooter);
 

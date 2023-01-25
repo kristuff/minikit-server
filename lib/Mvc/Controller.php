@@ -6,8 +6,8 @@
  * | '  \| | ' \| | / / |  _|
  * |_|_|_|_|_||_|_|_\_\_|\__|
  * 
- * This file is part of Kristuff/Minikit v0.9.22 
- * Copyright (c) 2017-2022 Christophe Buliard  
+ * This file is part of Kristuff/Minikit v0.9.23 
+ * Copyright (c) 2017-2023 Christophe Buliard  
  */
 
 namespace Kristuff\Minikit\Mvc;
